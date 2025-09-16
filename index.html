@@ -1,201 +1,78 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coralma</title>
-  <style>
-    body {
-      font-family: 'Raleway', sans-serif;
-      margin: 0;
-      padding: 0;
-      transition: background 0.5s, color 0.5s;
-      background: #f8f8f8;
-      color: #333;
-    }
-    header {
-      background: linear-gradient(90deg, #4facfe, #00f2fe);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    header h1 {
-      margin: 0;
-    }
-    nav a {
-      margin: 0 10px;
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      transition: opacity 0.3s;
-    }
-    nav a:hover {
-      opacity: 0.7;
-    }
-    .hero {
-      text-align: center;
-      padding: 3rem 1rem;
-    }
-    .hero h2 {
-      font-size: 2rem;
-    }
-    .frase {
-      font-style: italic;
-      margin-top: 1rem;
-      font-size: 1.2rem;
-      color: #666;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 1.5rem;
-      padding: 0.7rem 1.2rem;
-      background: #4facfe;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.3s, background 0.3s;
-      text-decoration: none;
-    }
-    .btn:hover {
-      transform: scale(1.05);
-      background: #00c9fe;
-    }
-    .articulos {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
-    }
-    .card {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    footer {
-      background: #222;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-    }
-    /* Modo oscuro */
-    .dark {
-      background: #1e1e1e;
-      color: #eee;
-    }
-    .dark .card {
-      background: #2a2a2a;
-      color: #eee;
-    }
-    .dark footer {
-      background: #111;
-    }
-    /* Meditación */
-    #meditacion {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      color: white;
-      text-align: center;
-      padding-top: 20%;
-      z-index: 2000;
-    }
-    .circle {
-      margin: 20px auto;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: #4facfe;
-      animation: respirar 6s infinite;
-    }
-    @keyframes respirar {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.5); }
-      100% { transform: scale(1); }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>🌸 Coralma</h1>
-    <nav>
-      <a href="#">Artículos</a>
-      <a href="#">Libro</a>
-      <a href="#">Tienda</a>
-      <a href="#">Contacto</a>
-      <a href="javascript:void(0)" onclick="toggleDarkMode()">🌙</a>
-    </nav>
-  </header>
+<!-- HERO: Coralma con espiral y frases rotando -->
+<section id="hero-coralma" style="padding:48px 20px; text-align:center; background: linear-gradient(135deg,#e6f7ff 0%, #f0f5ff 50%, #fff 100%);">
+  <div style="max-width:900px; margin:0 auto;">
+    <!-- Logo + título -->
+    <div style="display:flex;align-items:center;gap:14px;justify-content:center;">
+      <!-- pequeño icono/espiral SVG -->
+      <div aria-hidden="true" style="width:58px;height:58px;display:flex;align-items:center;justify-content:center;">
+        <svg id="spiral-svg" viewBox="0 0 100 100" width="56" height="56" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Espiral Coralma">
+          <g fill="none" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M50 50 m0 -18 a18 18 0 1 1 0 36 a14 14 0 1 0 0 -28 a10 10 0 1 1 0 20" />
+          </g>
+        </svg>
+      </div>
 
-  <section class="hero">
-    <h2>Un espacio de conciencia y transformación interior</h2>
-    <p class="frase" id="frase"></p>
-    <button class="btn" onclick="iniciarMeditacion()">🧘 Iniciar 1 minuto de silencio</button>
-  </section>
-
-  <section class="articulos">
-    <div class="card">
-      <h3>La conciencia como llave del despertar</h3>
-      <p>Pequeños cambios en tu forma de pensar pueden abrir puertas hacia un entendimiento más profundo de ti mismo y del universo.</p>
-      <a href="#" class="btn">Leer más</a>
+      <div style="text-align:left;">
+        <h1 style="margin:0;font-family: 'Merriweather', serif; font-size:28px; color:#1f2937;">Coralma</h1>
+        <div style="font-size:13px;color:#475569;margin-top:4px;">Con corazón se inicia. Con alma se trasciende.</div>
+      </div>
     </div>
-    <div class="card">
-      <h3>El silencio interior</h3>
-      <p>En la quietud encontramos respuestas que las palabras no pueden dar.</p>
-      <a href="#" class="btn">Explorar</a>
+
+    <!-- Titular grande -->
+    <h2 style="font-family: 'Playfair Display', serif; font-size:28px; margin:28px 0 8px; color:#0f172a;">
+      <span id="hero-line-a">Un espacio de conciencia</span><br>
+      <span id="hero-line-b" style="color:#374151;">y transformación interior</span>
+    </h2>
+
+    <!-- Frases rotando -->
+    <p id="rotating-phrase" style="font-style:italic;color:#6b7280; font-size:16px; min-height:24px;"></p>
+
+    <!-- CTA -->
+    <div style="margin-top:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <a href="#articulos" style="background:#8b5cf6;color:white;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:600;box-shadow:0 6px 18px rgba(139,92,246,0.18);">Explorar artículos</a>
+      <a href="#suscripcion" style="background:transparent;color:#8b5cf6;padding:10px 18px;border-radius:10px;border:2px solid #8b5cf6;text-decoration:none;font-weight:600;">Únete al viaje</a>
     </div>
-  </section>
-
-  <footer>
-    <p>© 2025 Coralma · Todos los derechos reservados</p>
-  </footer>
-
-  <!-- Meditación -->
-  <div id="meditacion">
-    <h2>Respira profundamente...</h2>
-    <div class="circle"></div>
-    <p id="mensaje"></p>
   </div>
+</section>
 
-  <script>
-    // Frases aleatorias
+<!-- Estilos y animación de espiral -->
+<style>
+  /* anima la espiral (giro muy sutil) */
+  #spiral-svg { transform-origin: 50% 50%; animation: giro-lento 12s linear infinite; }
+  @keyframes giro-lento { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(6deg) scale(1.02);} 100% { transform: rotate(0deg) scale(1);} }
+
+  /* entrada suave para la frase */
+  #rotating-phrase { transition: opacity 300ms ease; opacity: 1; }
+  .ph-hide { opacity: 0; transform: translateY(6px); }
+</style>
+
+<!-- Script: rota frases y accesibilidad -->
+<script>
+  (function() {
     const frases = [
-      "El silencio es el idioma del alma.",
-      "Tu vibración atrae tu destino.",
-      "El universo vive dentro de ti.",
-      "No eres un ser humano con experiencias espirituales, eres un ser espiritual con experiencias humanas."
+      "Lo que haces con el corazón, se queda en el alma.",
+      "Se hacen las cosas con el corazón y con el alma se llevan más allá.",
+      "Con el corazón pero con el alma se llega más allá.",
+      "Un espiral: acto, presencia, recuerdo."
     ];
-    document.getElementById("frase").innerText = frases[Math.floor(Math.random() * frases.length)];
+    const el = document.getElementById('rotating-phrase');
+    let idx = 0;
 
-    // Modo oscuro
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark");
+    function mostrarFrase(i) {
+      el.classList.add('ph-hide');
+      setTimeout(() => {
+        el.textContent = frases[i];
+        el.classList.remove('ph-hide');
+      }, 320);
     }
 
-    // Meditación guiada
-    function iniciarMeditacion() {
-      const meditacion = document.getElementById("meditacion");
-      const mensaje = document.getElementById("mensaje");
-      meditacion.style.display = "block";
-      mensaje.innerText = "";
-      setTimeout(() => {
-        mensaje.innerText = "🌌 El silencio ya habló dentro de ti.";
-      }, 60000); // 1 minuto
-      setTimeout(() => {
-        meditacion.style.display = "none";
-      }, 70000);
-    }
-  </script>
-</body>
-</html>
+    // mostrar primera
+    mostrarFrase(idx);
+
+    // rotar cada 5 segundos
+    setInterval(() => {
+      idx = (idx + 1) % frases.length;
+      mostrarFrase(idx);
+    }, 5000);
+  })();
+</script>
