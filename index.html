@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+      <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -15,42 +15,69 @@
     header {
       background: linear-gradient(135deg, #5cc7a2, #3a7bd5);
       color: white;
-      padding: 20px 40px;
+      padding: 20px;
       text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     header h1 {
       margin: 0;
-      font-size: 2.2em;
-    }
-    nav {
-      margin-top: 10px;
+      font-size: 2em;
     }
     nav a {
       color: white;
       margin: 0 15px;
       text-decoration: none;
       font-weight: bold;
-      transition: opacity 0.3s;
     }
     nav a:hover {
       opacity: 0.8;
     }
+    .hero {
+      background: url("assets/images/banner.jpg") center/cover no-repeat;
+      color: white;
+      text-align: center;
+      padding: 100px 20px;
+    }
+    .hero h2 {
+      font-size: 2.5em;
+      background: rgba(0,0,0,0.5);
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
     section {
       padding: 50px 20px;
-      max-width: 900px;
+      max-width: 1000px;
       margin: auto;
     }
     section h2 {
       color: #3a7bd5;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
     }
     .card {
       background: white;
       border-radius: 10px;
-      padding: 20px;
-      margin: 15px 0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card img {
+      width: 100%;
+      display: block;
+    }
+    .card-content {
+      padding: 15px;
     }
     footer {
       background: #333;
@@ -65,7 +92,7 @@
 <body>
 
   <header>
-    <h1>🌿 Coralma</h1>
+    <h1>🕉️ Coralma</h1>
     <nav>
       <a href="#articulos">Artículos</a>
       <a href="#libro">Libro</a>
@@ -74,42 +101,77 @@
     </nav>
   </header>
 
+  <!-- HERO -->
+  <section class="hero">
+    <h2>Un espacio de conciencia y transformación interior</h2>
+  </section>
+
+  <!-- ARTÍCULOS -->
   <section id="articulos">
     <h2>📝 Artículos</h2>
-    <div class="card">
-      <h3>La conciencia como llave del despertar</h3>
-      <p>Explora cómo pequeños cambios en tu forma de pensar pueden abrir puertas hacia un entendimiento más profundo de ti mismo y del universo.</p>
-    </div>
-    <div class="card">
-      <h3>El silencio interior</h3>
-      <p>Un recordatorio de que en la quietud encontramos respuestas que las palabras no pueden dar.</p>
+    <div class="grid">
+      <div class="card">
+        <img src="assets/images/articulo1.jpg" alt="Conciencia">
+        <div class="card-content">
+          <h3>La conciencia como llave del despertar</h3>
+          <p>Explora cómo pequeños cambios en tu forma de pensar pueden abrir puertas hacia un entendimiento más profundo de ti mismo y del universo.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="assets/images/articulo2.jpg" alt="Silencio interior">
+        <div class="card-content">
+          <h3>El silencio interior</h3>
+          <p>Un recordatorio de que en la quietud encontramos respuestas que las palabras no pueden dar.</p>
+        </div>
+      </div>
     </div>
   </section>
 
+  <!-- LIBRO -->
   <section id="libro">
     <h2>📖 Libro Virtual</h2>
     <div class="card">
-      <p>Muy pronto podrás descargar nuestro libro digital lleno de reflexiones, símbolos y claves para el crecimiento interior.</p>
+      <img src="assets/images/libro.jpg" alt="Libro Coralma">
+      <div class="card-content">
+        <p>Muy pronto podrás descargar nuestro libro digital lleno de reflexiones, símbolos y claves para el crecimiento interior.</p>
+      </div>
     </div>
   </section>
 
+  <!-- TIENDA -->
   <section id="tienda">
     <h2>🛍️ Tienda</h2>
-    <div class="card">
-      <p>Próximamente encontrarás productos inspirados en conciencia y espiritualidad, creados para acompañarte en tu camino.</p>
+    <div class="grid">
+      <div class="card">
+        <img src="assets/images/producto1.jpg" alt="Producto 1">
+        <div class="card-content">
+          <h3>Producto Inspirador</h3>
+          <p>Próximamente disponible en la tienda de Coralma.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="assets/images/producto2.jpg" alt="Producto 2">
+        <div class="card-content">
+          <h3>Accesorio Espiritual</h3>
+          <p>Creado para acompañarte en tu camino interior.</p>
+        </div>
+      </div>
     </div>
   </section>
 
+  <!-- CONTACTO -->
   <section id="contacto">
     <h2>📩 Contacto</h2>
     <div class="card">
-      <p>¿Quieres colaborar con Coralma o compartir tus ideas?  
-      Escríbenos a: <b>contacto@coralma.com</b></p>
+      <div class="card-content">
+        <p>¿Quieres colaborar con Coralma o compartir tus ideas?<br>
+        Escríbenos a: <b>contacto@coralma.com</b></p>
+      </div>
     </div>
   </section>
 
   <footer>
-    🌿 Coralma © 2025 — Inspirando conciencia y transformación interior.
+    🕉️ Coralma © 2025 — Inspirando conciencia y transformación interior.
   </footer>
 
 </body>
