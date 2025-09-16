@@ -1,4 +1,4 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -6,173 +6,196 @@
   <title>Coralma</title>
   <style>
     body {
+      font-family: 'Raleway', sans-serif;
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #fdfdfd;
+      padding: 0;
+      transition: background 0.5s, color 0.5s;
+      background: #f8f8f8;
       color: #333;
-      line-height: 1.6;
     }
     header {
-      background: linear-gradient(135deg, #5cc7a2, #3a7bd5);
+      background: linear-gradient(90deg, #4facfe, #00f2fe);
       color: white;
-      padding: 20px;
+      padding: 1rem;
       text-align: center;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 1000;
     }
     header h1 {
       margin: 0;
-      font-size: 2em;
     }
     nav a {
+      margin: 0 10px;
       color: white;
-      margin: 0 15px;
       text-decoration: none;
       font-weight: bold;
+      transition: opacity 0.3s;
     }
     nav a:hover {
-      opacity: 0.8;
+      opacity: 0.7;
     }
     .hero {
-      background: url("assets/images/banner.jpg") center/cover no-repeat;
-      color: white;
       text-align: center;
-      padding: 100px 20px;
+      padding: 3rem 1rem;
     }
     .hero h2 {
-      font-size: 2.5em;
-      background: rgba(0,0,0,0.5);
+      font-size: 2rem;
+    }
+    .frase {
+      font-style: italic;
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #666;
+    }
+    .btn {
       display: inline-block;
-      padding: 10px 20px;
-      border-radius: 10px;
+      margin-top: 1.5rem;
+      padding: 0.7rem 1.2rem;
+      background: #4facfe;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+      text-decoration: none;
     }
-    section {
-      padding: 50px 20px;
-      max-width: 1000px;
-      margin: auto;
+    .btn:hover {
+      transform: scale(1.05);
+      background: #00c9fe;
     }
-    section h2 {
-      color: #3a7bd5;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .grid {
+    .articulos {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
     }
     .card {
       background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: transform 0.3s;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
     .card:hover {
       transform: translateY(-5px);
-    }
-    .card img {
-      width: 100%;
-      display: block;
-    }
-    .card-content {
-      padding: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
     footer {
-      background: #333;
-      color: #f2f2f2;
+      background: #222;
+      color: white;
       text-align: center;
-      padding: 20px;
-      margin-top: 40px;
-      font-size: 0.9em;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+    /* Modo oscuro */
+    .dark {
+      background: #1e1e1e;
+      color: #eee;
+    }
+    .dark .card {
+      background: #2a2a2a;
+      color: #eee;
+    }
+    .dark footer {
+      background: #111;
+    }
+    /* Meditación */
+    #meditacion {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      text-align: center;
+      padding-top: 20%;
+      z-index: 2000;
+    }
+    .circle {
+      margin: 20px auto;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #4facfe;
+      animation: respirar 6s infinite;
+    }
+    @keyframes respirar {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.5); }
+      100% { transform: scale(1); }
     }
   </style>
 </head>
 <body>
-
   <header>
-    <h1>🕉️ Coralma</h1>
+    <h1>🌸 Coralma</h1>
     <nav>
-      <a href="#articulos">Artículos</a>
-      <a href="#libro">Libro</a>
-      <a href="#tienda">Tienda</a>
-      <a href="#contacto">Contacto</a>
+      <a href="#">Artículos</a>
+      <a href="#">Libro</a>
+      <a href="#">Tienda</a>
+      <a href="#">Contacto</a>
+      <a href="javascript:void(0)" onclick="toggleDarkMode()">🌙</a>
     </nav>
   </header>
 
-  <!-- HERO -->
   <section class="hero">
     <h2>Un espacio de conciencia y transformación interior</h2>
+    <p class="frase" id="frase"></p>
+    <button class="btn" onclick="iniciarMeditacion()">🧘 Iniciar 1 minuto de silencio</button>
   </section>
 
-  <!-- ARTÍCULOS -->
-  <section id="articulos">
-    <h2>📝 Artículos</h2>
-    <div class="grid">
-      <div class="card">
-        <img src="assets/images/articulo1.jpg" alt="Conciencia">
-        <div class="card-content">
-          <h3>La conciencia como llave del despertar</h3>
-          <p>Explora cómo pequeños cambios en tu forma de pensar pueden abrir puertas hacia un entendimiento más profundo de ti mismo y del universo.</p>
-        </div>
-      </div>
-      <div class="card">
-        <img src="assets/images/articulo2.jpg" alt="Silencio interior">
-        <div class="card-content">
-          <h3>El silencio interior</h3>
-          <p>Un recordatorio de que en la quietud encontramos respuestas que las palabras no pueden dar.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- LIBRO -->
-  <section id="libro">
-    <h2>📖 Libro Virtual</h2>
+  <section class="articulos">
     <div class="card">
-      <img src="assets/images/libro.jpg" alt="Libro Coralma">
-      <div class="card-content">
-        <p>Muy pronto podrás descargar nuestro libro digital lleno de reflexiones, símbolos y claves para el crecimiento interior.</p>
-      </div>
+      <h3>La conciencia como llave del despertar</h3>
+      <p>Pequeños cambios en tu forma de pensar pueden abrir puertas hacia un entendimiento más profundo de ti mismo y del universo.</p>
+      <a href="#" class="btn">Leer más</a>
     </div>
-  </section>
-
-  <!-- TIENDA -->
-  <section id="tienda">
-    <h2>🛍️ Tienda</h2>
-    <div class="grid">
-      <div class="card">
-        <img src="assets/images/producto1.jpg" alt="Producto 1">
-        <div class="card-content">
-          <h3>Producto Inspirador</h3>
-          <p>Próximamente disponible en la tienda de Coralma.</p>
-        </div>
-      </div>
-      <div class="card">
-        <img src="assets/images/producto2.jpg" alt="Producto 2">
-        <div class="card-content">
-          <h3>Accesorio Espiritual</h3>
-          <p>Creado para acompañarte en tu camino interior.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACTO -->
-  <section id="contacto">
-    <h2>📩 Contacto</h2>
     <div class="card">
-      <div class="card-content">
-        <p>¿Quieres colaborar con Coralma o compartir tus ideas?<br>
-        Escríbenos a: <b>contacto@coralma.com</b></p>
-      </div>
+      <h3>El silencio interior</h3>
+      <p>En la quietud encontramos respuestas que las palabras no pueden dar.</p>
+      <a href="#" class="btn">Explorar</a>
     </div>
   </section>
 
   <footer>
-    🕉️ Coralma © 2025 — Inspirando conciencia y transformación interior.
+    <p>© 2025 Coralma · Todos los derechos reservados</p>
   </footer>
 
+  <!-- Meditación -->
+  <div id="meditacion">
+    <h2>Respira profundamente...</h2>
+    <div class="circle"></div>
+    <p id="mensaje"></p>
+  </div>
+
+  <script>
+    // Frases aleatorias
+    const frases = [
+      "El silencio es el idioma del alma.",
+      "Tu vibración atrae tu destino.",
+      "El universo vive dentro de ti.",
+      "No eres un ser humano con experiencias espirituales, eres un ser espiritual con experiencias humanas."
+    ];
+    document.getElementById("frase").innerText = frases[Math.floor(Math.random() * frases.length)];
+
+    // Modo oscuro
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+    }
+
+    // Meditación guiada
+    function iniciarMeditacion() {
+      const meditacion = document.getElementById("meditacion");
+      const mensaje = document.getElementById("mensaje");
+      meditacion.style.display = "block";
+      mensaje.innerText = "";
+      setTimeout(() => {
+        mensaje.innerText = "🌌 El silencio ya habló dentro de ti.";
+      }, 60000); // 1 minuto
+      setTimeout(() => {
+        meditacion.style.display = "none";
+      }, 70000);
+    }
+  </script>
 </body>
 </html>
