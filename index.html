@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coralma</title>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
       margin: 0;
@@ -173,37 +174,30 @@
       font-size: 14px;
       transition: background 0.4s ease;
     }
+    .social-icons {
+      margin-top: 14px;
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+    }
+    .social-icons a {
+      color: #d1d5db;
+      transition: color 0.3s ease;
+    }
+    .social-icons a:hover {
+      color: #8b5cf6;
+    }
 
     /* --- 🌙 DARK MODE --- */
     @media (prefers-color-scheme: dark) {
-      body {
-        background: #111827;
-        color: #e5e7eb;
-      }
-      header {
-        background: #1f2937;
-      }
-      header nav a {
-        color: #e5e7eb;
-      }
-      #hero-coralma {
-        background: linear-gradient(135deg,#1f2937 0%, #111827 50%, #000 100%);
-      }
-      #rotating-phrase {
-        color: #9ca3af;
-      }
-      section p {
-        color: #d1d5db;
-      }
-      .card {
-        background: #1f2937;
-        color: #f9fafb;
-      }
-      input[type="email"] {
-        background: #1f2937;
-        color: #f9fafb;
-        border: 1px solid #374151;
-      }
+      body { background: #111827; color: #e5e7eb; }
+      header { background: #1f2937; }
+      header nav a { color: #e5e7eb; }
+      #hero-coralma { background: linear-gradient(135deg,#1f2937 0%, #111827 50%, #000 100%); }
+      #rotating-phrase { color: #9ca3af; }
+      section p { color: #d1d5db; }
+      .card { background: #1f2937; color: #f9fafb; }
+      input[type="email"] { background: #1f2937; color: #f9fafb; border: 1px solid #374151; }
     }
   </style>
 </head>
@@ -280,6 +274,11 @@
   <!-- Footer -->
   <footer>
     Coralma — Transformación interior © 2025
+    <div class="social-icons">
+      <a href="https://www.tiktok.com/@effect.33" target="_blank"><i data-lucide="music-2"></i></a>
+      <a href="https://youtube.com/@effect.no33" target="_blank"><i data-lucide="youtube"></i></a>
+      <a href="https://www.instagram.com/effectno33" target="_blank"><i data-lucide="instagram"></i></a>
+    </div>
   </footer>
 
   <!-- Script: rotación de frases -->
@@ -289,7 +288,33 @@
         "Lo que haces con el corazón, se queda en el alma.",
         "Se hacen las cosas con el corazón y con el alma se llevan más allá.",
         "Con el corazón pero con el alma se llega más allá.",
-        "Un espiral: acto, presencia, recuerdo."
+        "Un espiral: acto, presencia, recuerdo.",
+        "La semilla que plantas en tu alma florece en tu vida.",
+        "El silencio habla cuando el alma escucha.",
+        "Cada vibración crea un destino.",
+        "El alma reconoce lo eterno.",
+        "La calma es la voz del corazón.",
+        "Lo que das, vuelve en espiral.",
+        "El universo responde a tu frecuencia.",
+        "El amor es el idioma original.",
+        "No somos cuerpos con alma, somos almas con cuerpo.",
+        "El corazón es brújula, el alma es mapa.",
+        "La gratitud abre portales invisibles.",
+        "Donde pones tu atención, pones tu energía.",
+        "El presente es la eternidad en miniatura.",
+        "No busques fuera lo que habita dentro.",
+        "Tus heridas son puertas al despertar.",
+        "La vibración del alma nunca miente.",
+        "El corazón susurra lo que la mente calla.",
+        "En cada final hay un inicio oculto.",
+        "La fe es ver con los ojos del alma.",
+        "Tu energía es tu firma en el universo.",
+        "El amor sin miedo expande todo.",
+        "Cada encuentro es un espejo de ti.",
+        "La vida es un eco de tu vibración.",
+        "El alma danza donde la mente se rinde.",
+        "La entrega transforma el dolor en luz.",
+        "Coralma es un viaje de regreso a ti."
       ];
       const el = document.getElementById('rotating-phrase');
       let idx = 0;
@@ -306,7 +331,8 @@
         mostrarFrase(idx);
       }, 5000);
     })();
+    lucide.createIcons();
   </script>
 
 </body>
-    </html>
+  </html>
