@@ -4,10 +4,113 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coralma</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fdfdfd;
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #5cc7a2, #3a7bd5);
+      color: white;
+      padding: 20px 40px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.2em;
+    }
+    nav {
+      margin-top: 10px;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: opacity 0.3s;
+    }
+    nav a:hover {
+      opacity: 0.8;
+    }
+    section {
+      padding: 50px 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    section h2 {
+      color: #3a7bd5;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    footer {
+      background: #333;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      font-size: 0.9em;
+    }
+  </style>
 </head>
-<body style="font-family: Arial; text-align: center; padding: 40px;">
-  <h1>🌿 Bienvenidos a Coralma</h1>
-  <p>Un espacio digital para la conciencia, la espiritualidad y la transformación interior.</p>
-  <p>📖 Muy pronto: artículos, un libro virtual y una tienda.</p>
+<body>
+
+  <header>
+    <h1>🌿 Coralma</h1>
+    <nav>
+      <a href="#articulos">Artículos</a>
+      <a href="#libro">Libro</a>
+      <a href="#tienda">Tienda</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </header>
+
+  <section id="articulos">
+    <h2>📝 Artículos</h2>
+    <div class="card">
+      <h3>La conciencia como llave del despertar</h3>
+      <p>Explora cómo pequeños cambios en tu forma de pensar pueden abrir puertas hacia un entendimiento más profundo de ti mismo y del universo.</p>
+    </div>
+    <div class="card">
+      <h3>El silencio interior</h3>
+      <p>Un recordatorio de que en la quietud encontramos respuestas que las palabras no pueden dar.</p>
+    </div>
+  </section>
+
+  <section id="libro">
+    <h2>📖 Libro Virtual</h2>
+    <div class="card">
+      <p>Muy pronto podrás descargar nuestro libro digital lleno de reflexiones, símbolos y claves para el crecimiento interior.</p>
+    </div>
+  </section>
+
+  <section id="tienda">
+    <h2>🛍️ Tienda</h2>
+    <div class="card">
+      <p>Próximamente encontrarás productos inspirados en conciencia y espiritualidad, creados para acompañarte en tu camino.</p>
+    </div>
+  </section>
+
+  <section id="contacto">
+    <h2>📩 Contacto</h2>
+    <div class="card">
+      <p>¿Quieres colaborar con Coralma o compartir tus ideas?  
+      Escríbenos a: <b>contacto@coralma.com</b></p>
+    </div>
+  </section>
+
+  <footer>
+    🌿 Coralma © 2025 — Inspirando conciencia y transformación interior.
+  </footer>
+
 </body>
 </html>
