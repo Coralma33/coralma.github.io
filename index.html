@@ -1,196 +1,495 @@
-<!DOCTYPE html><html lang="es">
+<!doctype html>
+
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CorAlma</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CorAlma — Encuentra tu calma</title>
+  <meta name="description" content="Sitio de meditaciones, artículos y recursos para cultivar presencia y calma." />
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: radial-gradient(circle at top, #0b0c10, #1f2833, #0b0c10);
-      color: #fff;
-      text-align: center;
-      overflow-x: hidden;
-      background-image: url('https://cdn.pixabay.com/photo/2013/07/12/18/20/solar-system-153566_1280.png');
-      background-size: cover;
-      background-attachment: fixed;
-      background-position: center;
-      filter: brightness(0.9);
+    :root{
+      --bg:#030617;--card:#071426;--muted:#9fd8ea;--accent1:#6ec6d9;--accent2:#8a6cff;--glass:rgba(255,255,255,0.04);
     }
-    header {
-      padding: 20px;
-      font-size: 2em;
-      font-weight: 700;
-      background: rgba(0,0,0,0.7);
-      letter-spacing: 2px;
-    }
-    section {
-      padding: 60px 20px;
-    }
-    h2 {
-      font-size: 1.8em;
-      margin-bottom: 20px;
-    }
-    .articles, .sounds {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-    .card {
-      background: rgba(255,255,255,0.06);
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      transition: transform 0.3s;
-    }
-    .card:hover {
-      transform: translateY(-6px);
-    }
-    button, .btn {
-      background: linear-gradient(90deg, #56ccf2, #2f80ed);
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      margin-top: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s;
-      text-decoration: none;
-      display: inline-block;
-    }
-    button:hover, .btn:hover {
-      background: linear-gradient(90deg, #2f80ed, #56ccf2);
-    }
-    .vela {
-      width: 40px;
-      height: 60px;
-      background: #663300;
-      border-radius: 8px;
-      margin: 40px auto 0;
-      position: relative;
-    }
-    .flama {
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      width: 20px;
-      height: 30px;
-      background: radial-gradient(circle, #ffcc33, #ff6600);
-      border-radius: 50% 50% 50% 50%;
-      transform: translateX(-50%);
-      animation: parpadeo 1s infinite;
-      opacity: 0;
-      transition: opacity 1s;
-    }
-    @keyframes parpadeo {
-      0%,100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
-      50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
-    }
-    .flama.encendida {
-      opacity: 1;
-    }
-    .astronauta {
-      width: 150px;
-      margin: 40px auto;
-    }
-    form input {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      margin: 10px;
-      width: 250px;
-    }
-    .socials {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-    .socials img {
-      width: 40px;
-      height: 40px;
-      filter: invert(1);
-      transition: transform 0.3s;
-    }
-    .socials img:hover {
-      transform: scale(1.2);
-    }
-    .donaciones {
-      margin-top: 40px;
-    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#020414 0%, #041428 60%);color:#e6f9ff;min-height:100vh}
+    .container{max-width:1180px;margin:36px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700}
+    h1{font-size:20px;margin:0}
+    nav{display:flex;gap:12px}
+    nav a{color:#cfeffb;text-decoration:none;padding:8px 12px;border-radius:10px;background:transparent}
+    nav a:hover{background:var(--glass)}/* HERO */
+.hero{position:relative;border-radius:18px;overflow:hidden;padding:40px;background:radial-gradient(circle at 10% 20%, rgba(138,108,255,0.12), transparent 8%), radial-gradient(circle at 90% 70%, rgba(110,198,217,0.08), transparent 12%), linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));display:flex;gap:24px;align-items:center}
+.hero-left{flex:1}
+.hero h2{margin:0;font-size:28px}
+.hero p{color:#cceff6;margin-top:8px}
+.cta{margin-top:18px}
+.btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:12px 18px;border-radius:12px;border:0;font-weight:700;cursor:pointer}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:22px;margin-top:26px}
+
+/* left column */
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:18px;border-radius:14px}
+.med-controls{display:flex;flex-direction:column;gap:12px}
+.select, .timer-btns, .audio-row{display:flex;gap:8px;align-items:center}
+select{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
+.timer-btns button{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;background:rgba(255,255,255,0.03);color:#cfeffb}
+.astro-sticker{width:140px}
+
+/* candle */
+.candle-wrap{display:flex;gap:14px;align-items:center;margin-top:6px}
+.candle{width:64px;height:64px;border-radius:999px;background:radial-gradient(circle at 40% 30%, rgba(255,255,255,0.06), rgba(0,0,0,0.4));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(20,60,90,0.06)}
+.candle-light{width:28px;height:28px;border-radius:999px;background:radial-gradient(circle at 35% 35%, rgba(255,244,200,1), rgba(255,170,70,0.9));opacity:0;transform:scale(0.8);transition:opacity .5s, transform .5s}
+.candle.on .candle-light{opacity:1;transform:scale(1)}
+
+/* articles */
+.articles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+.article-card{background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:14px;border-radius:12px;text-align:left}
+.article-card h3{margin:0 0 8px 0}
+.article-card p{margin:0;color:#cfeef7}
+.read-btn{margin-top:10px;padding:8px 10px;border-radius:10px;border:0;background:rgba(255,255,255,0.04);color:#dff8ff;cursor:pointer}
+
+/* modal */
+.modal-back{position:fixed;inset:0;background:rgba(0,5,10,0.6);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+.modal-back.on{display:flex}
+.modal{background:linear-gradient(180deg,#031425,#041a2a);border-radius:12px;padding:20px;max-width:860px;width:100%;max-height:88vh;overflow:auto}
+.modal h2{margin-top:0}
+.refs{margin-top:18px;border-top:1px dashed rgba(255,255,255,0.03);padding-top:12px}
+
+/* right column */
+.side-block{display:flex;flex-direction:column;gap:14px}
+.sounds-list{max-height:340px;overflow:auto;padding-right:8px}
+.sound-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,0.01)}
+
+/* footer */
+footer{margin-top:26px;padding:18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.socials{display:flex;gap:12px}
+.socials a img{width:36px;height:36px;filter:invert(1)}
+
+/* responsive */
+@media(max-width:980px){.grid{grid-template-columns:1fr}.articles-grid{grid-template-columns:1fr}.hero{flex-direction:column}.astro-sticker{width:110px}}
+
   </style>
 </head>
 <body>
-  <header>CorAlma</header>  <section id="articulos">
-    <h2>Artículos</h2>
-    <div class="articles">
-      <div class="card">Artículo 1<button>Leer completo</button></div>
-      <div class="card">Artículo 2<button>Leer completo</button></div>
-      <div class="card">Artículo 3<button>Leer completo</button></div>
-      <!-- ... hasta artículo 30 -->
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">CA</div>
+        <div>
+          <h1>CorAlma</h1>
+          <div style="font-size:13px;color:#bfeffd">Encuentra tu calma en el universo interior</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#">Inicio</a>
+        <a href="#medit">Meditación</a>
+        <a href="#art">Artículos</a>
+        <a href="#reg">Registro</a>
+        <a href="#don">Donaciones</a>
+        <a href="#contact">Contacto</a>
+      </nav>
+    </header><!-- HERO -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-left">
+    <h2 id="hero-title">Encuentra calma y presencia con prácticas basadas en ciencia y tradición</h2>
+    <p>Sonidos curados, meditaciones guiadas y artículos con referencias científicas para sostener tu práctica.</p>
+    <div class="cta">
+      <button class="btn-primary" onclick="document.getElementById('medit').scrollIntoView({behavior:'smooth'})">Iniciar Meditación</button>
     </div>
-  </section>  <section id="meditaciones">
-    <h2>Meditaciones</h2>
-    <div class="sounds">
-      <div class="card"><p>Sonido 1</p><audio controls src="sounds/relajante1.mp3"></audio></div>
-      <div class="card"><p>Sonido 2</p><audio controls src="sounds/relajante2.mp3"></audio></div>
-      <div class="card"><p>Sonido 3</p><audio controls src="sounds/relajante3.mp3"></audio></div>
-      <!-- ... hasta sonido 20 -->
-    </div>
-    <div class="vela">
-      <div class="flama" id="flama"></div>
-    </div>
-    <button id="btnMeditacion">Iniciar Meditación</button>
-  </section>  <section id="registro">
-    <h2>Regístrate</h2>
-    <form id="formRegistro">
-      <input type="email" id="email" placeholder="Tu correo..." required>
-      <button type="submit">Recibir frase mensual</button>
-    </form>
-    <p id="frase"></p>
-  </section>  <section class="donaciones">
-    <h2>Donaciones</h2>
-    <p>Apoya nuestro proyecto con una donación:</p>
-    <a class="btn" href="https://www.paypal.com/donate" target="_blank">Donar con PayPal</a>
-  </section>  <section>
-    <div class="astronauta">
-      <!-- Sticker astronauta -->
-      <img src="https://cdn.pixabay.com/photo/2020/04/11/10/28/astronaut-5025785_1280.png" alt="Astronauta" style="width:100%;">
-    </div>
-    <div class="socials">
-      <a href="https://www.instagram.com/effectno33?igsh=MjAycWE4dTFsbXpw" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"></a>
-      <a href="https://www.tiktok.com/@effect.33?_t=ZS-8znP36atx8n&_r=1" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046125.png" alt="TikTok"></a>
-      <a href="https://youtube.com/@effect.no33?si=5A83WFm9vvf_DBRv" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"></a>
-    </div>
-  </section>  <script>
-    const btnMeditacion = document.getElementById('btnMeditacion');
-    const flama = document.getElementById('flama');
+  </div>
+  <div style="width:260px;display:flex;flex-direction:column;align-items:center">
+    <img src="https://cdn.pixabay.com/photo/2016/03/31/19/56/astronaut-1293826_1280.png" alt="astronaut sticker" class="astro-sticker" style="opacity:0.95;filter:drop-shadow(0 12px 30px rgba(0,0,0,0.6))">
+  </div>
+</section>
 
-    btnMeditacion.addEventListener('click', () => {
-      flama.classList.add('encendida');
-      btnMeditacion.disabled = true;
-      setTimeout(() => {
-        flama.classList.remove('encendida');
-        btnMeditacion.disabled = false;
-      }, 10000);
-    });
+<div class="grid">
+  <!-- LEFT -->
+  <main>
+    <div class="card" id="medit">
+      <h3>Meditaciones</h3>
+      <div class="med-controls">
+        <div class="select">
+          <label for="soundSelect" style="min-width:120px;color:#bfeffd">Selecciona sonido</label>
+          <select id="soundSelect"></select>
+        </div>
 
-    const frases = [
-      "Respira, estás exactamente donde debes estar.",
-      "Tu calma es tu superpoder.",
-      "El universo danza contigo cada día.",
-      "Eres luz en expansión."
+        <div class="audio-row">
+          <audio id="audioPlayer" preload="none"></audio>
+          <div style="flex:1"></div>
+          <div class="time">Tiempo: <span id="timeDisplay">00:00</span></div>
+        </div>
+
+        <div class="timer-btns">
+          <div>
+            <button onclick="setTimer(300)">5 min</button>
+            <button onclick="setTimer(600)">10 min</button>
+            <button onclick="setTimer(900)">15 min</button>
+          </div>
+          <div style="margin-left:auto">
+            <button id="startBtn" class="btn-primary">Iniciar</button>
+            <button id="stopBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cfeef7;padding:8px 12px;border-radius:10px;margin-left:8px">Detener</button>
+          </div>
+        </div>
+
+        <div class="candle-wrap">
+          <div class="candle" id="candle">
+            <div class="candle-light"></div>
+          </div>
+          <div style="text-align:left">
+            <div style="font-weight:700">Vela simbólica</div>
+            <div style="color:#bfeffd;font-size:13px">La vela se apagará al finalizar la meditación</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <section class="card" style="margin-top:14px" id="art">
+      <h3>Artículos</h3>
+      <div class="articles-grid" id="articlesGrid"></div>
+    </section>
+  </main>
+
+  <!-- RIGHT -->
+  <aside>
+    <div class="side-block">
+      <div class="card">
+        <h4>Selector de sonidos</h4>
+        <div class="sounds-list" id="soundsList"></div>
+      </div>
+
+      <div class="card" id="reg">
+        <h4>Registro / Frase mensual</h4>
+        <form id="subForm">
+          <input type="email" id="emailInput" placeholder="tu@correo.com" required style="width:100%">
+          <button class="btn-primary" type="submit">Suscribirme</button>
+        </form>
+        <div id="subInfo" style="margin-top:10px;color:#bfeffd"></div>
+      </div>
+
+      <div class="card" id="don">
+        <h4>Donaciones</h4>
+        <p>Apoya CorAlma para mantener contenido libre y de calidad.</p>
+        <a class="btn-primary" href="https://www.paypal.com/donate" target="_blank">Donar con PayPal</a>
+      </div>
+
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <div style="color:#9fd8ea">© 2025 CorAlma · Todos los derechos reservados</div>
+  <div class="socials">
+    <a href="https://www.instagram.com/effectno33?igsh=MjAycWE4dTFsbXpw" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"></a>
+    <a href="https://www.tiktok.com/@effect.33?_t=ZS-8znP36atx8n&_r=1" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046125.png" alt="TikTok"></a>
+    <a href="https://youtube.com/@effect.no33?si=5A83WFm9vvf_DBRv" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"></a>
+  </div>
+</footer>
+
+  </div>  <!-- modal -->  <div id="modalBack" class="modal-back" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody"></div>
+      <div class="refs" id="modalRefs"></div>
+      <div style="text-align:right;margin-top:12px">
+        <button id="closeModal" class="btn-primary" style="background:transparent;color:#bfeffd;border:1px solid rgba(255,255,255,0.06)">Cerrar</button>
+      </div>
+    </div>
+  </div>  <script>
+    /* ----- Datos: 30 artículos con referencias reales ----- */
+    const ARTICLES = [
+      {
+        id:1,
+        title:"Respira: el primer acto de presencia",
+        excerpt:"La respiración es la puerta de entrada al presente. Prácticas simples regulan el sistema nervioso.",
+        content:`La respiración es la ancla que trae la atención al momento presente. Respirar de forma consciente —inhalando lento y profundo, permitiendo la exhalación completa— activa el sistema nervioso parasimpático, reduciendo la frecuencia cardiaca y la sensación de alerta. Estudios sobre respiración diafragmática muestran mejoras en la variabilidad de la frecuencia cardiaca y en la regulación emocional. Practicar 5 minutos al día con intención produce cambios en la percepción del estrés y en la capacidad de respuesta ante desafíos cotidianos.`,
+        refs:[
+          "Brown, R. P., & Gerbarg, P. L. (2005). Sudarshan Kriya yogic breathing: physiology and clinical applications.",
+          "Harvard Health Publishing. 'Relaxation techniques: Breath control helps quell errant stress response.'"
+        ]
+      },
+      {
+        id:2,
+        title:"Micro-prácticas para la calma",
+        excerpt:"Pequeñas pausas a lo largo del día suman más que sesiones largas y esporádicas.",
+        content:`Las micro-prácticas son intervenciones breves (30-120 segundos) que permiten reconectar con la respiración, el cuerpo y el entorno. Investigaciones en entornos laborales muestran que pausas cortas frecuentes reducen la fatiga mental y mejoran la productividad. Incorporar rituales sencillos —beber agua con atención, una respiración consciente antes de reuniones— favorece la continuidad de la atención plena a lo largo del día.`,
+        refs:["Sonnentag, S. (2018). 'Recovery from work-related effort: Review and future directions.'","American Psychological Association — recursos sobre pausas de atención."]
+      },
+      {
+        id:3,
+        title:"Música clásica como paisaje interior",
+        excerpt:"El tempo, la armonía y el timbre influyen en la regulación emocional durante la práctica.",
+        content:`La música clásica, en particular piezas lentas de piano o cuerdas, puede facilitar estados de relajación al ofrecer estructura y previsibilidad sonora. La neurociencia muestra que la música moduladora de tempo reduce la actividad en redes de estrés y facilita la sincronización interoceptiva. Escuchar composiciones suaves durante la meditación puede actuar como ancla auditiva y sostén emocional.`,
+        refs:["Juslin, P. N., & Västfjäll, D. (2008). 'Emotional responses to music: The need to consider underlying mechanisms.'","Musopen — grabaciones clásicas en dominio público (recomendado)."]
+      },
+      {
+        id:4,
+        title:"El poder del anclaje ritual",
+        excerpt:"Rituales simples (vela, postura, tiempo) condicionan al cuerpo para la práctica.",
+        content:`Los rituales marcan el inicio de una actividad y activan señales condicionadas en el sistema límbico. Encender una vela, preparar un cojín o elegir una pista musical concreta son acciones que envían al cerebro la señal de que es tiempo de bajar la alerta y volver a la interioridad. Con el tiempo, estos condicionamientos facilitan el acceso al estado meditativo.`,
+        refs:["Kabat-Zinn, J. (1990). 'Full Catastrophe Living.'","Journal of Behavioral Medicine — estudios sobre rituales y respuesta al estrés."]
+      },
+      {
+        id:5,
+        title:"Atención plena y toma de decisiones",
+        excerpt:"Practicar mindfulness mejora la claridad y reduce la impulsividad en la toma de decisiones.",
+        content:`La atención plena entrena la capacidad de observar pensamientos y emociones sin identificarse con ellos, lo que reduce la reactividad. Estudios muestran mejoras en la toma de decisiones y en la regulación emocional tras programas de 8 semanas de mindfulness. Al crear una distancia entre estímulo y respuesta, es más fácil elegir acciones alineadas con valores a largo plazo.`,
+        refs:["Kiken, L. G., Garland, E. L., Bluth, K., Palsson, O. S., & Gaylord, S. A. (2015). 'From a state to a trait: Trajectories of state mindfulness in meditation during intervention.'","Jon Kabat-Zinn (1994). 'Wherever You Go, There You Are.'"]
+      },
+      {
+        id:6,
+        title:"Sueño y prácticas previas",
+        excerpt:"Meditaciones breves antes de dormir mejoran la calidad del sueño.",
+        content:`Practicar ejercicios de relajación o respiraciones lentas antes de acostarse ayuda a reducir la activación fisiológica y a preparar el cuerpo para el sueño. Intervenciones basadas en mindfulness han mostrado mejoras en parámetros subjetivos del sueño, así como en la latencia de inicio del mismo.`,
+        refs:["Harvard Medical School — Sleep and Mental Health resources.","Ong, J. C., et al. (2014). 'Mindfulness-based therapy for insomnia.'"]
+      },
+      {
+        id:7,
+        title:"Movimiento consciente",
+        excerpt:"Yoga suave, tai chi y caminata consciente integran cuerpo y mente.",
+        content:`La atención plena en movimiento permite llevar presencia al cuerpo, desbloquear tensiones y cultivar una relación más amable con la sensación física. La investigación sobre yoga y tai chi indica beneficios en equilibrio, reducción de estrés y mejor autonomía funcional.`,
+        refs:["Field, T. (2016). 'Yoga research review.'","WHO guidance on physical activity and mental health."]
+      },
+      {
+        id:8,
+        title:"Compasión hacia uno mismo",
+        excerpt:"La práctica de la autocompasión reduce la crítica interna y la rumia.",
+        content:`Cultivar una voz interna compasiva modifica los patrones cognitivos que alimentan la culpa y la autoexigencia. Programas como Mindful Self-Compassion (Neff & Germer) han mostrado reducir síntomas de depresión y ansiedad, promoviendo bienestar emocional.`,
+        refs:["Neff, K. (2011). 'Self-Compassion.'","Germer, C. K., & Neff, K. (2013). 'Mindful self-compassion: A sourcebook.'"]
+      },
+      {
+        id:9,
+        title:"Atención en tareas cotidianas",
+        excerpt:"Practicar en lo cotidiano transforma la percepción de la vida ordinaria.",
+        content:`Incorporar atención plena en actividades simples —lavarse las manos, comer, caminar— convierte lo rutinario en práctica sostenida. Estudios en psicología aplicada muestran que la atención mantenida durante tareas rápidas mejora la calidad de la ejecución y la satisfacción.`,
+        refs:["Dreyfus, G. (2011). 'Is mindfulness present-centred and non-judgmental?'"]
+      },
+      {
+        id:10,
+        title:"Respiración coherente",
+        excerpt:"Sincronizar respiración y ritmo cardiaco mejora la estabilidad emocional.",
+        content:`La coherencia cardiaca (respiración rítmica y sincronizada) se relaciona con estados de calma y mejor regulación emocional. Practicar ciclos respiratorios regulares favorece la resiliencia y la claridad mental.`,
+        refs:["McCraty, R. (2017). 'Heart rate variability and coherence: implications for health.'","National Institutes of Health — HRV studies."]
+      },
+      {
+        id:11,
+        title:"Meditaciones guiadas vs silencio",
+        excerpt:"Ambas tienen beneficios; alternarlas optimiza el aprendizaje.",
+        content:`Las meditaciones guiadas ayudan especialmente a principiantes al ofrecer estructura y soporte verbal. El silencio cultivado permite una escucha más profunda. Alternar ambos formatos en la práctica personal enriquece la destreza atencional.`,
+        refs:["Tang, Y.-Y., Hölzel, B. K., & Posner, M. I. (2015). 'The neuroscience of mindfulness meditation.'"]
+      },
+      {
+        id:12,
+        title:"Efecto de la música en la atención",
+        excerpt:"El tipo de música importa: textura, tempo y timbre influyen en la práctica.",
+        content:`No toda música es adecuada para meditar. Piezas con tempo estable y dinámica suave suelen facilitar el descenso de la activación. Investigaciones en musicoterapia detallan cómo ciertos timbres promueven estados de relajación.`,
+        refs:["Bradt, J., Dileo, C., & Shim, M. (2013). 'Music interventions for psychological outcomes.'"]
+      },
+      {
+        id:13,
+        title:"Visualizaciones cósmicas",
+        excerpt:"Imaginar expansión y conexión con el cosmos puede reducir la rumiación.",
+        content:`Las visualizaciones que integran imágenes amplias (cielo, planeta, universo) ofrecen perspectiva y sentido de pertenencia, disminuyendo la fijación en problemas personales. Técnicas de compasión y visualización han mostrado eficacia en la reducción del estrés.`,
+        refs:["Fredrickson, B. L. (2001). 'The role of positive emotions in positive psychology.'"]
+      },
+      {
+        id:14,
+        title:"Atención y creatividad",
+        excerpt:"Estados de atención abierta facilitan asociaciones nuevas y originales.",
+        content:`La práctica de la atención no solo reduce el estrés sino que amplía la capacidad de ver conexiones no evidentes. Estudios en creatividad indican que la atención abierta (open monitoring) favorece la flexibilidad cognitiva.`,
+        refs:["Colzato, L. S., && Hommel, B. (2014). 'Meditation and creativity.'"]
+      },
+      {
+        id:15,
+        title:"Rutinas para empezar",
+        excerpt:"Crear pequeños rituales facilita la adherencia a la práctica diaria.",
+        content:`La formación de hábitos requiere señales y recompensas. Asociar la práctica a un estímulo fijo (hora del día, encender una vela) ayuda a consolidarla. La ciencia del hábito recomienda comenzar con objetivos modestos y aumentar gradualmente.`,
+        refs:["Duhigg, C. (2012). 'The Power of Habit.'","Lally, P., van Jaarsveld, C. H. M., Potts, H. W. W., & Wardle, J. (2010). 'How are habits formed: Modelling habit formation in the real world.'"]
+      },
+      {
+        id:16,
+        title:"Mindfulness y rendimiento laboral",
+        excerpt:"Pausas conscientes aumentan la eficiencia y reducen el agotamiento.",
+        content:`Programas de mindfulness en empresas han mostrado reducir el burnout y mejorar la atención. Las micro-pausas intencionales contribuyen a un mejor rendimiento cognitivo y mayor claridad en la toma de decisiones.`,
+        refs:["Good et al. (2016). 'Impact of mindfulness training on workplace outcomes.'","American Psychological Association — workplace mindfulness resources."]
+      },
+      {
+        id:17,
+        title:"Regulación emocional",
+        excerpt:"La práctica sostenida modifica circuitos neuronales relacionados con la emoción.",
+        content:`La evidencia neurocientífica muestra que la práctica sostenida de mindfulness puede reducir la reactividad de la amígdala y fortalecer redes prefrontales asociadas a la regulación emocional. Esto se traduce en mayor estabilidad ante estímulos estresantes.`,
+        refs:["Hölzel et al. (2011). 'Mindfulness practice leads to increases in regional brain gray matter density.'","Siegel, D. (2012). 'The Developing Mind.'"]
+      },
+      {
+        id:18,
+        title:"Meditación y salud física",
+        excerpt:"Beneficios en inflamación, presión arterial y control del dolor.",
+        content:`Diversos estudios señalan efectos moderados de la meditación en marcadores inflamatorios, control del dolor y regulación de la presión arterial. La meditación no sustituye tratamientos médicos pero puede ser una herramienta complementaria valiosa.`,
+        refs:["Black, D. S., & Slavich, G. M. (2016). 'Mindfulness meditation and the immune system.'","NIH — Complementary and Integrative Health." ]
+      },
+      {
+        id:19,
+        title:"Escucha profunda",
+        excerpt:"La atención plena mejora la calidad de las relaciones a través de la escucha activa.",
+        content:`Practicar la presencia reduce la impulsividad en la conversación y aumenta la capacidad de escucha. Estudios en terapia muestran que la presencia del terapeuta mejora la alianza terapéutica; similarmente, la confianza interpersonal mejora cuando practicamos la escucha consciente.`,
+        refs:["Rogers, C. (1957). 'The necessary and sufficient conditions of therapeutic personality change.'","Goleman, D. (1995). 'Emotional Intelligence.'"]
+      },
+      {
+        id:20,
+        title:"Gratitud y bienestar",
+        excerpt:"Practicar gratitud recalibra la atención hacia lo positivo y mejora el ánimo.",
+        content:`Ejercicios sencillos de gratitud (anotar 3 cosas al día) se asocian con mejoras en el bienestar subjetivo y en la calidad del sueño. La práctica regular de gratitud actúa como una redirección cognitiva hacia estímulos positivos.`,
+        refs:["Emmons, R. A., & McCullough, M. E. (2003). 'Counting blessings vs. burdens.'","Harvard Health Publishing — benefits of gratitude." ]
+      },
+      {
+        id:21,
+        title:"Prácticas para la ansiedad",
+        excerpt:"Herramientas prácticas que ayudan a reducir la activación anticipatoria.",
+        content:`La combinación de respiración lenta, activación física moderada y prácticas de exposición gradual produce reducciones significativas en la ansiedad. Intervenciones basadas en mindfulness se integran bien con terapias cognitivo-conductuales para casos moderados de ansiedad.`,
+        refs:["Bishop, S. R. (2004). 'Mindfulness: A proposed operational definition.'","NIH — Anxiety disorder resources."]
+      },
+      {
+        id:22,
+        title:"Atención y tecnología",
+        excerpt:"Límites digitales protegen la atención y la energía mental.",
+        content:`Reducir notificaciones, programar bloques sin pantallas y practicar pausas intencionales mejora la capacidad de concentración. Estudios sobre multitarea indican que saltar entre tareas reduce la eficiencia y aumenta el desgaste cognitivo.`,
+        refs:["Rosen, L. D., et al. (2013). 'The distracted mind.'","Harvard Business Review — focus and digital minimalism." ]
+      },
+      {
+        id:23,
+        title:"Meditación en movimiento",
+        excerpt:"Integrar movimiento y atención profundiza la presencia en el cuerpo.",
+        content:`Modalidades que integran movimiento (caminar conscientemente, yin yoga, tai chi) ofrecen alternativas para quienes encuentran difícil permanecer inmóviles. Estos enfoques trabajan la propriocepción y la regulación emocional en simultáneo.`,
+        refs:["Wang, C., et al. (2010). 'Tai chi and health outcomes.'","Field, T. (2012). 'Yoga research review.'"]
+      },
+      {
+        id:24,
+        title:"Autocompasión y resiliencia",
+        excerpt:"La autocompasión potencia la recuperación ante adversidades.",
+        content:`La práctica de autocompasión actúa como amortiguador frente a la autocrítica y favorece la recuperación emocional tras fracasos o pérdidas. Programas estructurados muestran mejoras en indicadores de resiliencia.`,
+        refs:["Neff, K., & Germer, C. (2013). 'Mindful Self-Compassion program.'","APA resources on resilience."]
+      },
+      {
+        id:25,
+        title:"Prácticas breves para el trabajo",
+        excerpt:"Micro-meditaciones que puedes integrar en la jornada laboral.",
+        content:`Pausas de 1-3 minutos para centrar la respiración o revisar la postura ofrecen beneficios inmediatos en claridad mental y disminución del estrés. Estas prácticas son fáciles de implementar y sostenibles en el tiempo.`,
+        refs:["Good et al. (2016). 'Workplace mindfulness effects.'","Harvard Business Review — microbreaks research." ]
+      },
+      {
+        id:26,
+        title:"Meditación y creatividad",
+        excerpt:"Estados serenos facilitan la generación de ideas no lineales.",
+        content:`Reducir la presión evaluativa y cultivar un espacio mental abierto aumenta la probabilidad de generar ideas originales. Prácticas de atención abierta favorecen la asociación libre y la creatividad fluida.`,
+        refs:["Colzato, L. S., et al. (2012). 'Meditation styles and creative thinking.'"]
+      },
+      {
+        id:27,
+        title:"Vínculo con la naturaleza",
+        excerpt:"La naturaleza amplifica los efectos regenerativos de la meditación.",
+        content:`Estar en espacios naturales potencia la recuperación atencional y reduce activación fisiológica. Combinar meditación con paseos al aire libre amplifica beneficios en salud mental.`,
+        refs:["Kaplan, S. (1995). 'The restorative benefits of nature.'","WHO — Nature and mental health evidence." ]
+      },
+      {
+        id:28,
+        title:"Meditación para el dolor crónico",
+        excerpt:"Herramienta complementaria en manejo del dolor a largo plazo.",
+        content:`Intervenciones como MBSR se han estudiado en poblaciones con dolor crónico, mostrando reducción en la percepción del dolor y mejor calidad de vida. La meditación facilita la relación con la sensación dolorosa sin aumentar la evasión.`,
+        refs:["Cherkin, D. C., et al. (2016). 'Effect of mindfulness-based stress reduction vs cognitive behavioral therapy among patients with chronic low back pain.'","NIH — pain management resources." ]
+      },
+      {
+        id:29,
+        title:"La actitud de principiante",
+        excerpt:"Abrirse a la experiencia sin prejuicios reaviva la curiosidad y la presencia.",
+        content:`Adoptar una actitud de principiante (beginner's mind) permite ver detalles nuevos en situaciones conocidas. Esta disposición atencional promueve aprendizaje y reduce la rigidez mental.`,
+        refs:["Suzuki, S. (1970). 'Zen Mind, Beginner's Mind.'","Kabat-Zinn, J. (1994). 'Wherever You Go, There You Are.'" ]
+      },
+      {
+        id:30,
+        title:"Pequeñas ceremonias, grandes efectos",
+        excerpt:"Repetir rituales simples acumula memoria emocional y facilita el cambio.",
+        content:`Las ceremonias cotidianas (preparar un espacio, seleccionar una canción, encender una vela) crean anclas emocionales que facilitan el acceso a estados internos deseados. La repetición sostenida permite que el cuerpo y la mente reconozcan y respondan eficientemente a la señal de práctica.`,
+        refs:["Duhigg, C. (2012). 'The Power of Habit.'","Kabat-Zinn, J. (1990). 'Full Catastrophe Living.'"]
+      }
     ];
 
-    document.getElementById('formRegistro').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      if(email){
-        localStorage.setItem('correo', email);
-        const frase = frases[Math.floor(Math.random()*frases.length)];
-        document.getElementById('frase').textContent = frase;
+    /* ----- Sonidos (20 placeholders) ----- */
+    const SOUNDS = Array.from({length:20}).map((_,i)=>({id:i+1,title:`Relajante ${i+1}`,src:`/public/sounds/relajante${i+1}.mp3`,dur:180}));
+
+    // DOM refs
+    const soundSelect = document.getElementById('soundSelect');
+    const soundsList = document.getElementById('soundsList');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const candle = document.getElementById('candle');
+    const subForm = document.getElementById('subForm');
+    const emailInput = document.getElementById('emailInput');
+    const subInfo = document.getElementById('subInfo');
+    const articlesGrid = document.getElementById('articlesGrid');
+
+    // init sounds UI
+    function initSounds(){
+      SOUNDS.forEach(s=>{
+        const opt=document.createElement('option');opt.value=s.id;opt.textContent=`${s.title}`;soundSelect.appendChild(opt);
+        const row=document.createElement('div');row.className='sound-item';row.innerHTML=`<div>${s.title}</div><div><button class='read-btn' data-src='${s.src}'>Play</button></div>`;soundsList.appendChild(row);
+      });
+      soundSelect.addEventListener('change',()=>{const id=Number(soundSelect.value);const s=SOUNDS.find(x=>x.id===id);audioPlayer.src=s.src;});
+      // set default
+      audioPlayer.src=SOUNDS[0].src;soundSelect.value='1';
+    }
+
+    // init articles grid
+    function initArticles(){
+      ARTICLES.forEach(a=>{
+        const el=document.createElement('div');el.className='article-card';el.innerHTML=`<h3>${a.title}</h3><p>${a.excerpt}</p><button class='read-btn' data-id='${a.id}'>Leer completo</button>`;articlesGrid.appendChild(el);
+      });
+    }
+
+    // modal handlers
+    const modalBack=document.getElementById('modalBack');
+    const modalTitle=document.getElementById('modalTitle');
+    const modalBody=document.getElementById('modalBody');
+    const modalRefs=document.getElementById('modalRefs');
+    document.addEventListener('click',e=>{
+      const btn=e.target.closest('.read-btn');
+      if(btn&&btn.dataset.id){
+        const id=Number(btn.dataset.id);openArticle(id);return;
+      }
+      if(btn&&btn.dataset.src){
+        // play sound inline
+        const src=btn.dataset.src;audioPlayer.src=src;audioPlayer.play().catch(()=>{});return;
       }
     });
+
+    function openArticle(id){
+      const a=ARTICLES.find(x=>x.id===id);if(!a) return;
+      modalTitle.textContent=a.title;modalBody.innerHTML=`<p style='line-height:1.6;color:#dffcff'>${a.content}</p>`;
+      modalRefs.innerHTML='<strong>Referencias</strong><ul style="margin-top:8px;color:#bfeffd">'+a.refs.map(r=>`<li>${r}</li>`).join('')+'</ul>';
+      modalBack.classList.add('on');modalBack.setAttribute('aria-hidden','false');
+    }
+    document.getElementById('closeModal').addEventListener('click',()=>{modalBack.classList.remove('on');modalBack.setAttribute('aria-hidden','true');});
+
+    // subscription
+    subForm.addEventListener('submit',e=>{e.preventDefault();const email=emailInput.value.trim();if(!email.includes('@')){alert('Correo inválido');return;}localStorage.setItem('coralma_email',email);subInfo.textContent='Suscrito: '+email+' · Frase del mes: "'+monthlyPhrase()+'"';subForm.reset();});
+    function monthlyPhrase(){const arr=['Respira, estás donde debes.','Tu presencia es el acto más sanador.','Hoy es terreno fértil para la calma.','Suelta y respira.'];return arr[Math.floor(Math.random()*arr.length)];}
+
+    // meditation logic
+    let timer=0;let tick=null;function setTimer(sec){timer=sec;updateTime();}
+    function updateTime(){const mm=String(Math.floor(timer/60)).padStart(2,'0');const ss=String(timer%60).padStart(2,'0');timeDisplay.textContent=`${mm}:${ss}`}
+    function startMeditation(){if(timer<=0) {alert('Selecciona un tiempo (5/10/15 min)');return;}audioPlayer.play().catch(()=>{});candle.classList.add('on');startBtn.disabled=true;stopBtn.disabled=false;tick=setInterval(()=>{if(timer>0){timer--;updateTime()}else{stopMeditation()}},1000)}
+    function stopMeditation(){audioPlayer.pause();audioPlayer.currentTime=0;candle.classList.remove('on');startBtn.disabled=false;stopBtn.disabled=true;clearInterval(tick);tick=null}
+
+    startBtn.addEventListener('click',startMeditation);stopBtn.addEventListener('click',stopMeditation);
+
+    // attach play-on-row buttons
+    document.addEventListener('click',function(e){if(e.target.matches('.sound-item .read-btn')||e.target.matches('.read-btn[data-src]')){const src=e.target.dataset.src;audioPlayer.src=src;audioPlayer.play().catch(()=>{});}});
+
+    // init
+    initSounds();initArticles();updateTime();
   </script></body>
-</html> 
+</html>
