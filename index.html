@@ -50,7 +50,7 @@ main{min-width:0}
 .med-card{max-width:760px;margin:0 auto;padding:22px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);box-shadow:0 10px 40px rgba(15,30,50,0.45)}
 .center{display:flex;flex-direction:column;align-items:center;gap:12px}
 .selector-row{display:flex;gap:10px;align-items:center;width:100%;justify-content:center;flex-wrap:wrap}
-select{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
+select, input[type="text"], input[type="email"]{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
 .timer-btns{display:flex;gap:8px}
 .timer-btns button{padding:8px 12px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:#dff8ff;cursor:pointer}
 .time-display{font-weight:700}
@@ -175,9 +175,22 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
             <h3 id="medit-title" style="margin:0">Meditación interactiva</h3>
             <p style="margin:0;color:#cfeef7">Selecciona sonido, elige duración y haz click en el círculo para comenzar.</p>
 
+            <!-- Buscador de música -->
+            <div class="selector-row" style="margin-top:12px">
+              <input id="musicQuery" type="text" placeholder="Buscar música (ej. relax binaural)" style="padding:8px;border-radius:10px;min-width:220px">
+              <button onclick="searchMusic('google')">Buscar Google</button>
+              <button onclick="searchMusic('youtube')">Buscar YouTube</button>
+            </div>
+
             <div class="selector-row" style="margin-top:12px">
               <label for="soundSelect" style="color:#bfeffd">Selecciona sonido</label>
-              <select id="soundSelect" aria-label="Selecciona sonido"></select>
+              <select id="soundSelect" aria-label="Selecciona sonido">
+                <!-- opciones con miniatura asociada -->
+                <option value="rain" data-img="https://i.imgur.com/4NJlJYw.jpg">Lluvia suave</option>
+                <option value="forest" data-img="https://i.imgur.com/sB4aVhV.jpg">Bosque</option>
+                <option value="waves" data-img="https://i.imgur.com/6Yy7dOi.jpg">Olas</option>
+                <option value="binaural" data-img="https://i.imgur.com/3z7Qp6k.jpg">Binaural 7Hz</option>
+              </select>
             </div>
 
             <div class="selector-row" style="margin-top:6px">
@@ -197,10 +210,20 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
               </div>
             </div>
 
-            <!-- controls -->
-            <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
-              <button id="startBtn" class="btn-primary">Iniciar</button>
-              <button id="stopBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cfeef7;padding:8px 12px;border-radius:10px">Detener</button>
+            <!-- Miniatura y controles -->
+            <div id="sessionInfo" style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+              <div id="thumbWrap" style="display:none;align-items:center;gap:12px">
+                <img id="sessionThumb" src="" alt="Miniatura" style="width:96px;height:96px;border-radius:10px;object-fit:cover;box-shadow:0 8px 30px rgba(0,0,0,0.6)">
+                <div>
+                  <div id="sessionText" style="font-weight:700"></div>
+                  <div id="sessionSub" style="font-size:13px;color:#cfeef7"></div>
+                </div>
+              </div>
+
+              <div>
+                <button id="startBtn" class="btn-primary">Iniciar</button>
+                <button id="stopBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cfeef7;padding:8px 12px;border-radius:10px">Detener</button>
+              </div>
             </div>
 
             <div id="audioNotice" class="notice" style="display:none"></div>
@@ -294,15 +317,175 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
   </div>
 
 <script>
-/* CorAlma: client-only app
-   - Multi-source audio fallback
-   - Dynamic article fetch (Wikipedia, Reddit, arXiv) and 15-day rotation
-   - All state in localStorage where needed
+/* CorAlma - Integrated full client file
+   - Articles (Wikipedia, Reddit, arXiv)
+   - 15-day rotation + localStorage cache
+   - Music search (Google / YouTube)
+   - Meditation session with thumbnail and timer
+   - Modal for article content
 */
 
 /* ---------- Utilities ---------- */
-const $ = selector => document.querySelector(selector);
-const $$ = selector => Array.from(document.querySelectorAll(selector));
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+/* ---------- WebView banner detection ---------- */
+(function showWebviewBannerIfNeeded(){
+  const ua = navigator.userAgent || '';
+  if(ua.includes('Instagram') || ua.includes('FBAN') || ua.includes('TikTok') || ua.includes('FBAV')){
+    $('#webviewBanner').style.display = 'block';
+  }
+  $('#dismissWebview').addEventListener('click', ()=> $('#webviewBanner').style.display='none');
+})();
+
+/* ---------- Music search (Google / YouTube) ---------- */
+function searchMusic(type){
+  const q = $('#musicQuery').value.trim();
+  if(!q) return;
+  const query = encodeURIComponent(q);
+  if(type === 'google'){
+    window.open(`https://www.google.com/search?q=${query}+música`, '_blank', 'noopener');
+  } else {
+    window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank', 'noopener');
+  }
+}
+
+/* ---------- Meditation: timer, thumbnail, audio with fallback ---------- */
+const audio = $('#audioPlayer');
+const sessionThumb = $('#sessionThumb');
+const thumbWrap = $('#thumbWrap');
+const sessionText = $('#sessionText');
+const sessionSub = $('#sessionSub');
+const audioNotice = $('#audioNotice');
+let timerSeconds = 0;
+let timerInterval = null;
+let sessionEndsTimeout = null;
+
+const SOUND_URLS = {
+  rain: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    // fallback mirrors (examples)
+    'https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav'
+  ],
+  forest: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+  ],
+  waves: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+  ],
+  binaural: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+  ]
+};
+
+function setTimer(seconds){
+  timerSeconds = seconds;
+  updateTimeDisplay(seconds);
+}
+
+function updateTimeDisplay(sec){
+  const mm = String(Math.floor(sec/60)).padStart(2,'0');
+  const ss = String(sec % 60).padStart(2,'0');
+  $('#timeDisplay').textContent = `${mm}:${ss}`;
+}
+
+function tryPlaySrcList(list, idx = 0){
+  if(!list || !list[idx]) {
+    audioNotice.style.display='block';
+    audioNotice.textContent = 'No se encontraron fuentes de audio disponibles.';
+    return;
+  }
+  audio.src = list[idx];
+  audio.load();
+  const playPromise = audio.play();
+  if(playPromise !== undefined){
+    playPromise.then(()=> {
+      audioNotice.style.display='none';
+    }).catch(err => {
+      // try next source
+      if(idx+1 < list.length){
+        tryPlaySrcList(list, idx+1);
+      } else {
+        audioNotice.style.display='block';
+        audioNotice.textContent = 'El navegador bloqueó la reproducción automática. Presiona Iniciar de nuevo o permite reproducción.';
+      }
+    });
+  }
+}
+
+function startSessionFromButton(){
+  // default to current timer or 5 min
+  if(!timerSeconds) setTimer(300);
+  startMeditation(timerSeconds/60);
+}
+
+function startMeditation(minutes){
+  if(!minutes) minutes = (timerSeconds/60) || 5;
+  const select = $('#soundSelect');
+  const soundKey = select.value;
+  const img = select.selectedOptions[0].getAttribute('data-img') || 'https://i.imgur.com/Fp6p9VH.png';
+  // show thumbnail + text
+  sessionThumb.src = img;
+  sessionText.textContent = `Sonido: ${select.selectedOptions[0].textContent}`;
+  sessionSub.textContent = `Duración: ${minutes} min`;
+  thumbWrap.style.display = 'flex';
+
+  // start audio with fallback list
+  const candidates = SOUND_URLS[soundKey] || [];
+  tryPlaySrcList(candidates, 0);
+
+  // set timer UI
+  let remaining = Math.round(minutes * 60);
+  updateTimeDisplay(remaining);
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    remaining--;
+    if(remaining >= 0) updateTimeDisplay(remaining);
+    if(remaining <= 0){
+      clearInterval(timerInterval);
+    }
+  }, 1000);
+
+  // schedule end-of-session actions
+  clearTimeout(sessionEndsTimeout);
+  sessionEndsTimeout = setTimeout(()=> {
+    audio.pause();
+    sessionSub.textContent = 'Sesión finalizada';
+  }, minutes * 60000);
+}
+
+// stop
+function stopMeditation(){
+  clearInterval(timerInterval);
+  clearTimeout(sessionEndsTimeout);
+  audio.pause();
+  sessionSub.textContent = 'Sesión detenida';
+  updateTimeDisplay(0);
+}
+
+/* wire buttons */
+$('#startBtn').addEventListener('click', startSessionFromButton);
+$('#stopBtn').addEventListener('click', stopMeditation);
+$('#medCircle').addEventListener('click', startSessionFromButton);
+$('#medCircle').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') startSessionFromButton(); });
+
+/* ---------- Populate sounds list in sidebar ---------- */
+function renderSoundsList(){
+  const wrap = $('#soundsList');
+  wrap.innerHTML = '';
+  Object.keys(SOUND_URLS).forEach(k => {
+    const opt = document.createElement('div');
+    opt.className = 'sound-item';
+    opt.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><div style="width:42px;height:42px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center">${k[0].toUpperCase()}</div><div style="min-width:120px">${k}</div></div><div><button onclick="selectSound('${k}')">Seleccionar</button></div>`;
+    wrap.appendChild(opt);
+  });
+}
+function selectSound(key){
+  const sel = $('#soundSelect');
+  const opt = Array.from(sel.options).find(o => o.value === key);
+  if(opt) { sel.value = key; }
+}
+renderSoundsList();
 
 /* ---------- Articles dynamic fetching + 15-day rotation ---------- */
 const ARTICLES_KEY = 'coralma_articles_v1';
@@ -310,460 +493,186 @@ const ARTICLES_DATE_KEY = 'coralma_articles_date_v1';
 const ROTATE_DAYS = 15; // rotate every 15 days
 const MAX_ARTICLES = 30;
 
-async function fetchWikipediaTopics(topics = ['Meditation','Mindfulness','Neuroscience','Mind–body_interventions','Gratitude']) {
-  // returns array of {title, extract, url}
-  try {
-    const results = [];
-    for (const t of topics) {
-      const api = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t)}`;
-      try {
-        const res = await fetch(api);
-        if(!res.ok) continue;
-        const json = await res.json();
-        if(json && json.title) {
+function daysSinceEpoch(date = new Date()){
+  return Math.floor(date.getTime() / (1000*60*60*24));
+}
+
+function shouldRefreshArticles(){
+  const stored = localStorage.getItem(ARTICLES_DATE_KEY);
+  if(!stored) return true;
+  const saved = parseInt(stored,10);
+  const now = daysSinceEpoch();
+  return (now - saved) >= ROTATE_DAYS;
+}
+
+async function fetchWikipediaTopics(topics = ['Meditation','Mindfulness','Neuroscience','Mind–body_interventions','Gratitude']){
+  const results = [];
+  for (const t of topics) {
+    const api = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t)}`;
+    try {
+      const res = await fetch(api);
+      if(!res.ok) continue;
+      const json = await res.json();
+      if(json && json.title) {
+        results.push({
+          source: 'Wikipedia',
+          title: json.title,
+          extract: json.extract || '',
+          url: json.content_urls ? json.content_urls.desktop.page : `https://en.wikipedia.org/wiki/${encodeURIComponent(t)}`,
+          content: json.extract || ''
+        });
+      }
+    } catch(e){}
+  }
+  return results;
+}
+
+async function fetchRedditPosts(subreddits = ['Meditation','Philosophy']){
+  const results = [];
+  for(const s of subreddits){
+    const api = `https://www.reddit.com/r/${s}/hot.json?limit=8`;
+    try {
+      const res = await fetch(api);
+      if(!res.ok) continue;
+      const json = await res.json();
+      if(json && json.data && json.data.children){
+        for(const ch of json.data.children){
+          const d = ch.data;
           results.push({
-            source: 'Wikipedia',
-            title: json.title,
-            extract: json.extract || '',
-            url: json.content_urls ? json.content_urls.desktop.page : `https://en.wikipedia.org/wiki/${encodeURIComponent(t)}`,
-            content: json.extract || ''
+            source: `r/${s}`,
+            title: d.title,
+            extract: (d.selftext && d.selftext.substring(0,300)) || '',
+            url: `https://reddit.com${d.permalink}`,
+            content: d.selftext || ''
           });
         }
-      } catch(e){}
-    }
-    return results;
-  } catch(e){ return []; }
+      }
+    } catch(e){}
+  }
+  return results;
 }
 
-async function fetchRedditPosts(subreddits = ['Meditation','Philosophy']) {
-  // returns array of {title, extract, url}
-  try {
-    const results = [];
-    for(const s of subreddits){
-      const api = `https://www.reddit.com/r/${s}/hot.json?limit=12`;
-      try {
-        const res = await fetch(api);
-        if(!res.ok) continue;
-        const json = await res.json();
-        if(json && json.data && json.data.children){
-          for(const ch of json.data.children){
-            const d = ch.data;
-            results.push({
-              source: `r/${s}`,
-              title: d.title,
-              extract: (d.selftext && d.selftext.substring(0,300)) || '',
-              url: `https://reddit.com${d.permalink}`,
-              content: d.selftext || ''
-            });
-          }
-        }
-      } catch(e){}
-    }
-    return results;
-  } catch(e){ return []; }
-}
-
-async function fetchArxiv(query='mindfulness OR meditation', max=20) {
-  // arXiv API RSS: we'll fetch an ATOM feed and parse minimal info.
-  // Note: arXiv has CORS restrictions sometimes; handle gracefully.
+async function fetchArxiv(query='mindfulness OR meditation', max=12) {
   try {
     const api = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&start=0&max_results=${max}`;
-    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`); // proxy to bypass CORS (allorigins.win)
+    // use public proxy to avoid CORS issues (may intermittently fail)
+    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`);
     if(!res.ok) return [];
     const text = await res.text();
     const parser = new DOMParser();
     const xml = parser.parseFromString(text, "application/xml");
-    const entries = Array.from(xml.querySelectorAll('entry')).slice(0, max);
-    const results = entries.map(e=>{
-      const title = (e.querySelector('title') && e.querySelector('title').textContent) || 'arXiv article';
-      const summary = (e.querySelector('summary') && e.querySelector('summary').textContent) || '';
-      const link = (e.querySelector('id') && e.querySelector('id').textContent) || '';
-      return { source: 'arXiv', title, extract: summary.substring(0,400), url: link, content: summary };
+    const entries = xml.querySelectorAll('entry');
+    const results = [];
+    entries.forEach(entry => {
+      const title = entry.querySelector('title')?.textContent || '';
+      const summary = entry.querySelector('summary')?.textContent || '';
+      const id = entry.querySelector('id')?.textContent || '';
+      results.push({
+        source: 'arXiv',
+        title: title.trim(),
+        extract: (summary || '').trim(),
+        url: id,
+        content: summary || ''
+      });
     });
     return results;
   } catch(e){ return []; }
 }
 
-/* Compose an articles set by pulling from multiple sources */
-async function buildArticles() {
-  // try to fetch from Wikipedia, Reddit, arXiv
+async function buildArticles(){
+  const articles = [];
   const [w, r, a] = await Promise.all([
-    fetchWikipediaTopics(['Meditation','Mindfulness','Neuroscience','Gratitude','Compassion','Breathing_techniques']),
-    fetchRedditPosts(['Meditation','Philosophy','psychology']),
-    fetchArxiv('mindfulness OR meditation', 15)
+    fetchWikipediaTopics(),
+    fetchRedditPosts(),
+    fetchArxiv()
   ]);
-  // merge and pick up to MAX_ARTICLES
-  const merged = [];
-  if(w && w.length) merged.push(...w);
-  if(a && a.length) merged.push(...a);
-  if(r && r.length) merged.push(...r);
-  // normalize and dedupe by title
-  const byTitle = new Map();
-  merged.forEach(it => {
-    if(!it || !it.title) return;
-    if(!byTitle.has(it.title)) byTitle.set(it.title, {
-      id: byTitle.size + 1,
-      title: it.title,
-      excerpt: (it.extract || '').slice(0,220),
-      content: it.content || it.extract || '',
-      refs: [it.source + ' • ' + (it.url || '')],
-      sourceUrl: it.url || ''
-    });
-  });
-  // If not enough articles, fallback to local (below)
-  const arr = Array.from(byTitle.values()).slice(0, MAX_ARTICLES);
-  if(arr.length < MAX_ARTICLES) {
-    // add fallback from built-in local list (see localArticles below)
-    const need = MAX_ARTICLES - arr.length;
-    arr.push(...localArticles.slice(0, need));
-  }
-  // assign consistent ids 1..N
-  arr.forEach((a,i)=>a.id=i+1);
-  return arr;
+  articles.push(...w, ...r, ...a);
+  // limit and shuffle a bit to mix sources
+  const shuffled = articles.sort(()=>0.5 - Math.random()).slice(0, MAX_ARTICLES);
+  return shuffled;
 }
 
-/* Use local fallback articles if remote fetching fails */
-const localArticles = [
-  {id:1,title:"Respira: el primer acto de presencia",excerpt:"La respiración es la puerta de entrada al presente.",content:"La respiración consciente... (texto completo aquí)",refs:["Brown & Gerbarg (2005)","Harvard Health"]},
-  {id:2,title:"Micro-prácticas para la calma",excerpt:"Pequeñas pausas a lo largo del día...",content:"Texto completo...",refs:["Sonnentag (2018)"]},
-  {id:3,title:"Música clásica como paisaje interior",excerpt:"Piano suave y cuerdas facilitan la relajación.",content:"Texto completo...",refs:["Juslin & Västfjäll (2008)"]},
-  // ... (si quieres, puedo expandir esta lista local)
-];
-
-/* Save & load articles with 15-day rotation */
-async function getArticlesForDisplay() {
-  const stored = JSON.parse(localStorage.getItem(ARTICLES_KEY) || 'null');
-  const dateSaved = localStorage.getItem(ARTICLES_DATE_KEY);
-  const now = Date.now();
-  const needsRefresh = !stored || !dateSaved || ((now - parseInt(dateSaved,10)) > ROTATE_DAYS * 24*3600*1000);
-  if(!needsRefresh) return stored;
-  // build new set
-  try {
-    const newArticles = await buildArticles();
-    localStorage.setItem(ARTICLES_KEY, JSON.stringify(newArticles));
-    localStorage.setItem(ARTICLES_DATE_KEY, String(now));
-    return newArticles;
-  } catch(e){
-    // fallback to localArticles
-    localStorage.setItem(ARTICLES_KEY, JSON.stringify(localArticles));
-    localStorage.setItem(ARTICLES_DATE_KEY, String(now));
-    return localArticles;
-  }
-}
-
-/* ---------- Audio handling with multi-server fallback ---------- */
-/*
-  We maintain a list of tracks. Each track has a title and an array of candidate URLs (order = preference).
-  tryPlayTrack will test URLs sequentially (with timeouts/events) until audio can play.
-  If none of a track's URLs work, pick a different track randomly and inform user.
-*/
-
-// Example candidate URLs — each entry is a list of candidate sources.
-// NOTE: many URLs are public/test endpoints. You can replace/add your own stable urls.
-// The code will attempt each url until one plays.
-const TRACKS = [
-  { title: 'Ambient — Space Pad 1', urls: [
-    'https://archive.org/download/ambient-space-pad/ambient_space_pad_1.mp3',
-    'https://upload.wikimedia.org/wikipedia/commons/4/4b/Example.ogg', // example fallback (may not be audio)
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
-  ]},
-  { title: 'Ambient — Forest Water', urls: [
-    'https://archive.org/download/forest-waves/forest_waves.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
-  ]},
-  { title: 'Piano Sereno 1', urls: [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-    'https://upload.wikimedia.org/wikipedia/commons/4/4b/Example.ogg'
-  ]},
-  { title: 'Piano Sereno 2', urls: [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
-  ]},
-  { title: 'Strings Pad', urls: [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
-  ]},
-  { title: 'Calm Piano 3', urls: [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3'
-  ]},
-  { title: 'Nature Rain', urls: [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3'
-  ]},
-  { title: 'Ambient Drone 2', urls: [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'
-  ]},
-  { title: 'Piano Loop', urls: [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3'
-  ]},
-  { title: 'Calm Strings 2', urls: [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3'
-  ]},
-  // Add more tracks until 20 (we'll duplicate some sensible ones for demo)
-  { title: 'Ambient — Wind 1', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3']},
-  { title: 'Ambient — Wind 2', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3']},
-  { title: 'Piano — Solo 4', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3']},
-  { title: 'Piano — Solo 5', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3']},
-  { title: 'Strings — Soft 3', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3']},
-  { title: 'Ambient — Ocean', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3']},
-  { title: 'Nature — Birds', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3']},
-  { title: 'Drone — Soft 4', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-18.mp3']},
-  { title: 'Piano — Lento', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-19.mp3']},
-  { title: 'Calm Mix', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-20.mp3']}
-];
-
-// Note: You should replace archive.org / wikimedia placeholders with real file URLs if you have them.
-// SoundHelix example MP3s are stable for testing and useful as fallback/demo.
-
-let CURRENT_TRACK_INDEX = 0;
-let CURRENT_URL_INDEX = 0;
-const audio = document.getElementById('audioPlayer');
-const audioNotice = document.getElementById('audioNotice');
-
-// set up UI lists
-function populateTrackUI() {
-  const select = document.getElementById('soundSelect');
-  select.innerHTML = '';
-  const list = document.getElementById('soundsList');
-  list.innerHTML = '';
-  TRACKS.forEach((t,i)=>{
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = t.title;
-    select.appendChild(opt);
-
-    const row = document.createElement('div');
-    row.className = 'sound-item';
-    row.innerHTML = `<div style="color:#dff8ff">${t.title}</div>
-      <div style="display:flex;gap:6px">
-        <button class="mini-play" data-i="${i}">Play</button>
-        <button class="mini-use" data-i="${i}">Usar</button>
-      </div>`;
-    list.appendChild(row);
-  });
-}
-
-// Try to play a specific track index, testing candidate URLs sequentially.
-function tryPlayTrack(trackIndex) {
-  const track = TRACKS[trackIndex];
-  if(!track) return;
-  CURRENT_TRACK_INDEX = trackIndex;
-  CURRENT_URL_INDEX = 0;
-  audioNotice.style.display = 'none';
-  attemptUrlPlay(track);
-}
-
-let attemptTimeout = null;
-function attemptUrlPlay(track) {
-  if(!track || !track.urls || track.urls.length === 0) {
-    fallbackToOtherTrack(`No hay URLs para "${track ? track.title : 'track'}"`);
-    return;
-  }
-  if(CURRENT_URL_INDEX >= track.urls.length) {
-    // exhausted this track's urls
-    fallbackToOtherTrack(`La pista "${track.title}" no está disponible en sus fuentes; probando otra pista.`);
-    return;
-  }
-  const url = track.urls[CURRENT_URL_INDEX];
-  // Try to load and detect 'canplaythrough' within X seconds
-  let played = false;
-  audio.pause();
-  audio.src = url;
-  audio.load();
-  const canplayHandler = () => {
-    played = true;
-    clearAttemptListeners();
-    audio.play().catch(()=>{}); // user interaction may be required in some webviews
-    showTemporaryNotice(`Reproduciendo: ${track.title}`);
-  };
-  const errorHandler = () => {
-    // try next url
-    clearAttemptListeners();
-    CURRENT_URL_INDEX++;
-    setTimeout(()=>attemptUrlPlay(track), 200);
-  };
-  const timeoutHandler = () => {
-    if(!played){
-      // treat as failure and try next
-      clearAttemptListeners();
-      CURRENT_URL_INDEX++;
-      attemptUrlPlay(track);
+async function ensureArticles(){
+  if(!shouldRefreshArticles()){
+    const cached = localStorage.getItem(ARTICLES_KEY);
+    if(cached) {
+      try {
+        return JSON.parse(cached);
+      } catch(e){}
     }
-  };
-  function clearAttemptListeners() {
-    audio.removeEventListener('canplaythrough', canplayHandler);
-    audio.removeEventListener('error', errorHandler);
-    if(attemptTimeout) { clearTimeout(attemptTimeout); attemptTimeout = null; }
   }
-  audio.addEventListener('canplaythrough', canplayHandler, {once:true});
-  audio.addEventListener('error', errorHandler, {once:true});
-  // safety timeout if canplaythrough doesn't fire
-  attemptTimeout = setTimeout(timeoutHandler, 6000); // 6s
+  // else fetch and save
+  const arts = await buildArticles();
+  localStorage.setItem(ARTICLES_KEY, JSON.stringify(arts));
+  localStorage.setItem(ARTICLES_DATE_KEY, daysSinceEpoch().toString());
+  return arts;
 }
 
-function fallbackToOtherTrack(msg) {
-  showTemporaryNotice(msg || 'Cambiando a otra pista...');
-  // pick a random track different from current
-  const idxs = TRACKS.map((_,i)=>i).filter(i=>i!==CURRENT_TRACK_INDEX);
-  const next = idxs[Math.floor(Math.random()*idxs.length)];
-  CURRENT_TRACK_INDEX = next;
-  CURRENT_URL_INDEX = 0;
-  // update select
-  const sel = document.getElementById('soundSelect');
-  if(sel) sel.value = String(next);
-  attemptUrlPlay(TRACKS[next]);
+/* ---------- Render articles ---------- */
+function createArticleCard(a, idx){
+  const div = document.createElement('div');
+  div.className = 'article-card';
+  const title = document.createElement('h3');
+  title.textContent = a.title;
+  const p = document.createElement('p');
+  p.textContent = a.extract ? (a.extract.length > 220 ? a.extract.substring(0,220)+'…' : a.extract) : '(sin resumen)';
+  const read = document.createElement('button');
+  read.className = 'read-btn';
+  read.textContent = 'Leer';
+  read.onclick = ()=> openModal(a);
+  div.appendChild(title);
+  div.appendChild(p);
+  div.appendChild(read);
+  return div;
 }
 
-let noticeTimeout = null;
-function showTemporaryNotice(text, duration=4000) {
-  audioNotice.textContent = text;
-  audioNotice.style.display = 'block';
-  if(noticeTimeout) clearTimeout(noticeTimeout);
-  noticeTimeout = setTimeout(()=>{ audioNotice.style.display = 'none'; }, duration);
-}
-
-/* ---------- UI interactions ---------- */
-document.addEventListener('click', (e)=>{
-  const p = e.target.closest('.mini-play');
-  if(p){
-    const i = Number(p.dataset.i);
-    tryPlayTrack(i);
-  }
-  const u = e.target.closest('.mini-use');
-  if(u){
-    const i = Number(u.dataset.i);
-    document.getElementById('soundSelect').value = String(i);
-    tryPlayTrack(i);
-  }
-  const r = e.target.closest('.read-btn');
-  if(r){
-    const id = r.dataset.id;
-    if(id) openArticle(id);
-  }
-});
-
-// sound select change (update current track index but don't auto-play)
-document.getElementById('soundSelect')?.addEventListener('change', function(){
-  const i = Number(this.value);
-  CURRENT_TRACK_INDEX = i;
-  CURRENT_URL_INDEX = 0;
-  // set audio src to first candidate but do not autoplay (respect browser)
-  if(TRACKS[i] && TRACKS[i].urls && TRACKS[i].urls[0]) {
-    audio.src = TRACKS[i].urls[0];
-  }
-});
-
-/* ---------- Meditation timer & controls ---------- */
-let timer = 0; let tick = null;
-function setTimer(sec){ timer = sec; updateTime(); }
-function updateTime(){ const mm = String(Math.floor(timer/60)).padStart(2,'0'); const ss = String(timer%60).padStart(2,'0'); document.getElementById('timeDisplay').textContent = `${mm}:${ss}`; }
-function startMeditation(){
-  if(timer <= 0){ alert('Selecciona duración (5/10/15 min)'); return; }
-  // Start audio if currently set; if not, start current track attempt
-  if(!audio.src || audio.src === '') {
-    tryPlayTrack(CURRENT_TRACK_INDEX || 0);
-  } else {
-    audio.play().catch(()=>{ /* may require interaction */ });
-  }
-  document.getElementById('medCircle').classList.remove('pulse');
-  document.getElementById('medCircle').style.transform='scale(0.98)';
-  document.getElementById('startBtn').disabled = true;
-  document.getElementById('stopBtn').disabled = false;
-  tick = setInterval(()=>{ if(timer>0){ timer--; updateTime(); } else { stopMeditation(); } },1000);
-}
-function stopMeditation(){
-  audio.pause(); audio.currentTime = 0;
-  document.getElementById('medCircle').classList.add('pulse'); document.getElementById('medCircle').style.transform='';
-  document.getElementById('startBtn').disabled = false; document.getElementById('stopBtn').disabled = true;
-  clearInterval(tick); tick=null;
-}
-document.getElementById('medCircle').addEventListener('click', ()=> { if(!tick) startMeditation(); else stopMeditation(); });
-document.getElementById('startBtn').addEventListener('click', startMeditation);
-document.getElementById('stopBtn').addEventListener('click', stopMeditation);
-setTimer(300); updateTime();
-
-/* ---------- Articles rendering ---------- */
-async function renderArticlesToUI(){
-  const arr = await getArticlesForDisplay();
-  const grid = document.getElementById('articlesGrid');
+async function renderArticles(){
+  const grid = $('#articlesGrid');
   grid.innerHTML = '';
-  arr.slice(0, MAX_ARTICLES).forEach(a=>{
-    const el = document.createElement('div');
-    el.className = 'article-card';
-    el.innerHTML = `<h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.excerpt || a.content || '').slice(0,260)}</p><button class="read-btn" data-id="${a.id}">Leer completo</button>`;
-    grid.appendChild(el);
+  const loading = document.createElement('div');
+  loading.textContent = 'Cargando artículos…';
+  grid.appendChild(loading);
+  const articles = await ensureArticles();
+  grid.innerHTML = '';
+  if(!articles || !articles.length){
+    grid.innerHTML = '<div class="article-card">No se pudieron cargar artículos.</div>';
+    return;
+  }
+  articles.forEach((a, i) => {
+    const c = createArticleCard(a, i);
+    grid.appendChild(c);
   });
 }
-function openArticle(id){
-  const arr = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]');
-  const a = arr.find(x=>String(x.id)===String(id)) || localArticles.find(x=>String(x.id)===String(id));
-  if(!a) return;
-  $('#modalTitle').textContent = a.title;
-  $('#modalBody').innerHTML = `<p style="margin-top:6px;color:#dffcff;line-height:1.6">${escapeHtml(a.content || a.excerpt || '')}</p>`;
-  $('#modalRefs').innerHTML = `<strong>Referencias</strong><ul style="margin-top:8px">${(a.refs || []).map(r=>`<li style="margin-bottom:6px;color:#bfeffd">${escapeHtml(r)}</li>`).join('')}</ul>`;
-  modalBack.classList.add('on'); modalBack.setAttribute('aria-hidden','false');
-}
-$('#closeModal').addEventListener('click', ()=>{ modalBack.classList.remove('on'); modalBack.setAttribute('aria-hidden','true'); });
 
-/* ---------- Subscription ---------- */
-$('#subForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  const email = ($('#emailInput').value || '').trim();
-  if(!email.includes('@')) { alert('Introduce un correo válido'); return; }
-  localStorage.setItem('coralma_email', email);
-  $('#subInfo').textContent = `Suscrito: ${email} · Frase del mes: "${monthlyPhrase()}"`;
-  this.style.display = 'none';
+/* ---------- Modal handling ---------- */
+function openModal(article){
+  $('#modalTitle').textContent = `${article.title} — ${article.source}`;
+  $('#modalBody').textContent = article.content || article.extract || '(sin contenido completo)';
+  const refs = document.getElementById('modalRefs');
+  refs.innerHTML = `<div>Fuente: <a href="${article.url}" target="_blank" rel="noopener">${article.url}</a></div>`;
+  $('#modalBack').classList.add('on');
+  $('#modalBack').setAttribute('aria-hidden','false');
+}
+$('#closeModal').addEventListener('click', ()=> {
+  $('#modalBack').classList.remove('on');
+  $('#modalBack').setAttribute('aria-hidden','true');
 });
-function monthlyPhrase(){ const arr=['Respira, estás donde debes.','Tu presencia es el acto más sanador.','Hoy es terreno fértil para la calma.','Suelta y respira.']; return arr[Math.floor(Math.random()*arr.length)]; }
 
-/* ---------- WebView detection ---------- */
-function isInAppBrowser(){
-  const ua = navigator.userAgent || '';
-  const apps = ['Instagram','FBAN','FBAV','Twitter','Line','MicroMessenger','TikTok','Snapchat'];
-  return apps.some(a => ua.includes(a));
-}
-if(isInAppBrowser()){
-  $('#webviewBanner').style.display = 'block';
-}
-$('#dismissWebview').addEventListener('click', ()=> $('#webviewBanner').style.display='none');
+/* ---------- Init ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderArticles();
+  // initialize default timer display
+  updateTimeDisplay(0);
 
-/* ---------- Helpers ---------- */
-function escapeHtml(s=''){ return String(s).replace(/[&<>"']/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]); }
-
-/* ---------- Init sequence ---------- */
-async function initApp(){
-  populateTrackUI();
-  // set a default current track index if not set
-  CURRENT_TRACK_INDEX = 0;
-  CURRENT_URL_INDEX = 0;
-  if(TRACKS[0] && TRACKS[0].urls && TRACKS[0].urls[0]) {
-    audio.src = TRACKS[0].urls[0];
-  }
-  // show saved subscription
-  const saved = localStorage.getItem('coralma_email');
-  if(saved){ $('#subInfo').textContent = `Suscrito: ${saved} · Frase del mes: "${monthlyPhrase()}"`; $('#subForm').style.display='none'; }
-
-  // Fetch & render articles (with rotation)
-  try {
-    await renderArticlesToUI();
-  } catch(e){
-    // fallback: render local articles
-    const grid = document.getElementById('articlesGrid');
-    grid.innerHTML = '';
-    localArticles.slice(0,MAX_ARTICLES).forEach(a=>{
-      const el = document.createElement('div');
-      el.className = 'article-card';
-      el.innerHTML = `<h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.excerpt || '')}</p><button class="read-btn" data-id="${a.id}">Leer completo</button>`;
-      grid.appendChild(el);
-    });
-  }
-
-  // If user opens page and audio files fail repeatedly, UI will show notice as fallback.
-}
-
-initApp();
-
-/* Accessibility: close modal with Escape */
-document.addEventListener('keydown', (e)=> { if(e.key === 'Escape'){ modalBack.classList.remove('on'); modalBack.setAttribute('aria-hidden','true'); } });
-
-/* End of script */
+  // subscription form
+  $('#subForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const email = $('#emailInput').value.trim();
+    if(!email) { $('#subInfo').textContent = 'Ingresa un correo válido.'; return; }
+    $('#subInfo').textContent = '¡Gracias! Te hemos inscrito (demo).';
+    $('#emailInput').value = '';
+  });
+});
 </script>
 </body>
 </html>
