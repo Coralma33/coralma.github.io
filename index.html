@@ -1,596 +1,180 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CorAlma — Encuentra tu calma</title>
-<meta name="description" content="Meditaciones, sonidos y artículos dinámicos. Sonidos con fallback entre servidores." />
 <style>
 :root{
   --bg1:#020414; --bg2:#041428;
   --accent1:#6ec6d9; --accent2:#8a6cff;
-  --glass: rgba(255,255,255,0.04);
-  --muted:#9fd8ea; --text:#e6f9ff;
-  --finished:#ff6b6b;
+  --text:#e6f9ff; --glass: rgba(255,255,255,0.04);
 }
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; -webkit-font-smoothing:antialiased}
-body{
-  color:var(--text);
-  background:
-    radial-gradient(circle at 10% 10%, rgba(138,108,255,0.06), transparent 6%),
-    radial-gradient(circle at 90% 70%, rgba(110,198,217,0.04), transparent 10%),
-    linear-gradient(180deg,var(--bg1), var(--bg2));
-  min-height:100vh;
-}
+body{margin:0;font-family:Inter,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);}
 .container{max-width:1180px;margin:24px auto;padding:18px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px}
+.card{background:rgba(255,255,255,0.02);padding:18px;border-radius:12px;margin-bottom:20px}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
 .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
-nav{display:flex;gap:10px;align-items:center}
 nav a{color:#cfeffb;text-decoration:none;padding:8px 10px;border-radius:9px}
 nav a:hover{background:var(--glass)}
-
-/* hero */
-.hero{margin-top:14px;border-radius:14px;padding:20px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));display:flex;gap:20px;align-items:center;position:relative;overflow:hidden}
-.hero-left{flex:1}
-.cta .btn-primary{margin-top:12px}
-
-/* layout */
 .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:22px}
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:12px}
-.med-card{padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);box-shadow:0 10px 40px rgba(15,30,50,0.45)}
-.center{display:flex;flex-direction:column;align-items:center;gap:12px}
-.selector-row{display:flex;gap:10px;align-items:center;width:100%;justify-content:center;flex-wrap:wrap}
-select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
-.btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-
-/* timer / circle */
-.med-circle{width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:transform .12s,border-color .2s}
+.med-circle{width:170px;height:170px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;transition:transform .18s;margin:auto}
 .med-circle:hover{transform:scale(1.03)}
-.time-display{font-weight:700}
-
-/* articles */
-.articles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px;max-height:480px;overflow:auto;padding-right:6px}
-.article-card{padding:12px;border-radius:10px;background:rgba(255,255,255,0.01);text-align:left}
-.article-card h3{margin:0 0 6px 0;font-size:16px}
-.article-card p{margin:0;color:#cfeef7;font-size:14px}
-.article-card .source{font-size:12px;color:#9fd8ea;margin-top:6px}
-.read-btn{margin-top:8px;padding:6px 8px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#dff8ff;cursor:pointer}
-
-/* youtube/recommendations */
-.youtube-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
-.youtube-thumb{background:#0b1620;border-radius:8px;overflow:hidden;cursor:pointer;position:relative}
-.youtube-thumb img{width:100%;display:block;height:88px;object-fit:cover}
-.youtube-thumb .yt-title{font-size:12px;padding:6px;color:#eaf9ff}
-.youtube-controls{display:flex;gap:6px;justify-content:center;padding-top:6px}
-
-/* yt player container */
-#ytPlayerContainer{margin-top:12px;border-radius:10px;overflow:hidden;background:rgba(0,0,0,0.35);padding:8px;display:none}
-#ytPlayer{width:100%;height:180px;border:0;border-radius:8px}
-
-/* floating draggable timer */
-.floating-btn{position:fixed;right:20px;bottom:20px;width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;cursor:move;z-index:2000;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:background .25s}
-.floating-btn.finished{background:var(--finished); color:#fff;}
-
-/* small helpers */
-.notice{font-size:13px;color:#ffd7a8;background:rgba(0,0,0,0.15);padding:8px;border-radius:8px;margin-top:8px}
-@media(max-width:980px){.grid{grid-template-columns:1fr}.articles-grid{grid-template-columns:1fr}}
+.time-display{font-weight:700;font-size:18px;text-align:center;margin-top:10px}
+button{cursor:pointer;border:none;border-radius:10px;padding:8px 12px;margin:4px;background:rgba(255,255,255,0.03);color:#dff8ff}
+.floating-btn{position:fixed;bottom:20px;right:20px;width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:14px;cursor:move;background:linear-gradient(135deg,var(--accent2),var(--accent1));box-shadow:0 12px 40px rgba(60,80,120,0.18);transition: background 0.3s;text-align:center;z-index:1000}
+.floating-btn.finished{background:#ff4a4a;color:#fff}
+.social-bar{position:fixed;top:50%;right:10px;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;z-index:900}
+.social-bar a{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.08);border-radius:50%;transition:background .3s}
+.social-bar a:hover{background:linear-gradient(135deg,var(--accent2),var(--accent1))}
+.social-bar img{width:20px;height:20px}
 </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="logo">CA</div>
-        <div>
-          <h1>CorAlma</h1>
-          <div style="font-size:12px;color:#bfeffd">Encuentra tu calma en el universo interior</div>
-        </div>
+<header class="container">
+  <div class="logo">CA</div>
+  <nav>
+    <a href="#articulos">Artículos</a>
+    <a href="#frases">Frases</a>
+    <a href="#donaciones">Donaciones</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+</header>
+
+<div class="container grid">
+  <div>
+    <div class="card">
+      <h2>Meditación Interactiva</h2>
+      <p>Selecciona duración y haz click en el círculo para comenzar</p>
+      <div>
+        <button onclick="setTimer(300)">5 min</button>
+        <button onclick="setTimer(600)">10 min</button>
+        <button onclick="setTimer(900)">15 min</button>
       </div>
-      <nav>
-        <a href="#">Inicio</a>
-        <a href="#medit-block">Meditación</a>
-        <a href="#art">Artículos</a>
-        <a href="#contact">Contacto</a>
-      </nav>
-    </header>
-
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-left">
-        <h2 id="hero-title">Calma y presencia — prácticas basadas en ciencia y tradición</h2>
-        <p>Sonidos de naturaleza, meditaciones y artículos con referencias. Elige un sonido y duracíon, inicia y el temporizador se sincroniza con el botón flotante.</p>
-        <div class="cta"><button class="btn-primary" onclick="document.getElementById('medit-block').scrollIntoView({behavior:'smooth'})">Iniciar Meditación</button></div>
-      </div>
-    </section>
-
-    <div class="grid">
-      <main>
-        <!-- Meditación -->
-        <section id="medit-block" class="card med-card" aria-labelledby="medit-title">
-          <h3 id="medit-title">Meditación interactiva</h3>
-          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-            <div class="selector-row">
-              <label for="soundSelect" style="color:#bfeffd">Sonido</label>
-              <select id="soundSelect" aria-label="Selecciona sonido">
-                <!-- Reemplaza value con URLs si tienes archivos remotos -->
-                <option value="https://cdn.freesound.org/.../nature1.mp3">Lluvia suave</option>
-                <option value="https://cdn.freesound.org/.../nature2.mp3">Bosque</option>
-                <option value="https://cdn.freesound.org/.../nature3.mp3">Río</option>
-              </select>
-            </div>
-
-            <div class="selector-row">
-              <div>
-                <button class="btn-primary" onclick="setTimer(300)">5 min</button>
-                <button class="btn-primary" onclick="setTimer(600)">10 min</button>
-                <button class="btn-primary" onclick="setTimer(900)">15 min</button>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top:14px" class="center">
-            <div id="medCircle" class="med-circle" role="button" tabindex="0">Click para<br>meditar</div>
-            <div class="time-display" style="margin-top:10px">Tiempo: <span id="timeDisplay">00:00</span></div>
-          </div>
-
-          <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
-            <button id="startBtn" class="btn-primary">Iniciar</button>
-            <button id="stopBtn" class="btn-primary" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">Detener</button>
-            <label style="margin-left:8px;font-size:13px"><input id="audioOnlyToggle" type="checkbox"> Solo audio (ocultar video)</label>
-          </div>
-
-          <div id="audioNotice" class="notice" style="display:none"></div>
-          <audio id="natureAudio" preload="none" controls style="display:none"></audio>
-        </section>
-
-        <!-- Artículos -->
-        <section class="card" style="margin-top:16px" id="art">
-          <h3 style="margin-top:0">Artículos</h3>
-          <div class="articles-grid" id="articlesGrid" role="list"></div>
-        </section>
-
-        <!-- YouTube buscador y reproductor -->
-        <section class="card" style="margin-top:16px">
-          <h3>Recomendaciones / Buscador (YouTube)</h3>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input id="ytKeyword" type="text" placeholder="Palabra clave (ej. forest, rain)..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dff8ff">
-            <button class="btn-primary" onclick="doSearch()">Buscar</button>
-            <button class="btn-primary" onclick="loadDailyRecs()">Rec. del día</button>
-          </div>
-
-          <div class="youtube-grid" id="youtubeGrid"></div>
-
-          <div id="ytPlayerContainer">
-            <iframe id="ytPlayer" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
-              <button class="btn-primary" onclick="stopYT()">Detener</button>
-              <span id="ytNow" style="margin-left:8px;font-size:13px;color:#bfeffd"></span>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <aside>
-        <div class="side-block">
-          <div class="card">
-            <h4 style="margin-top:0">Música del día</h4>
-            <div id="dailyList" style="display:flex;flex-direction:column;gap:8px"></div>
-          </div>
-
-          <div class="card" id="reg">
-            <h4 style="margin-top:0">Registro / Frase mensual</h4>
-            <form id="subForm">
-              <input id="emailInput" type="email" placeholder="tu@correo.com" required style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dff8ff">
-              <div style="margin-top:10px"><button class="btn-primary" type="submit">Suscribirme</button></div>
-            </form>
-            <div id="subInfo" style="margin-top:12px;color:#bfeffd"></div>
-          </div>
-
-          <div class="card" id="don">
-            <h4 style="margin-top:0">Donaciones</h4>
-            <p style="margin:0 0 10px 0;color:#cfeef7">Si valoras este proyecto, apóyalo.</p>
-            <a class="btn-primary" href="https://www.paypal.com/donate" target="_blank" rel="noopener">Donar con PayPal</a>
-          </div>
-        </div>
-      </aside>
+      <div id="medCircle" class="med-circle">Click para iniciar</div>
+      <div class="time-display">Tiempo: <span id="timeDisplay">00:00</span></div>
     </div>
 
-    <footer id="contact" style="margin-top:20px">
-      <div style="color:#9fd8ea">Contacto: <a href="mailto:almacoralma@gmail.com">almacoralma@gmail.com</a></div>
-    </footer>
-  </div>
+    <div id="articulos" class="card">
+      <h2>Artículos</h2>
+      <div id="articlesList"></div>
+    </div>
 
-  <!-- floating synchronized timer -->
-  <div id="floatingBtn" class="floating-btn" title="Arrástrame">
-    <div id="floatingLabel">Meditación</div>
-    <div id="floatingTime" style="font-size:13px;margin-top:6px">00:00</div>
+    <div id="frases" class="card">
+      <h2>Frases</h2>
+      <blockquote id="quote">"Respira, suelta, confía."</blockquote>
+    </div>
+
+    <div id="donaciones" class="card">
+      <h2>Apóyanos</h2>
+      <p>Si este proyecto te ayuda, considera hacer una donación 🙏</p>
+      <form action="https://www.paypal.com/donate" method="post" target="_blank" style="text-align:center;">
+        <input type="hidden" name="hosted_button_id" value="GW4XCFHYRTJQQ" />
+        <button type="submit" style="
+          background: linear-gradient(135deg,#6ec6d9,#8a6cff);
+          color: #021018;
+          font-weight: 700;
+          border: none;
+          border-radius: 12px;
+          padding: 12px 24px;
+          cursor: pointer;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+          transition: transform .2s ease-in-out;">
+          ❤️ Apóyanos con PayPal
+        </button>
+      </form>
+    </div>
+
+    <div id="contacto" class="card">
+      <h2>Contacto</h2>
+      <p>Envíanos un mensaje a: <b>contacto@coralma.com</b></p>
+    </div>
   </div>
+</div>
+
+<!-- Botón flotante -->
+<div id="floatingBtn" class="floating-btn">Click<br><span id="floatingTime">00:00</span></div>
+
+<!-- Redes sociales -->
+<div class="social-bar">
+  <a href="https://facebook.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"/></a>
+  <a href="https://instagram.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"/></a>
+  <a href="https://youtube.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png"/></a>
+  <a href="https://tiktok.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png"/></a>
+</div>
 
 <script>
-/* ----------------- Helpers ----------------- */
-const $ = id => document.getElementById(id);
-
-/* ---------- Timer & sync (page + floating) ---------- */
-let timerSec = 300;            // seconds left
+// --- Variables ---
+let timerSec = 300;
 let timerInterval = null;
 
-function pad(n){ return String(n).padStart(2,'0'); }
+// --- Elementos ---
+const medCircle = document.getElementById('medCircle');
+const timeDisplay = document.getElementById('timeDisplay');
+const floatingBtn = document.getElementById('floatingBtn');
+const floatingTime = document.getElementById('floatingTime');
 
-function updateDisplays(){
-  const m = Math.floor(timerSec/60), s = timerSec%60;
-  const text = `${pad(m)}:${pad(s)}`;
-  $('timeDisplay').textContent = text;
-  $('floatingTime').textContent = text;
-  // change color when finished
-  if(timerSec <= 0){
-    $('floatingBtn').classList.add('finished');
-    $('medCircle').style.border = '4px solid rgba(255,107,107,0.85)';
-  } else {
-    $('floatingBtn').classList.remove('finished');
-    $('medCircle').style.border = '0';
-  }
-}
-
+// --- Temporizador ---
 function setTimer(sec){
   timerSec = sec;
-  updateDisplays();
-  // sync: if running, continue with new value
+  updateDisplay();
+  floatingBtn.classList.remove('finished');
 }
-
+function updateDisplay(){
+  const m = Math.floor(timerSec/60).toString().padStart(2,'0');
+  const s = (timerSec%60).toString().padStart(2,'0');
+  timeDisplay.innerText = `${m}:${s}`;
+  floatingTime.innerText = `${m}:${s}`;
+}
 function startTimer(){
   if(timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(()=>{
-    if(timerSec > 0){
+    if(timerSec>0){
       timerSec--;
-      updateDisplays();
+      updateDisplay();
     } else {
       clearInterval(timerInterval);
-      timerInterval = null;
-      updateDisplays();
-      // optional: play bell / notify
+      floatingBtn.classList.add('finished');
     }
-  }, 1000);
+  },1000);
 }
+medCircle.onclick = () => startTimer();
+floatingBtn.onclick = () => startTimer();
 
-function stopTimer(){
-  if(timerInterval) clearInterval(timerInterval);
-  timerInterval = null;
-  updateDisplays();
-}
-
-/* UI bindings */
-$('startBtn').addEventListener('click', ()=> {
-  // start nature audio (if selected)
-  const audio = $('natureAudio');
-  const sel = $('soundSelect').value;
-  if(sel){
-    audio.src = sel;
-    audio.play().catch(()=>{ /* autoplay may be blocked until user gesture */ });
-  }
-  startTimer();
-});
-$('stopBtn').addEventListener('click', ()=> {
-  $('natureAudio').pause();
-  stopTimer();
-});
-$('medCircle').addEventListener('click', ()=> {
-  // single click starts too
-  const audio = $('natureAudio');
-  const sel = $('soundSelect').value;
-  if(sel){
-    audio.src = sel;
-    audio.play().catch(()=>{});
-  }
-  startTimer();
-});
-
-/* Sync floating: clicking floating starts/stops same timer */
-$('floatingBtn').addEventListener('click', (e)=>{
-  // clicking floating starts timer (but if dragging, don't trigger)
-  if(isDragging) return;
-  // toggle start/pause
-  if(timerInterval) stopTimer();
-  else {
-    // if audio source available, play it
-    const audio = $('natureAudio');
-    const sel = $('soundSelect').value;
-    if(sel){
-      audio.src = sel;
-      audio.play().catch(()=>{});
-    }
-    startTimer();
-  }
-});
-
-/* ---------- Drag for floating ---------- */
-let isDragging=false, offsetX=0, offsetY=0;
-const floating = $('floatingBtn');
-floating.addEventListener('mousedown', e => {
+// --- Botón flotante arrastrable ---
+let isDragging = false, offsetX=0, offsetY=0;
+floatingBtn.onmousedown = e => {
   isDragging = true;
-  offsetX = e.clientX - floating.offsetLeft;
-  offsetY = e.clientY - floating.offsetTop;
-  // prevent click bubble
-  e.preventDefault();
-});
-document.addEventListener('mousemove', e => {
-  if(!isDragging) return;
-  floating.style.left = (e.clientX - offsetX) + 'px';
-  floating.style.top = (e.clientY - offsetY) + 'px';
-});
-document.addEventListener('mouseup', () => { isDragging=false; });
-/* make it touch-friendly */
-floating.addEventListener('touchstart', e => {
-  isDragging = true;
-  const t = e.touches[0];
-  offsetX = t.clientX - floating.offsetLeft;
-  offsetY = t.clientY - floating.offsetTop;
-});
-document.addEventListener('touchmove', e => {
-  if(!isDragging) return;
-  const t = e.touches[0];
-  floating.style.left = (t.clientX - offsetX) + 'px';
-  floating.style.top = (t.clientY - offsetY) + 'px';
-});
-document.addEventListener('touchend', ()=> isDragging=false);
-
-/* ---------- Articles (rotate every 3 days) ---------- */
-const ARTICLES_KEY = 'coralma_articles_v2';
-const ARTICLES_DATE_KEY = 'coralma_articles_date_v2';
-const ROTATE_MS = 3 * 24 * 60 * 60 * 1000;
-const MAX_ARTICLES = 30;
-
-async function fetchWikipediaTopics(topics = ['Meditation','Mindfulness','Neuroscience','Gratitude','Relaxation']) {
-  const results = [];
-  for(const t of topics){
-    try{
-      const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t)}`;
-      const r = await fetch(url);
-      if(!r.ok) continue;
-      const json = await r.json();
-      results.push({
-        source: 'Wikipedia',
-        title: json.title || t,
-        extract: json.extract || '',
-        url: (json.content_urls && json.content_urls.desktop && json.content_urls.desktop.page) || `https://en.wikipedia.org/wiki/${encodeURIComponent(t)}`
-      });
-    }catch(e){}
+  offsetX = e.clientX - floatingBtn.offsetLeft;
+  offsetY = e.clientY - floatingBtn.offsetTop;
+};
+document.onmousemove = e => {
+  if(isDragging){
+    floatingBtn.style.left = (e.clientX - offsetX) + 'px';
+    floatingBtn.style.top = (e.clientY - offsetY) + 'px';
   }
-  return results;
-}
+};
+document.onmouseup = () => isDragging=false;
 
-async function fetchRedditPosts(subs=['Meditation','Philosophy']){
-  const results = [];
-  for(const s of subs){
-    try{
-      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://www.reddit.com/r/'+s+'/hot.json?limit=6')}`;
-      const r = await fetch(url);
-      if(!r.ok) continue;
-      const json = await r.json();
-      if(json && json.data && Array.isArray(json.data.children)){
-        json.data.children.forEach(ch=>{
-          const d = ch.data;
-          results.push({
-            source: `r/${s}`,
-            title: d.title || 'Reddit post',
-            extract: (d.selftext && d.selftext.substring(0,300)) || '',
-            url: `https://reddit.com${d.permalink}`
-          });
-        });
-      }
-    }catch(e){}
-  }
-  return results;
-}
+// --- Inicialización ---
+updateDisplay();
 
-async function fetchArxiv(query='mindfulness OR meditation', max=15){
-  try{
-    const api = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&start=0&max_results=${max}`;
-    const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`;
-    const r = await fetch(proxy);
-    if(!r.ok) return [];
-    const text = await r.text();
-    const doc = new DOMParser().parseFromString(text,'application/xml');
-    const entries = Array.from(doc.querySelectorAll('entry'));
-    return entries.map(e=>{
-      return {
-        source: 'arXiv',
-        title: (e.querySelector('title') && e.querySelector('title').textContent.trim()) || 'arXiv article',
-        extract: (e.querySelector('summary') && e.querySelector('summary').textContent.trim().replace(/\s+/g,' ').substring(0,300)) || '',
-        url: (e.querySelector('id') && e.querySelector('id').textContent) || ''
-      };
-    });
-  }catch(e){ return []; }
-}
-
-async function loadArticles(){
-  try{
-    const last = localStorage.getItem(ARTICLES_DATE_KEY);
-    const now = Date.now();
-    if(!last || (now - Number(last)) > ROTATE_MS || !localStorage.getItem(ARTICLES_KEY)){
-      // fetch fresh
-      const [wiki, reddit, arxiv] = await Promise.all([fetchWikipediaTopics(), fetchRedditPosts(), fetchArxiv()]);
-      const combined = [...wiki, ...reddit, ...arxiv];
-      // if empty, fallback
-      const items = combined.length ? combined.slice(0,MAX_ARTICLES) : Array.from({length:MAX_ARTICLES}).map((_,i)=>({
-        source: 'Local',
-        title: `Artículo de ejemplo ${i+1}`,
-        extract: `Este es un resumen de ejemplo para el artículo ${i+1}. Reemplaza con fetch real si quieres.`,
-        url: '#'
-      }));
-      localStorage.setItem(ARTICLES_KEY, JSON.stringify(items));
-      localStorage.setItem(ARTICLES_DATE_KEY, String(now));
-      renderArticles(items);
-    } else {
-      const saved = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]');
-      renderArticles(saved);
-    }
-  }catch(e){
-    // fallback
-    const items = Array.from({length:10}).map((_,i)=>({source:'Local',title:`Artículo ${i+1}`,extract:`Resumen ${i+1}`,url:'#'}));
-    renderArticles(items);
-  }
-}
-
-function renderArticles(items){
-  const grid = $('articlesGrid');
-  grid.innerHTML = '';
-  items.forEach(a=>{
-    const card = document.createElement('div');
-    card.className = 'article-card';
-    const title = a.title || 'Sin título';
-    const extract = (a.extract || '').replace(/\n/g,' ').trim();
-    const shortTitle = title.length > 60 ? title.slice(0,57)+'...' : title;
-    const shortExtract = extract.length > 220 ? extract.slice(0,217)+'...' : extract;
-    const source = a.source || 'Fuente';
-    const url = a.url || '#';
-    card.innerHTML = `
-      <h3>${shortTitle}</h3>
-      <p>${shortExtract}</p>
-      <div class="source">Fuente: ${source}</div>
-      <div style="margin-top:8px"><button class="read-btn">Leer más</button></div>
-    `;
-    const btn = card.querySelector('.read-btn');
-    btn.addEventListener('click', ()=> {
-      if(url && url !== '#') window.open(url,'_blank');
-    });
-    grid.appendChild(card);
-  });
-}
-
-/* ---------- YouTube recommendations (rotate daily) ---------- */
-/* Full pool — puedes ampliar la lista con más videoId/title */
-const YT_POOL = [
-  {title:'Relaxing Forest Sounds', videoId:'2OEL4P1Rz04'},
-  {title:'Ocean Waves for Meditation', videoId:'VudJ_3R8F7A'},
-  {title:'Rain Sounds Nature', videoId:'qMiwb7cR3pE'},
-  {title:'Mountain Stream', videoId:'5qap5aO4i9A'},
-  {title:'Jungle Ambience', videoId:'OdIJ2x3nxzQ'},
-  {title:'Calm Night Crickets', videoId:'1ZYbU82GVz4'},
-  {title:'Deep Ocean Waves', videoId:'ABdFQvT2gBI'},
-  {title:'Waterfall Relaxation', videoId:'W0s0cKZqjSE'}
+// --- Artículos dinámicos (ejemplo local) ---
+const articles = [
+  {title:"Meditación y ciencia",summary:"Descubre cómo la meditación transforma tu cerebro.",url:"https://es.wikipedia.org/wiki/Meditaci%C3%B3n"},
+  {title:"La energía del pensamiento",summary:"Explora cómo tus pensamientos influyen en tu realidad.",url:"https://es.wikipedia.org/wiki/Pensamiento"},
+  {title:"Conexión mente-universo",summary:"Un puente entre espiritualidad y física cuántica.",url:"https://es.wikipedia.org/wiki/F%C3%ADsica_cu%C3%A1ntica"}
 ];
-
-function dailyRotation(pool, count=4){
-  const day = new Date().toISOString().slice(0,10).replace(/-/g,''); // YYYYMMDD
-  const seed = Array.from(day).reduce((s,ch)=>s + Number(ch||0),0);
-  // simple deterministic shuffle: rotate by seed % pool.length
-  const offset = seed % pool.length;
-  const arr = [];
-  for(let i=0;i<count;i++){
-    arr.push(pool[(offset + i) % pool.length]);
-  }
-  return arr;
-}
-
-function renderYTGrid(items){
-  const grid = $('youtubeGrid');
-  grid.innerHTML = '';
-  items.forEach(it=>{
-    const thumb = document.createElement('div');
-    thumb.className = 'youtube-thumb';
-    const img = document.createElement('img');
-    img.src = `https://i.ytimg.com/vi/${it.videoId}/hqdefault.jpg`;
-    img.alt = it.title;
-    const title = document.createElement('div');
-    title.className = 'yt-title';
-    title.textContent = it.title;
-    const controls = document.createElement('div');
-    controls.className = 'youtube-controls';
-    const playBtn = document.createElement('button');
-    playBtn.className='btn-primary';
-    playBtn.textContent = '▶️';
-    playBtn.addEventListener('click', ()=> playYT(it.videoId, it.title));
-    const openBtn = document.createElement('button');
-    openBtn.className='btn-primary';
-    openBtn.textContent = 'Abrir';
-    openBtn.addEventListener('click', ()=> window.open(`https://www.youtube.com/watch?v=${it.videoId}`,'_blank'));
-    controls.appendChild(playBtn);
-    controls.appendChild(openBtn);
-
-    thumb.appendChild(img);
-    thumb.appendChild(title);
-    thumb.appendChild(controls);
-    grid.appendChild(thumb);
+function loadArticles(){
+  const list = document.getElementById("articlesList");
+  list.innerHTML="";
+  articles.forEach(a=>{
+    const div=document.createElement("div");
+    div.innerHTML=`<h4>${a.title}</h4><p>${a.summary}</p><a href="${a.url}" target="_blank">Leer más</a><hr/>`;
+    list.appendChild(div);
   });
 }
-
-function loadDailyRecs(){
-  const items = dailyRotation(YT_POOL, 6);
-  renderYTGrid(items);
-  // also render in sidebar 'music of the day'
-  const dl = $('dailyList'); dl.innerHTML = '';
-  items.forEach(it=>{
-    const div = document.createElement('div');
-    div.style.display='flex'; div.style.gap='8px'; div.style.alignItems='center';
-    const img = document.createElement('img'); img.src=`https://i.ytimg.com/vi/${it.videoId}/default.jpg`; img.style.width='56px'; img.style.height='40px'; img.style.objectFit='cover'; img.style.borderRadius='6px';
-    const title = document.createElement('div'); title.style.fontSize='13px'; title.textContent=it.title;
-    const play = document.createElement('button'); play.className='btn-primary'; play.textContent='▶️'; play.addEventListener('click', ()=> playYT(it.videoId, it.title));
-    div.appendChild(img); div.appendChild(title); div.appendChild(play);
-    dl.appendChild(div);
-  });
-}
-
-/* ---------- YouTube player (embedded iframe) ---------- */
-function playYT(videoId, title){
-  const audioOnly = $('audioOnlyToggle').checked;
-  const container = $('ytPlayerContainer');
-  const iframe = $('ytPlayer');
-  // build embed url; use modestbranding and controls depending on audioOnly
-  const params = new URLSearchParams({
-    autoplay: 1,
-    controls: audioOnly ? 0 : 1,
-    modestbranding: 1,
-    rel: 0,
-    enablejsapi: 1,
-    origin: location.origin
-  });
-  iframe.src = `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
-  container.style.display = 'block';
-  $('ytNow').textContent = `Reproduciendo: ${title}`; 
-  // if audioOnly, shrink the visual
-  if(audioOnly){
-    iframe.style.height = '1px';
-    iframe.style.width = '1px';
-    iframe.style.opacity = '0';
-  } else {
-    iframe.style.width = '100%';
-    iframe.style.height = '180px';
-    iframe.style.opacity = '1';
-  }
-}
-
-function stopYT(){
-  const iframe = $('ytPlayer');
-  iframe.src = '';
-  $('ytPlayerContainer').style.display = 'none';
-  $('ytNow').textContent = '';
-}
-
-/* ---------- Search (simple client-side filter of pool) ---------- */
-function doSearch(){
-  const k = $('ytKeyword').value.trim().toLowerCase();
-  if(!k){ loadDailyRecs(); return; }
-  const results = YT_POOL.filter(p => p.title.toLowerCase().includes(k));
-  if(results.length) renderYTGrid(results);
-  else {
-    // fallback: call YouTube Data API if you add an API key later; for now show daily recs
-    renderYTGrid(dailyRotation(YT_POOL,6));
-  }
-}
-
-/* ---------- Subscription form ---------- */
-$('subForm').addEventListener('submit', e=>{
-  e.preventDefault();
-  $('subInfo').textContent = '¡Gracias! Te hemos suscrito (demo)';
-  $('emailInput').value = '';
-});
-
-/* ---------- Init ---------- */
-updateDisplays();
 loadArticles();
-loadDailyRecs();
-renderYTGrid(dailyRotation(YT_POOL,6));
 </script>
 </body>
 </html>
