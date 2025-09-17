@@ -23,8 +23,6 @@
                 linear-gradient(120deg, #0b1220 0%, #1b2440 25%, #2a1a4a 55%, #04383a 100%);
     overflow-x:hidden;
   }
-
-  /* header */
   header{
     position:sticky;top:0;z-index:50;
     display:flex;align-items:center;justify-content:space-between;
@@ -45,10 +43,7 @@
     color: #e6edff; text-decoration:none; margin:0 10px; font-weight:600;
   }
   nav a:hover{color:#fff9c4;text-shadow:0 0 10px rgba(255,240,190,0.12)}
-
   main{max-width:1100px;margin:0 auto;padding:20px}
-
-  /* Hero */
   .hero{
     padding:48px 18px 36px;
     display:flex;flex-direction:column;align-items:center;gap:18px;
@@ -71,34 +66,31 @@
   }
   .phrase.show{opacity:1; transform:translateY(0)}
   .hero p.lead{max-width:760px;color:#cbd9ff;margin:0;font-size:16px}
-
-  /* meditation area */
   #meditacion{
     margin-top:10px;padding:36px 14px;display:flex;flex-direction:column;align-items:center;gap:14px;
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
     border-radius:14px; box-shadow: 0 10px 40px rgba(15,10,40,0.28);
     border: 1px solid rgba(255,255,255,0.03);
   }
-  .circle{
-    width:200px;height:200px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  .meditation-btn{
+    width:200px;height:200px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
     background: radial-gradient(circle at 35% 30%, #fff3c3 0%, #ffb74d 40%, #f59e0b 70%);
     color:#1b1b1b;font-weight:700;font-size:18px;text-align:center;padding:14px;
     box-shadow: 0 10px 40px rgba(250, 180, 40,0.24);
-    transition: width 1s linear, height 1s linear, transform 0.4s ease;
-    cursor:pointer;
+    transition: all 1s ease-in-out, transform 0.4s ease;
+    cursor:pointer;border:none;
   }
-  .circle.small{ width:80px;height:80px;font-size:12px }
+  .meditation-btn.small{ width:80px;height:80px;font-size:12px; transform: scale(1.05); }
   .timer-text{ margin-top:8px;font-size:20px;color:#eaf6ff;text-shadow:0 6px 18px rgba(50,120,200,0.16)}
-
-  /* subscription */
   .subscribe{margin-top:18px;padding:18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));display:flex;gap:8px;align-items:center;justify-content:center}
   .subscribe input{padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);min-width:220px}
   .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:white;padding:12px 18px;border-radius:8px;font-weight:700;cursor:pointer}
-
   @media (max-width:720px){
     .hero h1{font-size:28px}
     .logo{width:40px;height:40px;font-size:16px}
-    .circle{width:160px;height:160px}
+    .meditation-btn{width:160px;height:160px}
+    nav{display:none}
   }
 </style>
 </head>
@@ -121,26 +113,26 @@
 </header>
 
 <main>
-  <!-- HERO -->
   <section class="hero">
     <h1>Con corazón se inicia,<br>con alma se trasciende</h1>
     <div class="phrases" aria-live="polite"></div>
     <p class="lead">Bienvenido a Coralma: un espacio para el cultivo interior. Encuentra guías, lecturas, meditaciones y herramientas para el camino.</p>
   </section>
 
-  <!-- MEDITACIÓN -->
   <section id="meditacion" aria-label="Meditación">
     <h2>Meditación guiada</h2>
     <p style="max-width:700px;color:#d6e7ff">Cierra los ojos un instante y deja que la respiración te guíe. Pulsa el círculo para iniciar la meditación guiada de 5 minutos.</p>
-    <div id="circle" class="circle" role="button" aria-pressed="false" tabindex="0" title="Iniciar meditación">✨ Ven, medita con nosotros ✨</div>
+    
+    <button id="meditationBtn" class="meditation-btn" aria-pressed="false" title="Iniciar meditación">
+      <span id="buttonText">✨ Ven, medita con nosotros ✨</span>
+      <span id="meditationState" style="display:none;">Meditando...</span>
+    </button>
+    
     <div class="timer-text" id="timerText">05:00</div>
-    <div style="margin-top:12px">
-      <button class="btn-primary" onclick="iniciarMeditacion()">Iniciar meditación (5 min)</button>
-    </div>
+    
     <audio id="bellSound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
   </section>
 
-  <!-- DONACIONES -->
   <section id="donaciones" style="margin-top:40px;text-align:center">
     <h2>Apoya nuestro camino</h2>
     <p style="color:#dbeaff;max-width:600px;margin:0 auto 16px">Si Coralma te aporta valor, puedes apoyar nuestro proyecto con una donación.</p>
@@ -176,19 +168,36 @@
 
   // temporizador meditación
   let timer;
+  const meditationBtn = document.getElementById("meditationBtn");
+  const timerText = document.getElementById("timerText");
+  const bell = document.getElementById("bellSound");
+
+  meditationBtn.addEventListener('click', iniciarMeditacion);
+
   function iniciarMeditacion(){
     clearInterval(timer);
     let time = 5 * 60; // 5 minutos
-    const timerText = document.getElementById("timerText");
-    const bell = document.getElementById("bellSound");
-    bell.play(); // sonido al iniciar
+
+    meditationBtn.classList.add('small');
+    meditationBtn.setAttribute('aria-pressed', 'true');
+    document.getElementById('buttonText').style.display = 'none';
+    document.getElementById('meditationState').style.display = 'block';
+
+    bell.play();
+    
     timer = setInterval(()=>{
       const minutes = String(Math.floor(time/60)).padStart(2,'0');
       const seconds = String(time%60).padStart(2,'0');
       timerText.textContent = `${minutes}:${seconds}`;
-      if(time<=0){
+      
+      if(time <= 0){
         clearInterval(timer);
-        bell.play(); // sonido al terminar
+        bell.play();
+        meditationBtn.classList.remove('small');
+        meditationBtn.setAttribute('aria-pressed', 'false');
+        document.getElementById('buttonText').style.display = 'block';
+        document.getElementById('meditationState').style.display = 'none';
+        timerText.textContent = "05:00";
       }
       time--;
     },1000);
