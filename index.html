@@ -57,7 +57,7 @@
       text-decoration: none;
     }
 
-    /* Sección vela */
+    /* Sección meditación */
     #vela-section {
       display: flex;
       flex-direction: column;
@@ -67,42 +67,23 @@
       text-align: center;
     }
 
-    .vela {
-      position: relative;
-      width: 120px;
+    .circle {
+      width: 200px;
       height: 200px;
-      background: radial-gradient(circle at 70% 30%, #fef3c7, #f59e0b 70%, #78350f 100%);
-      border-radius: 70px/140px;
-      box-shadow: 0 0 40px rgba(255, 200, 0, 0.6);
-      cursor: pointer;
-      overflow: hidden;
-      transition: height 1s linear;
-    }
-
-    .flame {
-      position: absolute;
-      top: -80px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 80px;
-      background: radial-gradient(circle at 50% 30%, #fef08a, #facc15 40%, transparent 70%);
       border-radius: 50%;
-      animation: flameFlicker 2s infinite ease-in-out;
-      filter: blur(2px);
+      background: radial-gradient(circle, #fde68a, #f59e0b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 40px rgba(255, 200, 0, 0.6);
+      transition: width 1s linear, height 1s linear;
+      cursor: pointer;
     }
 
-    @keyframes flameFlicker {
-      0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
-      50% { transform: translateX(-48%) scale(1.05); opacity: 1; }
-      100% { transform: translateX(-52%) scale(0.95); opacity: 0.8; }
-    }
-
-    .vela-text {
-      margin-top: 20px;
-      font-size: 18px;
+    .circle-text {
       font-weight: bold;
       text-shadow: 0 0 8px #fff;
+      color: #000;
     }
 
     #timer {
@@ -110,6 +91,24 @@
       font-size: 22px;
       font-weight: bold;
       text-shadow: 0 0 10px #7dd3fc;
+    }
+
+    /* Donaciones */
+    #donaciones {
+      padding: 80px 20px;
+      text-align: center;
+      background: rgba(0,0,0,0.5);
+      border-top: 2px solid rgba(255,255,255,0.2);
+    }
+    #donaciones h2 {
+      font-size: 28px;
+      margin-bottom: 12px;
+      text-shadow: 0 0 12px #fff;
+    }
+    #donaciones p {
+      font-size: 18px;
+      font-style: italic;
+      text-shadow: 0 0 8px #7dd3fc;
     }
   </style>
 </head>
@@ -125,14 +124,18 @@
   </header>
 
   <section id="vela-section">
-    <div class="vela" id="velaBtn">
-      <div class="flame"></div>
+    <div class="circle" id="velaBtn">
+      <span class="circle-text">✨ Ven, medita con nosotros ✨</span>
     </div>
-    <div class="vela-text">✨ Ven, medita con nosotros ✨</div>
     <div id="timer"></div>
   </section>
 
-  <!-- Sonido natural relajante -->
+  <section id="donaciones">
+    <h2>Donaciones</h2>
+    <p>✨ Todo lo que das regresa a ti multiplicado ✨</p>
+  </section>
+
+  <!-- Sonido relajante -->
   <audio id="natureSound" loop>
     <source src="https://cdn.pixabay.com/download/audio/2023/05/30/audio_6f6b1c63a4.mp3?filename=forest-river-birds-nature-ambient-146184.mp3" type="audio/mp3">
   </audio>
@@ -151,15 +154,18 @@
         time--;
         timerEl.textContent = formatTime(time);
 
-        // la vela se derrite poco a poco
-        vela.style.height = (200 * (time/180)) + "px";
+        // El círculo se encoge poco a poco
+        let size = 200 * (time/180);
+        vela.style.width = size + "px";
+        vela.style.height = size + "px";
 
         if (time <= 0) {
           clearInterval(countdown);
           timerEl.textContent = "✨ Meditación finalizada ✨";
           sound.pause();
           sound.currentTime = 0;
-          vela.style.height = "60px"; // vela casi consumida
+          vela.style.width = "80px";
+          vela.style.height = "80px";
         }
       }, 1000);
     });
