@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>CorAlma — Encuentra tu calma</title>
-<meta name="description" content="Meditaciones, sonidos y artículos dinámicos (Wikipedia, Reddit, arXiv). Sonidos con fallback entre servidores." />
+<meta name="description" content="Meditaciones, sonidos y artículos dinámicos. Sonidos con fallback entre servidores." />
 <style>
 :root{
   --bg1:#020414; --bg2:#041428;
@@ -14,13 +14,20 @@
   --text:#e6f9ff;
 }
 *{box-sizing:border-box}
-html,body{height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: radial-gradient(circle at 10% 10%, rgba(138,108,255,0.06), transparent 6%), radial-gradient(circle at 90% 70%, rgba(110,198,217,0.04), transparent 10%), linear-gradient(180deg,var(--bg1), var(--bg2)); color:var(--text); -webkit-font-smoothing:antialiased;}
+html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;}
+body{
+  background:
+    radial-gradient(circle at 10% 10%, rgba(138,108,255,0.06), transparent 6%),
+    radial-gradient(circle at 90% 70%, rgba(110,198,217,0.04), transparent 10%),
+    linear-gradient(180deg,var(--bg1), var(--bg2));
+  color:var(--text); -webkit-font-smoothing:antialiased;min-height:100vh;
+}
 .container{max-width:1180px;margin:24px auto;padding:18px}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px}
 .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
 h1{font-size:18px;margin:0}
-nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+nav{display:flex;gap:10px;align-items:center}
 nav a{color:#cfeffb;text-decoration:none;padding:8px 10px;border-radius:9px}
 nav a:hover{background:var(--glass)}
 .hero{margin-top:14px;border-radius:14px;padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));display:flex;gap:20px;align-items:center;position:relative;overflow:hidden}
@@ -36,19 +43,19 @@ main{min-width:0}
 .med-card{max-width:760px;margin:0 auto;padding:22px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);box-shadow:0 10px 40px rgba(15,30,50,0.45)}
 .center{display:flex;flex-direction:column;align-items:center;gap:12px}
 .selector-row{display:flex;gap:10px;align-items:center;width:100%;justify-content:center;flex-wrap:wrap}
-select{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
+select,input{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
 .timer-btns{display:flex;gap:8px}
 .timer-btns button{padding:8px 12px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:#dff8ff;cursor:pointer}
 .time-display{font-weight:700}
-.med-circle{width:170px;height:170px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:transform .18s ease, box-shadow .18s}
+.med-circle{width:170px;height:170px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:transform .18s}
 .med-circle:hover{transform:scale(1.03)}
 .pulse { animation: pulse 2000ms infinite; }
 @keyframes pulse {0%{box-shadow:0 8px 28px rgba(138,108,255,0.22)}50%{box-shadow:0 18px 44px rgba(110,198,217,0.20)}100%{box-shadow:0 8px 28px rgba(138,108,255,0.22)}}
-.articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;max-height:650px;overflow-y:auto;margin-top:12px;padding-right:6px}
+.articles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:12px;max-height:500px;overflow:auto}
 .article-card{padding:14px;border-radius:10px;background:rgba(255,255,255,0.01);text-align:left}
-.article-card h3{margin:0 0 8px 0;font-size:16px}
+.article-card h3{margin:0 0 6px 0;font-size:16px}
 .article-card p{margin:0;color:#cfeef7;font-size:14px}
-.read-btn{margin-top:10px;padding:6px 8px;border-radius:10px;border:0;background:rgba(255,255,255,0.04);color:#dff8ff;cursor:pointer}
+.read-btn{margin-top:6px;padding:6px 8px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#dff8ff;cursor:pointer;font-size:13px}
 aside{position:relative}
 .side-block{display:flex;flex-direction:column;gap:14px}
 .sounds-list{max-height:320px;overflow:auto;padding-right:6px}
@@ -58,14 +65,15 @@ footer{margin-top:28px;padding:18px 0;display:flex;justify-content:space-between
 .socials{display:flex;gap:12px}
 .socials a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:8px;background:rgba(255,255,255,0.03)}
 .socials svg{width:20px;height:20px;fill:#e6f9ff}
-.floating-med{position:fixed;right:20px;top:50%;transform:translateY(-50%);width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);z-index:1000;transition:transform .18s; user-select:none;}
-.floating-med:hover{transform:scale(1.05);}
-.dragging{opacity:0.8;}
-.youtube-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:14px;overflow-x:auto;padding-bottom:8px}
-.youtube-card{display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,0.01);padding:6px;border-radius:8px;text-align:center;font-size:14px;color:#dff8ff}
-.youtube-card img{border-radius:6px;cursor:pointer}
-.webview-banner{position:fixed;left:12px;right:12px;bottom:12px;background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:10px 12px;border-radius:12px;display:none;z-index:90;box-shadow:0 12px 40px rgba(10,20,40,0.5)}
-.webview-banner button{margin-left:12px;background:transparent;border:1px solid rgba(2,16,24,0.08);padding:6px 8px;border-radius:8px;cursor:pointer}
+.floating-sidebar{position:fixed;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:1000}
+.floating-btn{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s}
+.floating-btn:hover{transform:scale(1.08);background:rgba(255,255,255,0.08)}
+.youtube-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:14px}
+.youtube-thumb{position:relative;cursor:pointer;border-radius:10px;overflow:hidden;background:#111;}
+.youtube-thumb img{width:100%;display:block;}
+.youtube-thumb .yt-title{position:absolute;bottom:0;left:0;width:100%;background:rgba(0,0,0,0.5);color:#fff;font-size:12px;padding:4px;text-align:center;}
+.draggable{position:fixed;bottom:80px;right:20px;z-index:2000;cursor:move;}
+iframe{border-radius:10px;}
 @media(max-width:980px){.grid{grid-template-columns:1fr}.articles-grid{grid-template-columns:1fr}.hero{flex-direction:column}.med-card{width:100%}}
 @media(max-width:520px){.med-circle{width:150px;height:150px;font-size:14px}}
 button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offset: 3px; }
@@ -74,160 +82,299 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
 <body>
 <div class="container">
 <header>
-  <div class="brand">
-    <div class="logo">CA</div>
-    <div>
-      <h1>CorAlma</h1>
-      <div style="font-size:12px;color:#bfeffd">Encuentra tu calma en el universo interior</div>
-    </div>
-  </div>
-  <nav>
-    <a href="#">Inicio</a>
-    <a href="#articles">Artículos</a>
-    <a href="https://www.google.com" target="_blank">Google</a>
-    <a href="https://www.youtube.com" target="_blank">YouTube</a>
-    <a href="#contact">Contacto</a>
-  </nav>
+<div class="brand">
+<div class="logo">CA</div>
+<div>
+<h1>CorAlma</h1>
+<div style="font-size:12px;color:#bfeffd">Encuentra tu calma en el universo interior</div>
+</div>
+</div>
+<nav>
+<a href="#">Inicio</a>
+<a href="#medit-block">Meditación</a>
+<a href="#art">Artículos</a>
+<a href="#reg">Registro</a>
+<a href="#don">Donaciones</a>
+<a href="#contact">Contacto</a>
+</nav>
 </header>
 
-<section class="hero">
-  <div class="hero-left">
-    <h2>Encuentra calma y presencia con prácticas basadas en ciencia y tradición</h2>
-    <p>Sonidos curados, meditaciones guiadas y artículos con referencias científicas para sostener tu práctica.</p>
-  </div>
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-title">
+<div class="hero-left">
+<h2 id="hero-title">Encuentra calma y presencia con prácticas basadas en ciencia y tradición</h2>
+<p>Sonidos curados, meditaciones guiadas y artículos con referencias científicas para sostener tu práctica.</p>
+<div class="cta"><button class="btn-primary" onclick="document.getElementById('medit-block').scrollIntoView({behavior:'smooth'})">Iniciar Meditación</button></div>
+</div>
+<div class="hero-visual" aria-hidden="true">
+<svg width="260" height="260" viewBox="0 0 200 200">
+<g class="stars">
+<circle class="star" cx="20" cy="30" r="1.6" style="animation-delay:0s"/>
+<circle class="star" cx="40" cy="70" r="1.2" style="animation-delay:0.8s"/>
+<circle class="star" cx="80" cy="20" r="1.4" style="animation-delay:1.2s"/>
+<circle class="star" cx="150" cy="50" r="1.8" style="animation-delay:0.3s"/>
+<circle class="star" cx="170" cy="120" r="1.3" style="animation-delay:1.7s"/>
+<circle class="star" cx="110" cy="150" r="1.1" style="animation-delay:2.4s"/>
+<circle class="star" cx="30" cy="140" r="1.5" style="animation-delay:1.1s"/>
+</g>
+<g class="planet" transform="translate(40,20)">
+<defs>
+<linearGradient id="pgrad" x1="0" x2="1">
+<stop offset="0" stop-color="#6ec6d9"/>
+<stop offset="1" stop-color="#8a6cff"/>
+</linearGradient>
+</defs>
+<circle cx="60" cy="60" r="50" fill="url(#pgrad)" opacity="0.95"/>
+<ellipse cx="60" cy="68" rx="62" ry="14" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="2" transform="rotate(-18 60 60)"/>
+<circle cx="42" cy="50" r="6" fill="rgba(255,255,255,0.06)"/>
+</g>
+</svg>
+</div>
 </section>
 
 <div class="grid">
 <main>
-  <section class="card" id="articles">
-    <h3>Artículos</h3>
-    <div class="articles-grid" id="articlesGrid"></div>
-  </section>
+<!-- Meditación -->
+<section id="medit-block" class="card med-card" aria-labelledby="medit-title">
+<div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+<h3 id="medit-title" style="margin:0">Meditación interactiva</h3>
+<p style="margin:0;color:#cfeef7">Selecciona sonido, elige duración y haz click en el círculo para comenzar.</p>
+<div class="selector-row" style="margin-top:12px">
+<label for="soundSelect" style="color:#bfeffd">Selecciona sonido</label>
+<select id="soundSelect" aria-label="Selecciona sonido">
+<option value="nature1.mp3">Lluvia suave</option>
+<option value="nature2.mp3">Bosque</option>
+<option value="nature3.mp3">Río</option>
+</select>
+</div>
+<div class="selector-row" style="margin-top:6px">
+<div class="timer-btns" role="group" aria-label="Duraciones">
+<button onclick="setTimer(300)">5 min</button>
+<button onclick="setTimer(600)">10 min</button>
+<button onclick="setTimer(900)">15 min</button>
+</div>
+<div style="flex:1"></div>
+<div class="time-display" aria-live="polite">Tiempo: <span id="timeDisplay">00:00</span></div>
+</div>
+<div style="margin-top:14px" class="center">
+<div id="medCircle" class="med-circle pulse" role="button" aria-label="Click aquí para meditar" tabindex="0">
+Click aquí<br><span style="font-size:12px;opacity:0.9">para meditar</span>
+</div>
+</div>
+<div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+<button id="startBtn" class="btn-primary">Iniciar</button>
+<button id="stopBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cfeef7;padding:8px 12px;border-radius:10px">Detener</button>
+</div>
+<div id="audioNotice" class="notice" style="display:none"></div>
+<audio id="audioPlayer" preload="none" controls style="display:none"></audio>
+</section>
 
-  <section class="card" id="youtube">
-    <h3>Recomendaciones de música</h3>
-    <div class="youtube-grid" id="youtubeGrid"></div>
-  </section>
+<!-- Artículos -->
+<section class="card" style="margin-top:16px" id="art">
+<h3 style="margin-top:0">Artículos</h3>
+<div class="articles-grid" id="articlesGrid" role="list"></div>
+</section>
+
+<!-- YouTube buscador -->
+<section class="card" style="margin-top:16px">
+<h3>Buscador de música (YouTube)</h3>
+<div class="selector-row">
+<input id="ytKeyword" type="text" placeholder="Escribe palabra clave..." style="flex:1">
+<button class="btn-primary" onclick="searchYouTube()">Buscar</button>
+</div>
+<div class="youtube-container" id="youtubeResults"></div>
+</section>
 </main>
 
 <aside>
-  <div class="side-block">
-    <div class="card">
-      <h4>Frases Inspiradoras</h4>
-      <p id="fraseText">“La calma no es un lugar, es un estado que cultivas.”</p>
-    </div>
+<div class="side-block">
+<div class="card" aria-labelledby="sounds-title">
+<h4 id="sounds-title" style="margin-top:0">Selector de sonidos</h4>
+<div class="sounds-list" id="soundsList">
+<div class="sound-item">Lluvia suave</div>
+<div class="sound-item">Bosque</div>
+<div class="sound-item">Río</div>
+</div>
+</div>
 
-    <div class="card" id="contact">
-      <h4>Contacto</h4>
-      <form id="contactForm">
-        <input type="email" placeholder="tu@correo.com" required style="width:100%;padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:#dff8ff">
-        <div style="margin-top:10px"><button class="btn-primary" type="submit">Enviar</button></div>
-      </form>
-    </div>
-  </div>
+<div class="card" id="reg">
+<h4 style="margin-top:0">Registro / Frase mensual</h4>
+<form id="subForm">
+<input id="emailInput" type="email" placeholder="tu@correo.com" required>
+<div style="margin-top:10px"><button class="btn-primary" type="submit">Suscribirme</button></div>
+</form>
+<div id="subInfo" style="margin-top:12px;color:#bfeffd"></div>
+</div>
+
+<div class="card" id="don">
+<h4 style="margin-top:0">Donaciones</h4>
+<p style="margin:0 0 10px 0;color:#cfeef7">Si valoras este proyecto, apóyalo. Las donaciones mantienen el contenido libre.</p>
+<a class="btn-primary" href="https://www.paypal.com/donate" target="_blank" rel="noopener">Donar con PayPal</a>
+</div>
+</div>
 </aside>
 </div>
 
-<footer>
-  <div style="color:#9fd8ea">
-    Contacto: <a href="mailto:almacoralma@gmail.com">almacoralma@gmail.com</a>
-  </div>
-  <div class="socials">
-    <a href="https://www.instagram.com/effectno33" target="_blank" rel="noopener">IG</a>
-    <a href="https://www.tiktok.com/@effect.33" target="_blank" rel="noopener">TT</a>
-    <a href="https://youtube.com/@effect.no33" target="_blank" rel="noopener">YT</a>
-  </div>
-</footer>
+<footer id="contact">
+<div style="color:#9fd8ea">
+Contacto: <a href="mailto:almacoralma@gmail.com">almacoralma@gmail.com</a>
 </div>
-
-<div id="medFloating" class="floating-med">
-  <div>
-    Meditar<br><span id="medTimer">00:00</span>
-  </div>
-</div>
-
-<script>
-// ---------- VARIABLES ----------
-const articlesGrid = document.getElementById('articlesGrid');
-const youtubeGrid = document.getElementById('youtubeGrid');
-const frases = [
-  "La calma no es un lugar, es un estado que cultivas.",
-  "Respira profundo y deja que todo fluya.",
-  "Cada instante es una oportunidad de comenzar de nuevo."
-];
-document.getElementById('fraseText').innerText = frases[Math.floor(Math.random()*frases.length)];
-
-// ---------- ARTÍCULOS DINÁMICOS CADA 3 DÍAS ----------
-const MAX_ARTICLES = 30;
-const ROTATE_DAYS = 3;
-let articles = [];
-if(localStorage.getItem('articles_data')){
-  const saved = JSON.parse(localStorage.getItem('articles_data'));
-  const last = new Date(saved.date);
-  const diff = (new Date() - last)/(1000*60*60*24);
-  if(diff<ROTATE_DAYS){
-    articles = saved.items;
+<div class="socials" aria-label="Redes sociales">
+<a href="https://www.instagram.com/effectno33" target="_blank"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9zM18.5 6a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8z" fill="#e6f9ff"/></svg></a>
+<a href="https://www.tiktok.com/@effect.33" target="_blank"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2v7.1a4.5 4.5 0 0 1-4.5-4.5H9A6 6 0 1 0 15 15.9V9h3V2h-3z" fill="#e6f9ff"/></svg></a>
+<a href="https://youtube.com/@effect.no33" target/* ---------- Articles rotation every 3 days ---------- */
+async function loadArticles() {
+  const lastDate = localStorage.getItem(ARTICLES_DATE_KEY);
+  const now = new Date().getTime();
+  if (!lastDate || now - lastDate > 3*24*60*60*1000) {
+    // fetch fresh
+    const wiki = await fetchWikipediaTopics();
+    const reddit = await fetchRedditPosts();
+    const arxiv = await fetchArxiv();
+    const combined = [...wiki, ...reddit, ...arxiv].slice(0, MAX_ARTICLES);
+    localStorage.setItem(ARTICLES_KEY, JSON.stringify(combined));
+    localStorage.setItem(ARTICLES_DATE_KEY, now.toString());
+    renderArticles(combined);
+  } else {
+    const saved = JSON.parse(localStorage.getItem(ARTICLES_KEY)||'[]');
+    renderArticles(saved);
   }
 }
-if(!articles.length){
-  for(let i=1;i<=MAX_ARTICLES;i++){
-    articles.push({title:`Artículo ${i}`,summary:`Resumen del artículo ${i}`});
-  }
-  localStorage.setItem('articles_data', JSON.stringify({date:new Date(),items:articles}));
+
+function renderArticles(articles) {
+  const grid = $('#articlesGrid');
+  grid.innerHTML = '';
+  articles.forEach(a => {
+    const card = document.createElement('div');
+    card.className = 'article-card';
+    card.innerHTML = `
+      <h3>${a.title.length>50?a.title.substring(0,47)+'...':a.title}</h3>
+      <p>${a.extract.length>150?a.extract.substring(0,147)+'...':a.extract}</p>
+      <div style="font-size:11px;color:#9fd8ea">Fuente: ${a.source}</div>
+      <button class="read-btn" onclick="window.open('${a.url}','_blank')">Leer más</button>
+    `;
+    grid.appendChild(card);
+  });
 }
-articlesGrid.innerHTML = '';
-articles.forEach(a=>{
-  const card = document.createElement('div');
-  card.className='article-card';
-  card.innerHTML=`<h3>${a.title}</h3><p>${a.summary}</p>`;
-  articlesGrid.appendChild(card);
-});
 
-// ---------- YOUTUBE MINIATURAS ----------
-const ytSample = [
-  {title:'Sonido Calmante 1',thumb:'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ'},
-  {title:'Sonido Calmante 2',thumb:'https://i.ytimg.com/vi/oHg5SJYRHA0/hqdefault.jpg',url:'https://www.youtube.com/watch?v=oHg5SJYRHA0'},
-  {title:'Sonido Calmante 3',thumb:'https://i.ytimg.com/vi/6_b7RDuLwcI/hqdefault.jpg',url:'https://www.youtube.com/watch?v=6_b7RDuLwcI'},
+/* ---------- YouTube Nature Recommendations ---------- */
+const YT_RECS = [
+  {title:'Relaxing Forest Sounds', videoId:'2OEL4P1Rz04'},
+  {title:'Ocean Waves for Meditation', videoId:'VudJ_3R8F7A'},
+  {title:'Rain Sounds Nature', videoId:'qMiwb7cR3pE'},
+  {title:'Mountain Stream', videoId:'5qap5aO4i9A'},
+  {title:'Jungle Ambience', videoId:'OdIJ2x3nxzQ'}
 ];
-ytSample.forEach(v=>{
-  const ytc = document.createElement('div');
-  ytc.className='youtube-card';
-  ytc.innerHTML=`<img src="${v.thumb}" onclick="window.open('${v.url}','_blank')"><div>${v.title}</div>`;
-  youtubeGrid.appendChild(ytc);
-});
 
-// ---------- BOTÓN FLOTANTE MEDITACIÓN ----------
-const med = document.getElementById('medFloating');
-let dragging = false, offsetX=0, offsetY=0;
-med.addEventListener('mousedown',e=>{
-  dragging=true;
-  offsetX=e.clientX-med.offsetLeft;
-  offsetY=e.clientY-med.offsetTop;
-  med.classList.add('dragging');
-});
-document.addEventListener('mouseup',()=>{dragging=false; med.classList.remove('dragging')});
-document.addEventListener('mousemove',e=>{
-  if(dragging){
-    med.style.left=(e.clientX-offsetX)+'px';
-    med.style.top=(e.clientY-offsetY)+'px';
-  }
-});
+function renderYTRecs() {
+  const list = document.getElementById('soundsList');
+  list.innerHTML = '';
+  YT_RECS.forEach(r=>{
+    const item = document.createElement('div');
+    item.className = 'sound-item';
+    item.innerHTML = `
+      <div>${r.title.length>30?r.title.substring(0,27)+'...':r.title}</div>
+      <div style="display:flex;gap:6px">
+        <button onclick="playYT('${r.videoId}','${r.title}')">▶️</button>
+        <button onclick="stopYT()">⏹️</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
 
-// ---------- TEMPORIZADOR ----------
-let seconds = 0, timerInterval=null;
-med.addEventListener('click',()=>{
-  if(timerInterval){
-    clearInterval(timerInterval);
-    timerInterval=null;
-  }else{
-    timerInterval=setInterval(()=>{
-      seconds++;
-      let m = String(Math.floor(seconds/60)).padStart(2,'0');
-      let s = String(seconds%60).padStart(2,'0');
-      document.getElementById('medTimer').innerText=`${m}:${s}`;
-    },1000);
+/* ---------- Floating meditation timer ---------- */
+const medCircle = document.getElementById('medCircle');
+let timerSec = 300;
+let timerInterval = null;
+let audioPlayer = new Audio();
+audioPlayer.loop = true;
+
+function setTimer(sec){ timerSec = sec; updateDisplay(); }
+
+function updateDisplay(){
+  const m = Math.floor(timerSec/60).toString().padStart(2,'0');
+  const s = (timerSec%60).toString().padStart(2,'0');
+  $('#timeDisplay').innerText = `${m}:${s}`;
+}
+
+function startTimer(){ 
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    if(timerSec>0){ timerSec--; updateDisplay(); } 
+    else clearInterval(timerInterval);
+  },1000);
+}
+
+function stopTimer(){ if(timerInterval) clearInterval(timerInterval); }
+
+$('#startBtn').onclick = ()=>{
+  audioPlayer.play();
+  startTimer();
+};
+$('#stopBtn').onclick = ()=>{
+  audioPlayer.pause();
+  stopTimer();
+};
+
+function playYT(videoId,title){
+  audioPlayer.src = `https://www.youtube.com/watch?v=${videoId}`;
+  audioPlayer.play().catch(e=>console.log('YT play error',e));
+  $('#audioNotice').style.display='block';
+  $('#audioNotice').innerText='Reproduciendo: '+title;
+}
+function stopYT(){
+  audioPlayer.pause();
+  $('#audioNotice').style.display='none';
+}
+
+/* ---------- Floating draggable ---------- */
+const floating = document.createElement('div');
+floating.style.position='fixed';
+floating.style.bottom='20px';
+floating.style.left='20px';
+floating.style.width='160px';
+floating.style.height='160px';
+floating.style.background='linear-gradient(135deg,#8a6cff,#6ec6d9)';
+floating.style.borderRadius='50%';
+floating.style.color='#021018';
+floating.style.fontWeight='700';
+floating.style.fontSize='14px';
+floating.style.display='flex';
+floating.style.flexDirection='column';
+floating.style.alignItems='center';
+floating.style.justifyContent='center';
+floating.style.cursor='move';
+floating.style.boxShadow='0 12px 40px rgba(60,80,120,0.18)';
+floating.innerHTML='Click aquí<br><span style="font-size:12px;opacity:0.9">para meditar</span>';
+document.body.appendChild(floating);
+
+let isDragging=false, offsetX=0, offsetY=0;
+floating.onmousedown = (e)=>{
+  isDragging=true;
+  offsetX=e.clientX-floating.offsetLeft;
+  offsetY=e.clientY-floating.offsetTop;
+};
+document.onmousemove = (e)=>{
+  if(isDragging){
+    floating.style.left=(e.clientX-offsetX)+'px';
+    floating.style.top=(e.clientY-offsetY)+'px';
   }
-});
-</script>
-</body>
-</html>
+};
+document.onmouseup=()=>{ isDragging=false; };
+floating.onclick=()=>{
+  audioPlayer.play();
+  startTimer();
+};
+
+/* ---------- Form subscription ---------- */
+$('#subForm').onsubmit=(e)=>{
+  e.preventDefault();
+  $('#subInfo').innerText='Gracias por suscribirte!';
+  $('#emailInput').value='';
+};
+
+/* ---------- Init ---------- */
+updateDisplay();
+loadArticles();
+renderYTRecs();
