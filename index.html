@@ -106,8 +106,42 @@ footer{margin-top:28px;padding:18px 0;display:flex;justify-content:space-between
 .planet { animation: floatPlanet 8s ease-in-out infinite; transform-origin:center; }
 @keyframes floatPlanet { 0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)} }
 
+/* floating player (picture-in-page) */
+.floating-player {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  width: 240px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color: var(--text);
+  border-radius: 12px;
+  box-shadow: 0 14px 50px rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+  cursor: grab;
+}
+.floating-player.expanded { width: 420px; height: auto; }
+.fp-header {
+  display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(0,0,0,0.08);
+}
+.fp-title { font-weight:700; font-size:13px; }
+.fp-controls { display:flex; gap:8px; align-items:center; }
+.fp-controls button { background:transparent;border:0;color:var(--text);cursor:pointer;padding:6px;border-radius:8px; }
+.fp-body { display:flex;gap:10px;align-items:center;padding:10px; }
+.fp-body img { width:72px;height:72px;border-radius:8px;object-fit:cover;flex-shrink:0;box-shadow:0 8px 30px rgba(0,0,0,0.5); }
+.fp-meta { font-size:13px; color:#cfeef7; }
+.floating-player.hidden { display:none; }
+
+/* accessibility focus */
+.floating-player:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offset: 3px; }
+
+/* responsive */
 @media(max-width:980px){.grid{grid-template-columns:1fr}.articles-grid{grid-template-columns:1fr}.hero{flex-direction:column}.med-card{width:100%}}
-@media(max-width:520px){.med-circle{width:150px;height:150px;font-size:14px}}
+@media(max-width:520px){.med-circle{width:150px;height:150px;font-size:14px}.floating-player{width:200px}}
 button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offset: 3px; }
 </style>
 </head>
@@ -316,13 +350,29 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
     <button id="dismissWebview">Cerrar</button>
   </div>
 
+  <!-- floating in-page player (PiP style) -->
+  <div id="floatingPlayer" class="floating-player hidden" role="dialog" aria-label="Reproductor en miniatura" tabindex="0">
+    <div class="fp-header" id="fpHeader">
+      <div class="fp-title" id="fpTitle">Meditación en curso</div>
+      <div class="fp-controls" aria-hidden="false">
+        <button id="fpToggleSize" title="Agrandar/Reducir" aria-label="Agrandar o reducir">⤢</button>
+        <button id="fpPlayPause" title="Pausar/Reanudar" aria-label="Pausar o reanudar">⏯</button>
+        <button id="fpClose" title="Cerrar" aria-label="Cerrar">❌</button>
+      </div>
+    </div>
+    <div class="fp-body">
+      <img id="fpThumb" src="" alt="Miniatura sesión">
+      <div class="fp-meta">
+        <div id="fpMetaTitle" style="font-weight:700"></div>
+        <div id="fpMetaSub" style="font-size:13px;color:#cfeef7"></div>
+      </div>
+    </div>
+  </div>
+
 <script>
-/* CorAlma - Integrated full client file
-   - Articles (Wikipedia, Reddit, arXiv)
-   - 15-day rotation + localStorage cache
-   - Music search (Google / YouTube)
-   - Meditation session with thumbnail and timer
-   - Modal for article content
+/* CorAlma - Integrated file with floating mini player
+   - Floating player: draggable (mouse + touch), expandable, close, play/pause
+   - All previous functionality preserved
 */
 
 /* ---------- Utilities ---------- */
@@ -342,9 +392,9 @@ const $$ = s => Array.from(document.querySelectorAll(s));
 function searchMusic(type){
   const q = $('#musicQuery').value.trim();
   if(!q) return;
-  const query = encodeURIComponent(q);
+  const query = encodeURIComponent(q + (type === 'google' ? ' música' : ''));
   if(type === 'google'){
-    window.open(`https://www.google.com/search?q=${query}+música`, '_blank', 'noopener');
+    window.open(`https://www.google.com/search?q=${query}`, '_blank', 'noopener');
   } else {
     window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank', 'noopener');
   }
@@ -364,7 +414,6 @@ let sessionEndsTimeout = null;
 const SOUND_URLS = {
   rain: [
     'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    // fallback mirrors (examples)
     'https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav'
   ],
   forest: [
@@ -401,6 +450,8 @@ function tryPlaySrcList(list, idx = 0){
   if(playPromise !== undefined){
     playPromise.then(()=> {
       audioNotice.style.display='none';
+      // ensure floating player shows correct play state
+      setFpPlayState(true);
     }).catch(err => {
       // try next source
       if(idx+1 < list.length){
@@ -413,22 +464,28 @@ function tryPlaySrcList(list, idx = 0){
   }
 }
 
+/* Start/Stop logic */
 function startSessionFromButton(){
-  // default to current timer or 5 min
   if(!timerSeconds) setTimer(300);
   startMeditation(timerSeconds/60);
 }
-
 function startMeditation(minutes){
   if(!minutes) minutes = (timerSeconds/60) || 5;
   const select = $('#soundSelect');
   const soundKey = select.value;
   const img = select.selectedOptions[0].getAttribute('data-img') || 'https://i.imgur.com/Fp6p9VH.png';
-  // show thumbnail + text
+  // show thumb area in card
   sessionThumb.src = img;
   sessionText.textContent = `Sonido: ${select.selectedOptions[0].textContent}`;
   sessionSub.textContent = `Duración: ${minutes} min`;
   thumbWrap.style.display = 'flex';
+
+  // floating player: populate and show
+  showFloatingPlayer({
+    title: select.selectedOptions[0].textContent,
+    sub: `${minutes} min`,
+    thumb: img
+  });
 
   // start audio with fallback list
   const candidates = SOUND_URLS[soundKey] || [];
@@ -446,21 +503,23 @@ function startMeditation(minutes){
     }
   }, 1000);
 
-  // schedule end-of-session actions
   clearTimeout(sessionEndsTimeout);
   sessionEndsTimeout = setTimeout(()=> {
     audio.pause();
     sessionSub.textContent = 'Sesión finalizada';
+    setFpPlayState(false);
+    if(!$('#floatingPlayer').classList.contains('hidden')){
+      $('#fpMetaSub').textContent = 'Sesión finalizada';
+    }
   }, minutes * 60000);
 }
-
-// stop
 function stopMeditation(){
   clearInterval(timerInterval);
   clearTimeout(sessionEndsTimeout);
   audio.pause();
   sessionSub.textContent = 'Sesión detenida';
   updateTimeDisplay(0);
+  setFpPlayState(false);
 }
 
 /* wire buttons */
@@ -496,7 +555,6 @@ const MAX_ARTICLES = 30;
 function daysSinceEpoch(date = new Date()){
   return Math.floor(date.getTime() / (1000*60*60*24));
 }
-
 function shouldRefreshArticles(){
   const stored = localStorage.getItem(ARTICLES_DATE_KEY);
   if(!stored) return true;
@@ -555,7 +613,6 @@ async function fetchRedditPosts(subreddits = ['Meditation','Philosophy']){
 async function fetchArxiv(query='mindfulness OR meditation', max=12) {
   try {
     const api = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&start=0&max_results=${max}`;
-    // use public proxy to avoid CORS issues (may intermittently fail)
     const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`);
     if(!res.ok) return [];
     const text = await res.text();
@@ -587,7 +644,6 @@ async function buildArticles(){
     fetchArxiv()
   ]);
   articles.push(...w, ...r, ...a);
-  // limit and shuffle a bit to mix sources
   const shuffled = articles.sort(()=>0.5 - Math.random()).slice(0, MAX_ARTICLES);
   return shuffled;
 }
@@ -601,7 +657,6 @@ async function ensureArticles(){
       } catch(e){}
     }
   }
-  // else fetch and save
   const arts = await buildArticles();
   localStorage.setItem(ARTICLES_KEY, JSON.stringify(arts));
   localStorage.setItem(ARTICLES_DATE_KEY, daysSinceEpoch().toString());
@@ -658,13 +713,112 @@ $('#closeModal').addEventListener('click', ()=> {
   $('#modalBack').setAttribute('aria-hidden','true');
 });
 
-/* ---------- Init ---------- */
+/* ---------- Floating player (drag, touch, expand, controls) ---------- */
+const fp = $('#floatingPlayer');
+const fpHeader = $('#fpHeader');
+const fpThumb = $('#fpThumb');
+const fpTitle = $('#fpMetaTitle');
+const fpSub = $('#fpMetaSub');
+const fpToggleSize = $('#fpToggleSize');
+const fpPlayPause = $('#fpPlayPause');
+const fpClose = $('#fpClose');
+
+let isFpVisible = false;
+let isFpExpanded = false;
+let isDragging = false;
+let dragOffset = {x:0,y:0};
+
+// Show / populate floating player
+function showFloatingPlayer({title, sub, thumb}){
+  fpTitle.textContent = title || 'Meditación';
+  fpSub.textContent = sub || '';
+  fpThumb.src = thumb || '';
+  if(fp.classList.contains('hidden')) fp.classList.remove('hidden');
+  isFpVisible = true;
+  // bring to front
+  fp.style.zIndex = 9999;
+}
+
+// Set play/pause icon and accessible label
+function setFpPlayState(playing){
+  fpPlayPause.textContent = playing ? '⏸' : '▶️';
+  fpPlayPause.setAttribute('aria-pressed', playing ? 'true' : 'false');
+}
+
+// Toggle expanded state
+fpToggleSize.addEventListener('click', ()=>{
+  isFpExpanded = !isFpExpanded;
+  if(isFpExpanded) fp.classList.add('expanded'); else fp.classList.remove('expanded');
+});
+
+// Play/Pause control: control the hidden audio element
+fpPlayPause.addEventListener('click', ()=>{
+  if(audio.paused){
+    audio.play().then(()=> setFpPlayState(true)).catch(()=>{/* ignore */});
+  } else {
+    audio.pause();
+    setFpPlayState(false);
+  }
+});
+
+// Close: hide player but keep audio playing (or stop? we close only UI)
+fpClose.addEventListener('click', ()=>{
+  fp.classList.add('hidden');
+  isFpVisible = false;
+});
+
+// Update play state when audio pauses/plays
+audio.addEventListener('play', ()=> setFpPlayState(true));
+audio.addEventListener('pause', ()=> setFpPlayState(false));
+
+// Drag: mouse
+fpHeader.addEventListener('mousedown', (ev)=>{
+  isDragging = true;
+  dragOffset.x = ev.clientX - fp.getBoundingClientRect().left;
+  dragOffset.y = ev.clientY - fp.getBoundingClientRect().top;
+  fp.style.cursor = 'grabbing';
+});
+document.addEventListener('mouseup', ()=> { isDragging = false; fp.style.cursor = 'grab'; });
+document.addEventListener('mousemove', (ev)=>{
+  if(!isDragging) return;
+  ev.preventDefault();
+  const nx = Math.max(8, Math.min(window.innerWidth - fp.offsetWidth - 8, ev.clientX - dragOffset.x));
+  const ny = Math.max(8, Math.min(window.innerHeight - fp.offsetHeight - 8, ev.clientY - dragOffset.y));
+  fp.style.right = 'auto';
+  fp.style.left = nx + 'px';
+  fp.style.top = ny + 'px';
+});
+
+// Drag: touch
+fpHeader.addEventListener('touchstart', (ev)=>{
+  isDragging = true;
+  const t = ev.touches[0];
+  dragOffset.x = t.clientX - fp.getBoundingClientRect().left;
+  dragOffset.y = t.clientY - fp.getBoundingClientRect().top;
+});
+document.addEventListener('touchend', ()=> { isDragging = false; });
+document.addEventListener('touchmove', (ev)=>{
+  if(!isDragging) return;
+  const t = ev.touches[0];
+  const nx = Math.max(8, Math.min(window.innerWidth - fp.offsetWidth - 8, t.clientX - dragOffset.x));
+  const ny = Math.max(8, Math.min(window.innerHeight - fp.offsetHeight - 8, t.clientY - dragOffset.y));
+  fp.style.right = 'auto';
+  fp.style.left = nx + 'px';
+  fp.style.top = ny + 'px';
+});
+
+/* Helper: update floating player meta when session starts/ends */
+function updateFloatingMeta(title, sub){
+  if(!isFpVisible) return;
+  $('#fpMetaTitle').textContent = title;
+  $('#fpMetaSub').textContent = sub;
+}
+
+/* ---------- Init & bindings ---------- */
 document.addEventListener('DOMContentLoaded', ()=>{
   renderArticles();
-  // initialize default timer display
   updateTimeDisplay(0);
 
-  // subscription form
   $('#subForm').addEventListener('submit', (e)=>{
     e.preventDefault();
     const email = $('#emailInput').value.trim();
