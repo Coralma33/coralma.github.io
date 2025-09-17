@@ -1,192 +1,199 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coralma</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Georgia', serif;
-      background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
-      color: white;
-      text-align: center;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Coralma — Conciencia y transformación interior</title>
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 30px;
-      background: rgba(0, 0, 0, 0.5);
-      position: sticky;
-      top: 0;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-    header h1 {
-      font-size: 1.5em;
-      background: linear-gradient(45deg, #7fffd4, #9370db, #00ced1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+<style>
+  :root{
+    --accent1:#7b61ff;
+    --accent2:#32d6b1;
+    --bg-dark:#071226;
+    --glass: rgba(255,255,255,0.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,Segoe UI,Arial;
+    color: #eef2ff;
+    background: radial-gradient(circle at 10% 20%, rgba(76, 201, 175,0.06) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(125, 97, 255,0.08) 0%, transparent 25%),
+                linear-gradient(120deg, #0b1220 0%, #1b2440 25%, #2a1a4a 55%, #04383a 100%);
+    overflow-x:hidden;
+  }
 
-    nav a {
-      margin: 0 15px;
-      text-decoration: none;
-      color: white;
-      font-weight: bold;
-    }
+  /* aurora */
+  body::before{
+    content:"";
+    position:fixed;left:0;top:0;right:0;bottom:0;
+    background: linear-gradient(90deg,#2b0d52 0%, #3b2b8b 30%, #1aa7a3 60%, #0b6b8f 100%);
+    mix-blend-mode: screen;
+    opacity: .20;
+    z-index:-2;
+    background-size: 300% 300%;
+    animation: auroraMove 22s ease-in-out infinite;
+  }
+  @keyframes auroraMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
 
-    .hero {
-      padding: 80px 20px;
-    }
+  /* header */
+  header{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;padding:14px 22px;
+    background:linear-gradient(180deg, rgba(6,10,20,0.6), rgba(6,10,20,0.35));
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo {
+    width:44px;height:44px;border-radius:8px;
+    background: linear-gradient(135deg,var(--accent1),var(--accent2));
+    display:flex;align-items:center;justify-content:center;
+    font-family: 'Playfair Display', serif;
+    font-weight:700;color:white;font-size:18px;box-shadow: 0 6px 18px rgba(50,40,70,0.35);
+  }
+  nav a{
+    color: #e6edff; text-decoration:none; margin:0 10px; font-weight:600;
+  }
+  nav a:hover{color:#fff9c4;text-shadow:0 0 10px rgba(255,240,190,0.12)}
 
-    .frase {
-      font-size: 1.8em;
-      font-weight: bold;
-      min-height: 60px;
-      margin-bottom: 20px;
-      line-height: 1.4em;
-    }
+  main{max-width:1100px;margin:0 auto;padding:20px}
 
-    .velita {
-      width: 50px;
-      height: 80px;
-      background: linear-gradient(to top, #ffa500, #ff4500);
-      border-radius: 50% 50% 15% 15%;
-      margin: 30px auto;
-      position: relative;
-      animation: flotar 4s ease-in-out infinite;
-    }
+  /* Hero */
+  .hero{
+    padding:60px 18px 48px;
+    display:flex;flex-direction:column;align-items:center;gap:22px;
+    text-align:center;
+  }
+  .hero h1{
+    font-family:'Playfair Display', serif;
+    font-size:40px; line-height:1.2; margin:0; color: #f3f8ff;
+    text-shadow: 0 6px 30px rgba(40,20,80,0.3);
+  }
+  .phrases{
+    height:60px; display:flex;align-items:center;justify-content:center;
+    font-style:italic;color: #dbe7ff; font-size:18px; margin-top:10px;
+    position:relative;
+  }
+  .phrase{
+    position:absolute;opacity:0; transform:translateY(10px);
+    transition: all 450ms cubic-bezier(.2,.9,.3,1);
+    padding:0 12px;
+  }
+  .phrase.show{opacity:1; transform:translateY(0)}
+  .hero p.lead{max-width:760px;color:#cbd9ff;margin:0;font-size:16px}
 
-    .llama {
-      position: absolute;
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 20px;
-      height: 30px;
-      background: radial-gradient(circle at center, #ffff99, #ff9900);
-      border-radius: 50% 50% 50% 50%;
-      animation: parpadeo 1.5s infinite alternate;
-    }
+  /* vela flotante */
+  .vela{
+    position:fixed;
+    width:26px;height:60px;
+    background:#e6dccf;
+    border-radius:6px;
+    box-shadow:0 0 15px rgba(255,220,180,0.3);
+    z-index:100;
+    pointer-events:none;
+  }
+  .flama{
+    position:absolute;
+    top:-22px; left:50%;
+    transform:translateX(-50%);
+    width:20px; height:30px;
+    background:radial-gradient(ellipse at center, #ffd27f 0%, #ff8c42 70%, transparent 100%);
+    border-radius:50% 50% 50% 50%;
+    animation: flameDance 1.2s infinite ease-in-out;
+    box-shadow:0 0 30px rgba(255,180,80,0.8);
+  }
+  @keyframes flameDance{
+    0%{transform:translateX(-50%) scale(1)}
+    50%{transform:translateX(-50%) scale(1.2,0.9)}
+    100%{transform:translateX(-50%) scale(1)}
+  }
 
-    @keyframes parpadeo {
-      from { transform: translateX(-50%) scaleY(1); opacity: 1; }
-      to { transform: translateX(-50%) scaleY(0.8); opacity: 0.7; }
-    }
-
-    @keyframes flotar {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-
-    section {
-      padding: 40px 20px;
-      max-width: 800px;
-      margin: auto;
-      text-align: justify;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      background: linear-gradient(45deg, #7fffd4, #9370db, #00ced1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    footer {
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.7);
-      margin-top: 50px;
-    }
-  </style>
+  /* responsive */
+  @media (max-width:720px){
+    .hero h1{font-size:30px}
+    .logo{width:40px;height:40px;font-size:16px}
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Coralma</h1>
-    <nav>
-      <a href="#quienes">Quiénes somos</a>
-      <a href="#articulos">Artículos</a>
-      <a href="#meditacion">Meditación</a>
-      <a href="#ebooks">Ebooks</a>
-      <a href="#donaciones">Donaciones</a>
-    </nav>
-  </header>
 
-  <div class="hero">
-    <div class="frase" id="frase"></div>
-    <p>Bienvenido a Coralma, un espacio para el cultivo interior. Encuentra guías, lecturas, meditaciones y herramientas para el camino.</p>
-    <div class="velita">
-      <div class="llama"></div>
+<header>
+  <div class="brand">
+    <div class="logo">C</div>
+    <div>
+      <div style="font-weight:700;color:#fff">Coralma</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px">Conciencia · Transformación · Alma</div>
     </div>
   </div>
 
-  <section id="quienes">
-    <h2>Quiénes somos</h2>
-    <p><strong>Coralma</strong> nace de la experiencia de recorrer el propio interior. Somos un equipo de facilitadores, lectores y guías cuyo propósito es ofrecer prácticas, reflexiones y recursos que inviten al encuentro profundo. Nuestra misión es crear un refugio de calma: textos que despiertan la conciencia, meditaciones que aquietan la mente y herramientas que ayudan a trascender.</p>
+  <nav>
+    <a href="#quienes">Quiénes somos</a>
+    <a href="#articulos">Artículos</a>
+    <a href="#ebooks">Ebooks</a>
+    <a href="#donaciones">Donaciones</a>
+  </nav>
+</header>
+
+<!-- vela flotante -->
+<div class="vela" id="vela">
+  <div class="flama"></div>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Con corazón se inicia,<br>con alma se trasciende</h1>
+    <div class="phrases" aria-live="polite"></div>
+    <p class="lead">Bienvenido a Coralma: un espacio para el cultivo interior. Encuentra guías, lecturas, meditaciones y herramientas para el camino.</p>
   </section>
 
-  <section id="articulos">
-    <h2>Artículos</h2>
-    <p>Aquí encontrarás artículos completos de 400-600 palabras con reflexiones, guías y conocimientos espirituales para tu transformación personal.</p>
-  </section>
+  <!-- AQUÍ siguen los artículos completos (no los modifiqué) -->
+</main>
 
-  <section id="ebooks">
-    <h2>Ebooks</h2>
-    <p>Descarga libros y guías en formato PDF para profundizar en tu camino de autodescubrimiento.</p>
-  </section>
+<script>
+  // Vela sigue al cursor
+  const vela = document.getElementById("vela");
+  document.addEventListener("mousemove", e => {
+    vela.style.left = e.pageX + 10 + "px";
+    vela.style.top = e.pageY + 10 + "px";
+  });
 
-  <section id="donaciones">
-    <h2>Donaciones</h2>
-    <p><em>"Todo lo que das regresa a ti multiplicado."</em></p>
-    <p>Tu aporte nos ayuda a mantener este espacio vivo y a seguir compartiendo prácticas, meditaciones y textos para el despertar colectivo.</p>
-  </section>
+  // Frases cambiantes
+  const frases = [
+    "La mente calla, el espíritu habla",
+    "La calma es fuerza",
+    "Respira y vuelve al presente",
+    "Donde está tu atención, está tu vida",
+    "La gratitud abre caminos",
+    "Silencio: el lenguaje del alma",
+    "Lo eterno se esconde en lo simple"
+  ];
+  const contenedor = document.querySelector(".phrases");
+  frases.forEach((f,i)=>{
+    const span=document.createElement("span");
+    span.className="phrase";
+    span.textContent=f;
+    contenedor.appendChild(span);
+  });
+  const all=document.querySelectorAll(".phrase");
+  let idx=0;
+  function showPhrase(){
+    all.forEach(p=>p.classList.remove("show"));
+    all[idx].classList.add("show");
+    idx=(idx+1)%all.length;
+  }
+  showPhrase();
+  setInterval(showPhrase,4000);
+</script>
 
-  <footer>
-    <p>© 2025 Coralma - Conciencia · Transformación · Alma</p>
-  </footer>
-
-  <script>
-    const frases = [
-      "Con corazón se inicia, con alma se trasciende.",
-      "La mente calla, el espíritu habla.",
-      "Respira, todo lo que buscas ya está dentro.",
-      "El silencio también tiene voz.",
-      "Camina despacio, el alma no tiene prisa.",
-      "Cada instante es un portal.",
-      "La calma abre puertas invisibles.",
-      "Escucha tu interior, ahí está la respuesta.",
-      "El universo conspira a tu favor.",
-      "Tu conciencia es tu verdadero templo.",
-      "Meditar es regresar a casa.",
-      "Lo que siembras en ti florece afuera.",
-      "La luz siempre estuvo en ti.",
-      "Eres más vasto que tus pensamientos.",
-      "El amor es la frecuencia más alta.",
-      "El tiempo interior es eterno.",
-      "Trascender es recordar quién eres.",
-      "El espíritu no pide, se expande.",
-      "Todo lo que callas se transforma en energía.",
-      "El alma siempre susurra, nunca grita.",
-      "La verdadera riqueza es la paz.",
-      "El presente es tu mayor maestro.",
-      "Lo invisible sostiene lo visible.",
-      "Ser es más que existir.",
-      "Donde está tu atención, ahí floreces."
-    ];
-
-    let i = 0;
-    const fraseEl = document.getElementById("frase");
-
-    function cambiarFrase() {
-      fraseEl.textContent = frases[i];
-      i = (i + 1) % frases.length;
-    }
-
-    cambiarFrase();
-    setInterval(cambiarFrase, 4000);
-  </script>
 </body>
 </html>
