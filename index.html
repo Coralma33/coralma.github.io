@@ -1,177 +1,233 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>CorAlma</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f8f9fa; color: #333; }
-    header { background: linear-gradient(135deg, #4facfe, #00f2fe); padding: 20px; color: white; text-align: center; }
-    nav { background: #222; padding: 10px; text-align: center; }
-    nav a { color: white; margin: 0 10px; text-decoration: none; }
-    main { padding: 20px; }
-    footer { background: #222; color: white; text-align: center; padding: 15px; margin-top: 30px; }
-
-    /* Artículos */
-    .articles { display: grid; gap: 15px; margin-top: 20px; }
-    .article-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
-    /* Reproductor flotante */
-    .floating-player {
-      position: fixed; bottom: 20px; right: 20px;
-      background: #222; color: white;
-      padding: 10px; border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-      width: 260px; z-index: 9999;
-    }
-    .floating-player.hidden { display: none; }
-    .fp-header { display: flex; justify-content: space-between; align-items: center; }
-    .fp-body { text-align: center; margin-top: 10px; }
-    .fp-body img { max-width: 100%; border-radius: 8px; }
-
-    /* Recomendaciones */
-    h3 { margin-top: 30px; }
-    .recs { display: grid; gap: 10px; margin-top: 10px; }
-    .rec-card { display: flex; gap: 10px; align-items: center; background:#fff; border-radius:8px; padding:8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .rec-card img { width: 80px; border-radius: 6px; }
-    .rec-info { flex: 1; }
-    .rec-info p { margin:0; font-size:14px; }
-    .rec-info button { margin-top: 5px; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>CorAlma — Encuentra tu calma</title>
+<meta name="description" content="Meditaciones, sonidos y artículos dinámicos (Wikipedia, Reddit, arXiv). Sonidos con fallback entre servidores." />
+<style>
+:root{
+  --bg1:#020414; --bg2:#041428;
+  --accent1:#6ec6d9; --accent2:#8a6cff;
+  --glass: rgba(255,255,255,0.04);
+  --muted:#9fd8ea;
+  --text:#e6f9ff;
+}
+*{box-sizing:border-box}
+html,body{height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: radial-gradient(circle at 10% 10%, rgba(138,108,255,0.06), transparent 6%), radial-gradient(circle at 90% 70%, rgba(110,198,217,0.04), transparent 10%), linear-gradient(180deg,var(--bg1), var(--bg2)); color:var(--text); -webkit-font-smoothing:antialiased;}
+.container{max-width:1180px;margin:24px auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
+h1{font-size:18px;margin:0}
+nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+nav a{color:#cfeffb;text-decoration:none;padding:8px 10px;border-radius:9px}
+nav a:hover{background:var(--glass)}
+.hero{margin-top:14px;border-radius:14px;padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));display:flex;gap:20px;align-items:center;position:relative;overflow:hidden}
+.hero-left{flex:1;z-index:2}
+.hero h2{margin:0;font-size:26px}
+.hero p{margin-top:8px;color:#cfeef6}
+.cta{margin-top:14px}
+.btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:10px 16px;border-radius:12px;border:0;font-weight:700;cursor:pointer}
+.hero-visual{width:260px;display:flex;align-items:center;justify-content:center;z-index:1}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:22px}
+main{min-width:0}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:18px;border-radius:12px}
+.med-card{max-width:760px;margin:0 auto;padding:22px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);box-shadow:0 10px 40px rgba(15,30,50,0.45)}
+.center{display:flex;flex-direction:column;align-items:center;gap:12px}
+.selector-row{display:flex;gap:10px;align-items:center;width:100%;justify-content:center;flex-wrap:wrap}
+select{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
+.timer-btns{display:flex;gap:8px}
+.timer-btns button{padding:8px 12px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:#dff8ff;cursor:pointer}
+.time-display{font-weight:700}
+.med-circle{width:170px;height:170px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:transform .18s ease, box-shadow .18s}
+.med-circle:hover{transform:scale(1.03)}
+.pulse { animation: pulse 2000ms infinite; }
+@keyframes pulse {0%{box-shadow:0 8px 28px rgba(138,108,255,0.22)}50%{box-shadow:0 18px 44px rgba(110,198,217,0.20)}100%{box-shadow:0 8px 28px rgba(138,108,255,0.22)}}
+.articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;max-height:650px;overflow-y:auto;margin-top:12px;padding-right:6px}
+.article-card{padding:14px;border-radius:10px;background:rgba(255,255,255,0.01);text-align:left}
+.article-card h3{margin:0 0 8px 0;font-size:16px}
+.article-card p{margin:0;color:#cfeef7;font-size:14px}
+.read-btn{margin-top:10px;padding:6px 8px;border-radius:10px;border:0;background:rgba(255,255,255,0.04);color:#dff8ff;cursor:pointer}
+aside{position:relative}
+.side-block{display:flex;flex-direction:column;gap:14px}
+.sounds-list{max-height:320px;overflow:auto;padding-right:6px}
+.sound-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,0.01)}
+.notice{font-size:13px;color:#ffd7a8;background:rgba(0,0,0,0.15);padding:8px;border-radius:8px;margin-top:8px}
+footer{margin-top:28px;padding:18px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.socials{display:flex;gap:12px}
+.socials a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:8px;background:rgba(255,255,255,0.03)}
+.socials svg{width:20px;height:20px;fill:#e6f9ff}
+.floating-med{position:fixed;right:20px;top:50%;transform:translateY(-50%);width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);z-index:1000;transition:transform .18s; user-select:none;}
+.floating-med:hover{transform:scale(1.05);}
+.dragging{opacity:0.8;}
+.youtube-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:14px;overflow-x:auto;padding-bottom:8px}
+.youtube-card{display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,0.01);padding:6px;border-radius:8px;text-align:center;font-size:14px;color:#dff8ff}
+.youtube-card img{border-radius:6px;cursor:pointer}
+.webview-banner{position:fixed;left:12px;right:12px;bottom:12px;background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:10px 12px;border-radius:12px;display:none;z-index:90;box-shadow:0 12px 40px rgba(10,20,40,0.5)}
+.webview-banner button{margin-left:12px;background:transparent;border:1px solid rgba(2,16,24,0.08);padding:6px 8px;border-radius:8px;cursor:pointer}
+@media(max-width:980px){.grid{grid-template-columns:1fr}.articles-grid{grid-template-columns:1fr}.hero{flex-direction:column}.med-card{width:100%}}
+@media(max-width:520px){.med-circle{width:150px;height:150px;font-size:14px}}
+button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offset: 3px; }
+</style>
 </head>
 <body>
-
-  <header>
-    <h1>✨ CorAlma ✨</h1>
-    <p>Meditación · Conocimiento · Música</p>
-  </header>
-
-  <nav>
-    <a href="https://google.com" target="_blank">Google</a>
-    <a href="https://youtube.com" target="_blank">YouTube</a>
-  </nav>
-
-  <main>
-    <h2>Artículos recomendados</h2>
-    <div class="articles">
-      <div class="article-card">
-        <h3>La conciencia y el universo</h3>
-        <p>Exploración de cómo la conciencia puede estar entrelazada con la estructura misma del cosmos.</p>
-      </div>
-      <div class="article-card">
-        <h3>Dimensiones ocultas</h3>
-        <p>Una mirada científica y espiritual a la teoría de múltiples dimensiones.</p>
-      </div>
-      <div class="article-card">
-        <h3>El poder de la manifestación</h3>
-        <p>Cómo nuestros pensamientos y emociones moldean la realidad.</p>
-      </div>
+<div class="container">
+<header>
+  <div class="brand">
+    <div class="logo">CA</div>
+    <div>
+      <h1>CorAlma</h1>
+      <div style="font-size:12px;color:#bfeffd">Encuentra tu calma en el universo interior</div>
     </div>
-
-    <h2>🎵 Música Relajante</h2>
-    <p>Se carga automáticamente al abrir la página.</p>
-    <div id="ytRecs" class="recs"></div>
-  </main>
-
-  <footer>
-    <p>© 2025 CorAlma · Espiritualidad y Ciencia</p>
-  </footer>
-
-  <!-- Reproductor flotante -->
-  <div id="floatingPlayer" class="floating-player hidden">
-    <div class="fp-header">
-      <span id="fp-title">Música</span>
-      <div>
-        <button onclick="toggleYT()">▶️ / ⏸</button>
-        <button onclick="closeFloatingPlayer()">❌</button>
-      </div>
-    </div>
-    <div class="fp-body">
-      <img id="fp-thumbnail" src="" alt="Miniatura"/>
-    </div>
-    <!-- Reproductor invisible -->
-    <div id="ytPlayer" style="width:0;height:0;overflow:hidden;"></div>
   </div>
+  <nav>
+    <a href="#">Inicio</a>
+    <a href="#articles">Artículos</a>
+    <a href="https://www.google.com" target="_blank">Google</a>
+    <a href="https://www.youtube.com" target="_blank">YouTube</a>
+    <a href="#contact">Contacto</a>
+  </nav>
+</header>
 
-  <script>
-    let ytPlayer, ytPlaying = false;
-    const apiKey = "TU_API_KEY_DE_YOUTUBE"; // 🔑 Pega tu API key aquí
-    const searchQuery = "relaxing meditation music";
+<section class="hero">
+  <div class="hero-left">
+    <h2>Encuentra calma y presencia con prácticas basadas en ciencia y tradición</h2>
+    <p>Sonidos curados, meditaciones guiadas y artículos con referencias científicas para sostener tu práctica.</p>
+  </div>
+</section>
 
-    // Buscar música
-    function searchYouTubeAndLoad(){
-      fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=6&q=${encodeURIComponent(searchQuery)}&key=${apiKey}`)
-        .then(r => r.json())
-        .then(data => {
-          if(!data.items || data.items.length === 0) return alert("No se encontró música.");
-          
-          // Primer video → cargar automático
-          const first = data.items[0];
-          loadIntoPlayer(first.id.videoId, first.snippet.title, first.snippet.thumbnails.high.url, true);
+<div class="grid">
+<main>
+  <section class="card" id="articles">
+    <h3>Artículos</h3>
+    <div class="articles-grid" id="articlesGrid"></div>
+  </section>
 
-          // Resto → recomendaciones
-          const recs = document.getElementById("ytRecs");
-          recs.innerHTML = "";
-          data.items.slice(1).forEach(item => {
-            const videoId = item.id.videoId;
-            const title = item.snippet.title;
-            const thumb = item.snippet.thumbnails.medium.url;
-            const card = document.createElement("div");
-            card.className = "rec-card";
-            card.innerHTML = `
-              <img src="${thumb}" alt="${title}">
-              <div class="rec-info">
-                <p>${title}</p>
-                <button onclick="loadIntoPlayer('${videoId}', '${title}', '${thumb}')">▶️ Reproducir</button>
-              </div>
-            `;
-            recs.appendChild(card);
-          });
-        })
-        .catch(err => console.error("Error:", err));
-    }
+  <section class="card" id="youtube">
+    <h3>Recomendaciones de música</h3>
+    <div class="youtube-grid" id="youtubeGrid"></div>
+  </section>
+</main>
 
-    // Cargar canción en el reproductor
-    function loadIntoPlayer(videoId, title, thumb, autoplay=false){
-      document.getElementById("fp-title").textContent = title;
-      document.getElementById("fp-thumbnail").src = thumb;
-      document.getElementById("floatingPlayer").classList.remove("hidden");
+<aside>
+  <div class="side-block">
+    <div class="card">
+      <h4>Frases Inspiradoras</h4>
+      <p id="fraseText">“La calma no es un lugar, es un estado que cultivas.”</p>
+    </div>
 
-      if(ytPlayer){
-        ytPlayer.loadVideoById(videoId);
-        if(autoplay) ytPlayer.playVideo();
-      } else {
-        ytPlayer = new YT.Player("ytPlayer", {
-          height: "0", width: "0",
-          videoId: videoId,
-          playerVars: { autoplay: autoplay ? 1 : 0 }
-        });
-      }
-      ytPlaying = autoplay;
-    }
+    <div class="card" id="contact">
+      <h4>Contacto</h4>
+      <form id="contactForm">
+        <input type="email" placeholder="tu@correo.com" required style="width:100%;padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:#dff8ff">
+        <div style="margin-top:10px"><button class="btn-primary" type="submit">Enviar</button></div>
+      </form>
+    </div>
+  </div>
+</aside>
+</div>
 
-    function toggleYT(){
-      if(!ytPlayer) return;
-      if(ytPlaying){
-        ytPlayer.pauseVideo();
-      } else {
-        ytPlayer.playVideo();
-      }
-      ytPlaying = !ytPlaying;
-    }
+<footer>
+  <div style="color:#9fd8ea">
+    Contacto: <a href="mailto:almacoralma@gmail.com">almacoralma@gmail.com</a>
+  </div>
+  <div class="socials">
+    <a href="https://www.instagram.com/effectno33" target="_blank" rel="noopener">IG</a>
+    <a href="https://www.tiktok.com/@effect.33" target="_blank" rel="noopener">TT</a>
+    <a href="https://youtube.com/@effect.no33" target="_blank" rel="noopener">YT</a>
+  </div>
+</footer>
+</div>
 
-    function closeFloatingPlayer(){
-      document.getElementById("floatingPlayer").classList.add("hidden");
-      if(ytPlayer) ytPlayer.stopVideo();
-      ytPlaying = false;
-    }
+<div id="medFloating" class="floating-med">
+  <div>
+    Meditar<br><span id="medTimer">00:00</span>
+  </div>
+</div>
 
-    // API de YouTube
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.body.appendChild(tag);
+<script>
+// ---------- VARIABLES ----------
+const articlesGrid = document.getElementById('articlesGrid');
+const youtubeGrid = document.getElementById('youtubeGrid');
+const frases = [
+  "La calma no es un lugar, es un estado que cultivas.",
+  "Respira profundo y deja que todo fluya.",
+  "Cada instante es una oportunidad de comenzar de nuevo."
+];
+document.getElementById('fraseText').innerText = frases[Math.floor(Math.random()*frases.length)];
 
-    // Arrancar al cargar
-    window.onload = searchYouTubeAndLoad;
-  </script>
+// ---------- ARTÍCULOS DINÁMICOS CADA 3 DÍAS ----------
+const MAX_ARTICLES = 30;
+const ROTATE_DAYS = 3;
+let articles = [];
+if(localStorage.getItem('articles_data')){
+  const saved = JSON.parse(localStorage.getItem('articles_data'));
+  const last = new Date(saved.date);
+  const diff = (new Date() - last)/(1000*60*60*24);
+  if(diff<ROTATE_DAYS){
+    articles = saved.items;
+  }
+}
+if(!articles.length){
+  for(let i=1;i<=MAX_ARTICLES;i++){
+    articles.push({title:`Artículo ${i}`,summary:`Resumen del artículo ${i}`});
+  }
+  localStorage.setItem('articles_data', JSON.stringify({date:new Date(),items:articles}));
+}
+articlesGrid.innerHTML = '';
+articles.forEach(a=>{
+  const card = document.createElement('div');
+  card.className='article-card';
+  card.innerHTML=`<h3>${a.title}</h3><p>${a.summary}</p>`;
+  articlesGrid.appendChild(card);
+});
+
+// ---------- YOUTUBE MINIATURAS ----------
+const ytSample = [
+  {title:'Sonido Calmante 1',thumb:'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ'},
+  {title:'Sonido Calmante 2',thumb:'https://i.ytimg.com/vi/oHg5SJYRHA0/hqdefault.jpg',url:'https://www.youtube.com/watch?v=oHg5SJYRHA0'},
+  {title:'Sonido Calmante 3',thumb:'https://i.ytimg.com/vi/6_b7RDuLwcI/hqdefault.jpg',url:'https://www.youtube.com/watch?v=6_b7RDuLwcI'},
+];
+ytSample.forEach(v=>{
+  const ytc = document.createElement('div');
+  ytc.className='youtube-card';
+  ytc.innerHTML=`<img src="${v.thumb}" onclick="window.open('${v.url}','_blank')"><div>${v.title}</div>`;
+  youtubeGrid.appendChild(ytc);
+});
+
+// ---------- BOTÓN FLOTANTE MEDITACIÓN ----------
+const med = document.getElementById('medFloating');
+let dragging = false, offsetX=0, offsetY=0;
+med.addEventListener('mousedown',e=>{
+  dragging=true;
+  offsetX=e.clientX-med.offsetLeft;
+  offsetY=e.clientY-med.offsetTop;
+  med.classList.add('dragging');
+});
+document.addEventListener('mouseup',()=>{dragging=false; med.classList.remove('dragging')});
+document.addEventListener('mousemove',e=>{
+  if(dragging){
+    med.style.left=(e.clientX-offsetX)+'px';
+    med.style.top=(e.clientY-offsetY)+'px';
+  }
+});
+
+// ---------- TEMPORIZADOR ----------
+let seconds = 0, timerInterval=null;
+med.addEventListener('click',()=>{
+  if(timerInterval){
+    clearInterval(timerInterval);
+    timerInterval=null;
+  }else{
+    timerInterval=setInterval(()=>{
+      seconds++;
+      let m = String(Math.floor(seconds/60)).padStart(2,'0');
+      let s = String(seconds%60).padStart(2,'0');
+      document.getElementById('medTimer').innerText=`${m}:${s}`;
+    },1000);
+  }
+});
+</script>
 </body>
 </html>
