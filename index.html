@@ -4,14 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coralma</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Poppins', sans-serif;
-      color: white;
-      background: linear-gradient(270deg, #3a0ca3, #4361ee, #4cc9f0, #4ae54a, #7209b7);
-      background-size: 800% 800%;
-      animation: aurora 18s ease infinite;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    }
+
+    /* Aurora boreal animada */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(120deg, #4facfe, #00f2fe, #43e97b, #38f9d7, #667eea, #764ba2);
+      background-size: 600% 600%;
+      animation: aurora 20s ease infinite;
+      mix-blend-mode: screen;
+      opacity: 0.3;
+      z-index: -2;
     }
 
     @keyframes aurora {
@@ -20,182 +33,191 @@
       100% { background-position: 0% 50%; }
     }
 
+    /* Estrellas parpadeando */
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: transparent url("https://raw.githubusercontent.com/anthony-arnold/starfield/master/starfield.png") repeat;
+      z-index: -1;
+      animation: stars 200s linear infinite;
+    }
+
+    @keyframes stars {
+      from { background-position: 0 0; }
+      to { background-position: -10000px 5000px; }
+    }
+
+    /* Navbar */
     header {
+      background: rgba(0,0,0,0.6);
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 40px;
-      background: rgba(0,0,0,0.4);
       position: sticky;
       top: 0;
       backdrop-filter: blur(6px);
     }
-
-    header h1 {
-      font-size: 1.8rem;
-      letter-spacing: 2px;
+    header strong {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
       color: #fff;
-      text-shadow: 0 0 10px rgba(200,255,255,0.8);
+      text-shadow: 0 0 8px #7dd3fc;
     }
-
-    nav a {
-      margin-left: 20px;
+    header nav a {
+      margin: 0 12px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 0 6px #6366f1;
       text-decoration: none;
-      color: #e0f7ff;
-      font-weight: bold;
-      transition: 0.3s;
+    }
+    header nav a:hover {
+      color: #a78bfa;
     }
 
-    nav a:hover {
-      color: #ffcc00;
-      text-shadow: 0 0 8px #ffcc00;
-    }
-
-    /* Vela animada */
-    .vela {
+    /* Hero vela */
+    #vela-section {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      margin-top: 100px;
-      text-align: center;
-    }
-
-    .circulo {
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #fff7e6, #ff9f43);
-      display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #4b2e05;
+      height: 100vh;
       text-align: center;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .vela {
       position: relative;
-      z-index: 2;
+      width: 140px;
+      height: 220px;
+      background: radial-gradient(circle at 70% 30%, #fef3c7, #f59e0b 70%, #78350f 100%);
+      border-radius: 70px/140px;
+      box-shadow: 0 0 40px rgba(255, 200, 0, 0.6);
+      cursor: pointer;
     }
 
-    .circulo:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 20px #ffd580;
-    }
-
-    .fuego {
-      width: 35px;
-      height: 55px;
-      background: radial-gradient(ellipse at center, #ff0 0%, #ff6600 80%);
-      border-radius: 50% 50% 50% 50%;
-      animation: flame 1.5s infinite alternate;
-      margin-top: -50px;
+    /* llama animada */
+    .flame {
       position: absolute;
-      z-index: 1;
+      top: -90px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 90px;
+      background: radial-gradient(circle at 50% 30%, #fef08a, #facc15 40%, transparent 70%);
+      border-radius: 50% 50% 50% 50%;
+      animation: flameFlicker 2s infinite ease-in-out;
+      filter: blur(2px);
     }
 
-    @keyframes flame {
-      from { transform: scale(1) translateY(0); opacity: 1; }
-      to { transform: scale(1.2) translateY(-10px); opacity: 0.7; }
+    @keyframes flameFlicker {
+      0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+      50% { transform: translateX(-48%) scale(1.05); opacity: 1; }
+      100% { transform: translateX(-52%) scale(0.95); opacity: 0.8; }
     }
 
-    /* Secciones */
-    section {
+    .vela-text {
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 0 0 8px #fff;
+    }
+
+    /* Temporizador */
+    #timer {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 0 0 10px #7dd3fc;
+    }
+
+    /* Sección Donaciones */
+    #donaciones {
       padding: 80px 20px;
       text-align: center;
+      background: rgba(0,0,0,0.6);
     }
-
-    section h2 {
-      font-size: 2.2rem;
-      margin-bottom: 15px;
-      text-shadow: 0 0 12px rgba(255,255,255,0.8);
+    #donaciones h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #34d399;
     }
-
-    section p {
-      font-size: 1.1rem;
-      max-width: 700px;
-      margin: 0 auto 20px;
-    }
-
-    button {
-      padding: 12px 30px;
-      background: rgba(255,255,255,0.9);
-      border: none;
-      border-radius: 25px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.3s;
-      color: #222;
-    }
-
-    button:hover {
-      background: #ffcc00;
-      color: #000;
-      transform: scale(1.05);
-      box-shadow: 0 0 15px #ffcc00;
-    }
-
-    /* Donaciones */
-    #donaciones {
-      backdrop-filter: blur(4px);
-      border-radius: 12px;
-      margin: 40px auto;
-      max-width: 900px;
-      background: rgba(0,0,0,0.3);
-      padding: 60px 20px;
-    }
-
     #donaciones p {
-      font-size: 1.3rem;
-      font-style: italic;
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+    #donaciones img {
+      width: 200px;
     }
   </style>
 </head>
 <body>
+  <div class="stars"></div>
+
+  <!-- Navbar -->
   <header>
-    <h1>Coralma</h1>
+    <strong>Coralma</strong>
     <nav>
+      <a href="#vela-section">Meditación</a>
       <a href="#articulos">Artículos</a>
       <a href="#ebooks">Ebooks</a>
       <a href="#donaciones">Donaciones</a>
     </nav>
   </header>
 
-  <!-- Vela -->
-  <section class="vela">
-    <div class="fuego"></div>
-    <div class="circulo" onclick="playSound()">✨ Ven, medita con nosotros ✨</div>
-  </section>
-
-  <!-- Artículos -->
-  <section id="articulos">
-    <h2>🌿 Artículos</h2>
-    <p>Explora reflexiones y enseñanzas sobre espiritualidad, conciencia y transformación interior.</p>
-    <button onclick="alert('Próximamente disponibles')">Ver artículos</button>
-  </section>
-
-  <!-- Libros -->
-  <section id="ebooks">
-    <h2>📖 Nuestra colección de Ebooks</h2>
-    <p>Descubre libros digitales en PDF que despiertan tu conciencia y expanden tu visión del mundo.</p>
-    <button onclick="alert('Próximamente disponibles')">Ver Ebooks</button>
+  <!-- Hero: vela -->
+  <section id="vela-section">
+    <div class="vela" id="velaBtn">
+      <div class="flame"></div>
+      <div class="vela-text">✨ Ven, medita con nosotros ✨</div>
+    </div>
+    <div id="timer"></div>
   </section>
 
   <!-- Donaciones -->
   <section id="donaciones">
-    <h2>🙏 Donaciones</h2>
-    <p>"Todo lo que das regresa a ti multiplicado."</p>
-    <button onclick="alert('Gracias por tu apoyo ❤️')">Donar</button>
+    <h2>💜 Donaciones</h2>
+    <p>"Todo lo que das regresa a ti multiplicado"</p>
+    <a href="https://www.paypal.com/donate" target="_blank">
+      <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="Donar con PayPal">
+    </a>
   </section>
 
   <!-- Audio -->
-  <audio id="natureSound" src="https://www.fesliyanstudios.com/play-mp3/387"></audio>
+  <audio id="natureSound" loop>
+    <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mp3">
+  </audio>
 
   <script>
-    function playSound() {
-      const sound = document.getElementById('natureSound');
-      sound.currentTime = 0; // Reinicia para que siempre suene desde el inicio
+    const vela = document.getElementById("velaBtn");
+    const timerEl = document.getElementById("timer");
+    const sound = document.getElementById("natureSound");
+
+    vela.addEventListener("click", () => {
+      let time = 180; // 3 min
+      timerEl.textContent = formatTime(time);
       sound.play();
+
+      const countdown = setInterval(() => {
+        time--;
+        timerEl.textContent = formatTime(time);
+
+        if (time <= 0) {
+          clearInterval(countdown);
+          timerEl.textContent = "✨ Meditación finalizada ✨";
+          sound.pause();
+          sound.currentTime = 0;
+        }
+      }, 1000);
+    });
+
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = seconds % 60;
+      return `${min}:${sec < 10 ? "0" : ""}${sec}`;
     }
   </script>
 </body>
