@@ -1,190 +1,460 @@
-import React, { useState, useEffect, useRef } from "react";
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CorAlma — Encuentra tu calma</title>
+  <meta name="description" content="Meditaciones guiadas, sonidos relajantes y un universo visual para tu práctica.">
+  <style>
+    /* RESET + base */
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; background:linear-gradient(180deg,#021018 0%, #06283a 60%); color:#e9f3f7; min-height:100vh; -webkit-font-smoothing:antialiased}
+    a{color:inherit}
+    .container{max-width:1180px;margin:36px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    h1{font-size:28px;letter-spacing:-0.02em;margin:0}
+    nav button{background:rgba(255,255,255,0.06);border:0;padding:8px 12px;border-radius:8px;color:#dff4ff;margin-left:8px;cursor:pointer;transition:all .22s ease}
+    nav button:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(0,0,0,0.4)}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+    .card{background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,0,0,0.08));padding:20px;border-radius:16px;box-shadow:0 6px 30px rgba(3,12,20,0.45);overflow:hidden}
+    .small{font-size:13px;color:#cceaf6}
+    /* hero */
+    .hero-top{display:flex;gap:18px;align-items:flex-start}
+    .controls{display:flex;gap:10px;align-items:center;margin-top:14px}
+    select, input[type="email"]{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:#e6f8ff;outline:none;transition:all .18s}
+    select:focus, input[type="email"]:focus{box-shadow:0 6px 18px rgba(23,90,120,0.12);transform:translateY(-2px)}
+    .btn{background:linear-gradient(90deg,#7c5cff,#41e7c4);color:#012; border:none;padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer;transition:transform .18s, box-shadow .18s}
+    .btn.secondary{background:rgba(255,255,255,0.06);color:#dff4ff}
+    .btn:active{transform:translateY(1px)}
+    .time-remaining{font-size:13px;color:#bfeffd}
+    /* candle */
+    .candle-wrap{display:flex;gap:14px;align-items:center;margin-top:18px}
+    .candle{width:64px;height:128px;border-radius:12px;background:#2b1f15;position:relative;display:flex;align-items:flex-end;justify-content:center;transition:box-shadow .5s,opacity .4s}
+    .candle.off{opacity:0.6}
+    .wax-label{position:absolute;bottom:6px;font-size:11px;color:#e6f8ff;opacity:0.85}
+    .flame{position:absolute;top:18px;width:12px;height:18px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,220,130,1), rgba(255,140,0,0.95));transform-origin:center bottom;opacity:1;animation:flame 1s ease-in-out infinite}
+    .flame.off{opacity:0;transform:scaleY(0.6)}
+    @keyframes flame{0%{transform:scaleY(1)}50%{transform:scaleY(1.08)}100%{transform:scaleY(1)}}
+    .glow{box-shadow:0 18px 60px rgba(120,200,255,0.08), inset 0 -4px 10px rgba(0,0,0,0.4)}
+    /* astronaut */
+    .astro-wrap{width:120px;height:120px;position:relative}
+    .astro{position:absolute;left:10px;top:4px;width:100px;height:100px;animation:float 5s ease-in-out infinite;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.45))}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+    /* sounds list */
+    .sounds{max-height:300px;overflow:auto;padding-right:8px}
+    .sound-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;transition:background .18s}
+    .sound-item:hover{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))}
+    .sound-controls button{margin-left:8px}
+    /* articles */
+    .articles{margin-top:18px}
+    .article{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);margin-bottom:10px}
+    .article h4{margin:0 0 6px 0}
+    .read-btn{background:rgba(255,255,255,0.04);border:none;padding:8px 10px;border-radius:10px;color:#e6f8ff;cursor:pointer}
+    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:50;opacity:0;pointer-events:none;transition:opacity .22s}
+    .modal-back.on{opacity:1;pointer-events:auto}
+    .modal{width:90%;max-width:720px;background:#031821;padding:20px;border-radius:12px;transform:translateY(10px);transition:transform .22s}
+    .modal.on{transform:translateY(0)}
+    footer{margin-top:28px;text-align:center;color:#92d6e6;font-size:13px}
+    /* smooth transitions global */
+    button, .read-btn, select, input{transition:all .18s cubic-bezier(.2,.9,.2,1)}
+    /* aurora overlay */
+    .aurora{position:fixed;left:-10%;top:-20%;width:140%;height:45%;background:radial-gradient(closest-side at 10% 30%, rgba(124,92,255,0.12), transparent 10%), radial-gradient(closest-side at 80% 60%, rgba(65,231,196,0.12), transparent 12%), radial-gradient(closest-side at 60% 20%, rgba(32,156,238,0.08), transparent 12%);filter:blur(30px);pointer-events:none;z-index:0}
+    /* responsive */
+    @media(max-width:880px){.grid{grid-template-columns:1fr}.astro-wrap{display:none}.container{padding:14px}}
+  </style>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="container">
+    <header>
+      <h1>CorAlma</h1>
+      <nav>
+        <button>Inicio</button>
+        <button>Artículos</button>
+        <button>Meditaciones</button>
+        <button>Registro</button>
+      </nav>
+    </header>
 
-// CorAlma - Single-file React component (TailwindCSS assumed globally available) // - Hero with aurora-style gradient, planets, stars // - 30 complete sample articles (placeholder content; edit freely) // - 20 sound options (placeholders) with classical/relaxing labels // - Candle visual that "se apaga" al terminar la meditación // - Registro por correo para recibir frase mensual (almacenado en localStorage) // - Astronaut / "Snoopy con casco" moving animation (image placeholder) // NOTE: The Snoopy image is a copyrighted character. Replace with a licensed image // or a custom astronaut illustration if you don't have permission to use Snoopy.
+    <main class="grid" role="main">
+      <!-- LEFT -->
+      <section class="card" aria-labelledby="hero-title">
+        <div class="hero-top">
+          <div style="flex:1">
+            <h2 id="hero-title" style="font-size:28px;margin:0 0 6px 0">Encuentra tu calma — CorAlma</h2>
+            <p class="small">Meditaciones guiadas, música clásica/ambient y un universo visual con planetas y estrellas para acompañar tu práctica.</p>
 
-const SAMPLE_SOUNDS = Array.from({ length: 20 }).map((_, i) => ({ id: sound-${i + 1}, title: Relajante ${i + 1}, // Placeholder file paths — replace with real .mp3/.ogg files in your public/assets folder src: /assets/sounds/relax-${i + 1}.mp3, durationSec: 180 + (i % 5) * 30, // example durations 180s..300s }));
+            <div class="controls" style="align-items:center">
+              <label for="soundSelect" class="small" style="margin-right:6px">Selecciona sonido</label>
+              <select id="soundSelect" aria-label="Selecciona sonido"></select>
 
-// 30 short articles (complete paragraphs) — edit as you like const ARTICLES = [ { id: 1, title: "Respira: el primer acto de presencia", content: "La respiración es la ancla que nos trae de vuelta al ahora. En cada inhalación recogemos la vida; en cada exhalación soltamos lo que ya no sirve. Practicar 5 minutos diarios conecta cuerpo y mente y reduce la velocidad del diálogo interno.", }, { id: 2, title: "Pequeñas prácticas para potenciar la calma", content: "La calma no siempre requiere horas. Micro-prácticas como una pausa de 60 segundos, una taza de té consciente o una caminata lenta al sol cambian el patrón neuroquímico y te preparan para momentos más profundos de meditación.", }, { id: 3, title: "La música clásica como paisaje interior", content: "Las composiciones de piano y cuerdas crean espacios seguros para la mente. La estructura armónica y el tempo pausado facilitan la regulación emocional; prueba piezas lentas de Mozart, Debussy o Satie para acompañar tu práctica.", }, { id: 4, title: "Cómo elegir un sonido para tu meditación", content: "No hay un sonido universal; hay preferencias. Observa cómo reaccionas al timbre, a la velocidad y a la densidad sonora. Si la atención se dispersa, cambia a un sonido más simple o más amplio hasta encontrar tu resonancia.", }, { id: 5, title: "La vela: símbolo y herramienta", content: "Encender una vela antes de meditar es un ritual que envía señales al sistema límbico: cuidado, ahora es tiempo para interiorizar. En esta página la vela también anima su combustión y se apaga al finalizar la sesión.", }, { id: 6, title: "Límites digitales: proteger tu atención", content: "Apagar notificaciones o poner el móvil en modo avión prioriza la experiencia. Un entorno controlado reduce micro-interrupciones y permite profundizar en solo unos minutos más que con distracciones constantes.", }, { id: 7, title: "Ciclos de sueño y meditación", content: "La meditación antes de dormir regula la activación fisiológica y favorece la transición al sueño. Practica ejercicios de respiración lenta y evita pantallas 30 minutos antes para mejorar la calidad del descanso.", }, { id: 8, title: "La atención plena en tareas simples", content: "Hacer una tarea cotidiana con atención plena —como lavar los platos— convierte lo rutinario en práctica. Observa sensaciones, sonidos y movimientos sin juzgar, y descubrirás capas de presencia en lo ordinario.", }, { id: 9, title: "Armonía cuerpo-mente: movimiento consciente", content: "Yoga suave, estiramientos y caminatas lentas preparan al sistema nervioso para la quietud. El cuerpo siente antes que la mente; moverlo con intención facilita la llegada de la calma profunda.", }, { id: 10, title: "Frases que sostienen: pequeños mantras", content: "Un mantra corto puede anclar la atención cuando la mente divaga. "Soy suficiente" o "Aquí y ahora" funcionan como recordatorios afectivos que devuelven la conciencia al presente.", }, { id: 11, title: "Luz y color: cómo nos influyen", content: "Los colores fríos y gradientes suaves (como las auroras) inducen estados de relajación. Ajustar la iluminación de tu espacio de práctica puede facilitar la inmersión y modular la respuesta emocional.", }, { id: 12, title: "Meditaciones guiadas: cuándo y por qué", content: "Una voz guía reduce la carga de tener que dirigir la práctica. Si estás empezando, usa sesiones guiadas; cuando ganes confianza, alterna con prácticas silenciosas.", }, { id: 13, title: "Conexión con el cosmos: imaginar expansiones", content: "Visualizaciones que incluyen planetas y estrellas pueden ampliar el sentido del yo y disminuir la importancia de preocupaciones locales. Esto produce una sensación de perspectiva sanadora.", }, { id: 14, title: "Respirar en 4 tiempos: técnica simple", content: "Inhala 4, retén 4, exhala 4, espera 4. Este ciclo regula el sistema nervioso y es fácil de recordar; úsalo para volver al centro en cualquier momento del día.", }, { id: 15, title: "La importancia de la consistencia", content: "Cinco minutos todos los días superan una sesión larga esporádica. La consistencia crea hábitos neuronales que sostienen estados de presencia y bienestar a largo plazo.", }, { id: 16, title: "Escucha activa: la meditación como práctica relacional", content: "La atención plena no solo sirve para estar solo; también mejora la escucha cuando estamos con otros. Practicar la presencia cultivar empatía y diálogo genuino.", }, { id: 17, title: "Rituales previos a la práctica", content: "Pequeños rituales —encender una vela, beber agua— indican al cuerpo que comienza algo diferente. La coherencia ritual potencia la señal psicológica de cambio de estado.", }, { id: 18, title: "Silencio y sonido: balance necesario", content: "Combinar momentos de silencio con paisajes sonoros ayuda a integrar la experiencia. Alterna sesiones con y sin música para descubrir qué te ayuda más en cada etapa.", }, { id: 19, title: "Meditación en movimiento", content: "No toda práctica exige inmovilidad. El Tai Chi y la caminata consciente son formas de meditación que integran cuerpo y mente a través del movimiento rítmico.", }, { id: 20, title: "Atención compasiva hacia uno mismo", content: "Tratarte con la misma ternura que a un amigo reduce la crítica interna. Usa frases amables y recuerda que la práctica no es perfección, sino presencia.", }, { id: 21, title: "Respirar con intención: foco y claridad", content: "Antes de una decisión importante, 3 respiraciones profundas enfocadas clarifican la mente y reducen la reactividad emocional. La intención ordena el pensamiento.", }, { id: 22, title: "Vínculo tierra-cuerpo: grounding", content: "Conectar las plantas de los pies al suelo, caminar descalzo o sostener una piedra te ancla. Estas prácticas recuperan estabilidad y reducen la sensación de dispersión.", }, { id: 23, title: "Meditaciones breves para el trabajo", content: "Pausas de 2 a 5 minutos en la jornada laboral mejoran la productividad y reducen el desgaste. Integra respiraciones conscientes antes de reuniones o tareas creativas.", }, { id: 24, title: "El poder del agradecimiento", content: "Terminar la práctica con tres cosas por las que estás agradecido recalibra la percepción hacia lo positivo y crea un cierre afectivo que puede sostener el día.", }, { id: 25, title: "Visualizaciones para soltar el estrés", content: "Imagina una corriente que arrastra las tensiones lejos de tu cuerpo. Visualizaciones kinestésicas aceleran el desapego y ayudan al sistema nervioso a regenerarse.", }, { id: 26, title: "La duración importa menos que la calidad", content: "Una práctica breve, sincera y focalizada ofrece más beneficios que una larga y distraída. Mantén la intención y reduce el juicio sobre el tiempo empleado.", }, { id: 27, title: "Meditación y creatividad", content: "Estados de atención abierta potencian conexiones inéditas en la mente. Meditar antes de crear puede facilitar ideas frescas y asociaciones menos condicionadas.", }, { id: 28, title: "Ritmo cardiaco y respiración", content: "La respiración lenta influye directamente en el ritmo cardiaco. Prácticas coherentes de respiración generan una base fisiológica más calma y estable.", }, { id: 29, title: "Meditación y relaciones", content: "La práctica sostenida transforma la manera de relacionarnos: menos reactividad, más presencia y escucha. Estos cambios impactan positivamente en la calidad de nuestras relaciones.", }, { id: 30, title: "Pequeñas ceremonias para grandes cambios", content: "Repetir acciones conscientes -una vela, una canción- crea memoria emocional. Con el tiempo, estas ceremonias sostienen cambios duraderos en el cuerpo y la mente.", }, ];
+              <button id="startBtn" class="btn" title="Iniciar meditación">Iniciar</button>
+              <button id="stopBtn" class="btn secondary">Detener</button>
 
-export default function CorAlmaApp() { const [sounds] = useState(SAMPLE_SOUNDS); const [selectedSound, setSelectedSound] = useState(sounds[0]); const [isPlaying, setIsPlaying] = useState(false); const audioRef = useRef(null); const [candleLit, setCandleLit] = useState(false); const [sessionSecs, setSessionSecs] = useState(0); const [remaining, setRemaining] = useState(0); const [email, setEmail] = useState(""); const [subscribed, setSubscribed] = useState(false); const [phrase, setPhrase] = useState(""); const [showModal, setShowModal] = useState(null);
-
-// Load subscription state from localStorage useEffect(() => { const s = localStorage.getItem("coralma_subscribed"); const e = localStorage.getItem("coralma_email"); if (s === "true") { setSubscribed(true); setEmail(e || ""); } // simple monthly phrase generation (deterministic by month) const now = new Date(); const monthKey = ${now.getFullYear()}-${now.getMonth()}; const seedPhrases = [ "Respira y deja que el universo haga lo suyo.", "Hoy es terreno fértil para la calma.", "Tu presencia es el acto más sanador.", "Al soltar, te haces más ligero.", "Escucha el latido que te sostiene.", ]; const idx = (now.getFullYear() + now.getMonth()) % seedPhrases.length; setPhrase(seedPhrases[idx]); }, []);
-
-useEffect(() => { if (!audioRef.current) return; const audio = audioRef.current; const onEnded = () => { setIsPlaying(false); setCandleLit(false); // candle goes off setRemaining(0); }; audio.addEventListener("ended", onEnded); return () => audio.removeEventListener("ended", onEnded); }, []);
-
-useEffect(() => { let timer; if (isPlaying && remaining > 0) { timer = setInterval(() => setRemaining((r) => Math.max(0, r - 1)), 1000); } if (remaining === 0 && isPlaying) { // stop audio audioRef.current?.pause(); audioRef.current && (audioRef.current.currentTime = 0); setIsPlaying(false); setCandleLit(false); } return () => clearInterval(timer); }, [isPlaying, remaining]);
-
-function startSession(durationSec = null) { const dur = durationSec || selectedSound.durationSec || 180; setSessionSecs(dur); setRemaining(dur); setCandleLit(true); audioRef.current && (audioRef.current.src = selectedSound.src); audioRef.current && audioRef.current.play().catch(() => {}); setIsPlaying(true); }
-
-function stopSession() { audioRef.current?.pause(); audioRef.current && (audioRef.current.currentTime = 0); setIsPlaying(false); setCandleLit(false); setRemaining(0); }
-
-function handleSubscribe(e) { e.preventDefault(); if (!email.includes("@")) { alert("Introduce un correo válido"); return; } localStorage.setItem("coralma_subscribed", "true"); localStorage.setItem("coralma_email", email); setSubscribed(true); alert("Gracias — recibirás una frase mensual en tu correo (simulado)"); }
-
-return ( <div className="min-h-screen bg-gradient-to-b from-[#0b2540] via-[#0a2040] to-[#021118] text-white overflow-x-hidden"> {/* Stars & planets background */} <div className="absolute inset-0 pointer-events-none"> <div className="w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent to-transparent opacity-60"></div> </div>
-
-<header className="relative z-20 p-6 flex items-center justify-between">
-    <h1 className="text-3xl font-extrabold tracking-tight">CorAlma</h1>
-    <nav className="space-x-4">
-      <button className="px-3 py-1 rounded-md bg-white/10">Inicio</button>
-      <button className="px-3 py-1 rounded-md bg-white/10">Artículos</button>
-      <button className="px-3 py-1 rounded-md bg-white/10">Meditaciones</button>
-      <button className="px-3 py-1 rounded-md bg-white/10">Registro</button>
-    </nav>
-  </header>
-
-  <main className="relative z-20 p-6 grid gap-8 md:grid-cols-3">
-    {/* Left column: Hero + Astronaut */}
-    <section className="md:col-span-2">
-      <div className="rounded-2xl p-8" style={{ background: 'linear-gradient(135deg, rgba(10,25,47,0.6), rgba(3,7,18,0.6))' }}>
-        <div className="flex items-start gap-6">
-          <div className="flex-1">
-            <h2 className="text-4xl font-bold">Encuentra tu calma — CorAlma</h2>
-            <p className="mt-3 text-lg text-white/80">Meditaciones guiadas, sonidos clásicos y un universo visual para acompañar tu práctica.</p>
-
-            <div className="mt-6 flex items-center gap-4">
-              <select
-                aria-label="Selecciona un sonido"
-                value={selectedSound.id}
-                onChange={(e) => setSelectedSound(sounds.find(s => s.id === e.target.value))}
-                className="rounded-md p-2 bg-white/5"
-              >
-                {sounds.map((s) => (
-                  <option key={s.id} value={s.id}>{s.title}</option>
-                ))}
-              </select>
-
-              <button onClick={() => startSession()} className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-emerald-400 text-black font-semibold">Iniciar</button>
-              <button onClick={stopSession} className="px-3 py-2 rounded-lg bg-white/10">Detener</button>
-
-              <div className="ml-4 text-sm text-white/70">Tiempo restante: {Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}</div>
+              <div class="time-remaining" id="timeRemaining">00:00</div>
             </div>
 
-            {/* Candle visual */}
-            <div className="mt-6 flex items-center gap-6">
-              <div className="relative w-28 h-44 flex items-end justify-center">
-                <div className={`w-12 h-28 rounded-xl bg-[#2b1f15] flex items-end justify-center transition-all ${candleLit ? 'shadow-glow' : 'opacity-60'}`}>
-                  {/* flame (visible when lit) */}
-                  <div className={`absolute top-4 w-4 h-6 origin-bottom transform ${candleLit ? 'animate-flame' : 'opacity-0'}`}></div>
-                </div>
-                {/* wax drip / label */}
-                <div className="absolute bottom-2 text-xs text-white/70">CorAlma Candle</div>
+            <!-- vela -->
+            <div class="candle-wrap" aria-hidden="false">
+              <div class="candle off" id="candle">
+                <div class="flame off" id="flame" aria-hidden="true"></div>
+                <div class="wax-label">CorAlma Candle</div>
               </div>
-
               <div>
-                <div className="text-sm text-white/80">Vela simbólica</div>
-                <div className="text-xs text-white/60">La vela se apagará al terminar la sesión.</div>
+                <div class="small">Vela simbólica</div>
+                <div class="small" style="opacity:0.8">La vela se apagará al terminar la sesión.</div>
+              </div>
+            </div>
+
+            <!-- astronauta SVG inline (libre/public domain style) -->
+            <div style="margin-top:14px;display:flex;align-items:center;gap:12px">
+              <div class="astro-wrap" aria-hidden="true">
+                <!-- simple astronaut helmet SVG (inline, libre para usar y editar) -->
+                <svg class="astro" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="astronauta">
+                  <defs>
+                    <linearGradient id="g1" x1="0" x2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity="0.9"/>
+                      <stop offset="1" stop-color="#d7f6ff" stop-opacity="0.2"/>
+                    </linearGradient>
+                    <radialGradient id="glass" cx="30%" cy="30%">
+                      <stop offset="0" stop-color="#dff9ff"/>
+                      <stop offset="1" stop-color="#7ecfe0"/>
+                    </radialGradient>
+                  </defs>
+                  <rect x="10" y="22" rx="20" ry="20" width="140" height="116" fill="#0a2230"/>
+                  <ellipse cx="80" cy="70" rx="48" ry="38" fill="url(#glass)" stroke="#082630" stroke-width="3"/>
+                  <path d="M30 110 Q80 130 130 110" fill="none" stroke="#052b36" stroke-width="4" opacity="0.7"/>
+                  <circle cx="52" cy="45" r="4" fill="#ffdfc4" opacity=".7"/>
+                  <circle cx="108" cy="45" r="4" fill="#ffd9f0" opacity=".6"/>
+                  <!-- helmet rim -->
+                  <path d="M28 48 Q20 72 28 96" stroke="#082630" stroke-width="4" fill="none" opacity="0.8"/>
+                </svg>
+              </div>
+              <div>
+                <div style="font-weight:600">Astronauta</div>
+                <div class="small">Ilustración inline — sin derechos reservados (puedes editar libremente).</div>
               </div>
             </div>
 
           </div>
-
-          {/* Astronaut / Snoopy animation */}
-          <div className="w-48 h-48 relative">
-            {/* Replace the src with licensed image. This is a placeholder path. */}
-            <img src="/assets/images/snoopy-astro.png" alt="Snoopy astronaut placeholder" className="absolute w-28 h-28 left-6 top-4 animate-float" />
-            <div className="absolute -bottom-6 left-0 w-full text-xs text-white/60 text-center">*Si no tienes derechos para usar este personaje, sustituye por un astronauta libre.</div>
-          </div>
         </div>
 
-        {/* small audio tag (hidden) */}
-        <audio ref={audioRef} />
-      </div>
+        <!-- audio element (single) -->
+        <audio id="player"></audio>
 
-      {/* Articles list */}
-      <section className="mt-8">
-        <h3 className="text-2xl font-bold mb-4">Artículos destacados</h3>
-        <div className="grid md:grid-cols-2 gap-4">
-          {ARTICLES.map((a) => (
-            <article key={a.id} className="p-4 rounded-xl bg-white/5">
-              <h4 className="font-semibold">{a.title}</h4>
-              <p className="mt-2 text-sm text-white/80">{a.content}</p>
-              <button onClick={() => setShowModal(a)} className="mt-3 inline-block px-3 py-1 rounded bg-white/10">Leer completo</button>
-            </article>
-          ))}
-        </div>
+        <!-- ARTÍCULOS resumen -->
+        <section class="articles" aria-label="Artículos destacados">
+          <h3 style="margin:14px 0 8px 0">Artículos destacados</h3>
+          <div id="articlesList"></div>
+        </section>
       </section>
-    </section>
 
-    {/* Right column: controls, sounds, registro */}
-    <aside className="p-4 rounded-2xl bg-white/5">
-      <div>
-        <h4 className="font-bold">Selector de sonido</h4>
-        <ul className="mt-3 space-y-2 max-h-72 overflow-auto">
-          {sounds.map((s) => (
-            <li key={s.id} className="flex items-center justify-between">
-              <div>
-                <div className="text-sm">{s.title}</div>
-                <div className="text-xs text-white/60">Duración aprox: {Math.round(s.durationSec / 60)} min</div>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => { setSelectedSound(s); startSession(s.durationSec); }} className="px-2 py-1 rounded bg-white/10">Play</button>
-                <button onClick={() => setSelectedSound(s)} className={`px-2 py-1 rounded ${selectedSound.id === s.id ? 'bg-emerald-500 text-black' : 'bg-white/10'}`}>Usar</button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <!-- RIGHT -->
+      <aside class="card" aria-labelledby="controls-title">
+        <h4 id="controls-title" style="margin:0 0 8px 0">Selector de sonido</h4>
+        <div class="sounds" id="soundsList" role="list"></div>
 
-      <hr className="my-4 border-white/10" />
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,0.04);margin:14px 0">
 
-      <div>
-        <h4 className="font-bold">Registro / Frase mensual</h4>
-        {subscribed ? (
-          <div className="text-sm">Suscrito: {email}<br />Frase del mes: <span className="italic">{phrase}</span></div>
-        ) : (
-          <form onSubmit={handleSubscribe} className="mt-3 flex flex-col gap-2">
-            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" className="p-2 rounded bg-white/5" />
-            <button type="submit" className="px-3 py-2 rounded bg-gradient-to-r from-indigo-500 to-emerald-400 text-black">Suscribirme</button>
+        <h4>Registro / Frase mensual</h4>
+        <div id="regArea" style="margin-top:8px">
+          <form id="subForm">
+            <input type="email" id="email" placeholder="tu@correo.com" aria-label="Correo" style="width:100%;margin-bottom:8px">
+            <button class="btn" type="submit">Suscribirme</button>
           </form>
-        )}
-      </div>
-
-      <hr className="my-4 border-white/10" />
-
-      <div>
-        <h4 className="font-bold">Personaliza colores (Aurora)</h4>
-        <div className="mt-2 text-sm text-white/70">Este sitio usa gradientes estilo aurora. Edita en CSS para ajustar los tonos: morado profundo, verde esmeralda y azul cielo.</div>
-      </div>
-
-      <hr className="my-4 border-white/10" />
-
-      <div>
-        <h4 className="font-bold">Notas técnicas</h4>
-        <ul className="text-xs text-white/70 mt-2 space-y-1">
-          <li>Los sonidos son placeholders: coloca archivos reales en /public/assets/sounds/</li>
-          <li>La imagen de Snoopy es placeholder — asegúrate de tener derechos o sustituir por una ilustración libre.</li>
-          <li>El registro guarda el correo en localStorage como ejemplo. Conecta un backend para envíos reales.</li>
-        </ul>
-      </div>
-    </aside>
-  </main>
-
-  {/* Article modal */}
-  {showModal && (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6">
-      <div className="bg-[#051425] rounded-2xl p-6 max-w-3xl w-full">
-        <h3 className="text-2xl font-bold">{showModal.title}</h3>
-        <p className="mt-4 text-white/80">{showModal.content}</p>
-        <div className="mt-6 text-right">
-          <button onClick={() => setShowModal(null)} className="px-4 py-2 rounded bg-white/10">Cerrar</button>
+          <div id="subInfo" class="small" style="margin-top:10px;display:none"></div>
         </div>
+
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,0.04);margin:14px 0">
+
+        <h4>Personaliza colores (Aurora)</h4>
+        <div class="small" style="margin-top:6px">Colores estilo aurora: morado profundo, verde esmeralda y azul cielo. Ajusta en CSS <code>.aurora</code> si quieres otros tonos.</div>
+
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,0.04);margin:14px 0">
+
+        <h4>Fuentes de audio libres sugeridas</h4>
+        <ul class="small" style="margin-top:8px">
+          <li>Pixabay Music — pistas de relajación sin copyright. (ideal para mp3 libres). </li>
+          <li>Freesound — efectos y paisajes sonoros con licencias CC; revisa cada pista. </li>
+          <li>Musopen — grabaciones clásicas en dominio público (piano, cuerdas, Debussy, etc.).</li>
+          <li>Free Music Archive — mucha música clasificable por género y licencia.</li>
+          <li>FreeSVG.org — iconos/SVGs de casco/astronauta en dominio público (si necesitas más ilustraciones).</li>
+        </ul>
+
+        <div class="small" style="margin-top:10px">Notas: descarga los MP3 y ponlos en <code>/assets/sounds/</code> con nombres <code>relax-1.mp3</code> ... <code>relax-20.mp3</code> o enlaza URLs directas a los archivos.</div>
+
+      </aside>
+    </main>
+
+    <footer>
+      <div>CorAlma · Tu espacio para la calma</div>
+      <div style="margin-top:8px;font-size:12px;color:#bfeffd">Fuentes sugeridas: Pixabay, Freesound, Musopen, FreeSVG, Free Music Archive (ver notas más abajo).</div>
+    </footer>
+  </div>
+
+  <!-- modal (leer artículo) -->
+  <div id="modalBack" class="modal-back" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="modal" class="modal" role="document">
+      <h3 id="modalTitle"></h3>
+      <p id="modalBody" style="margin-top:12px;color:#cfeff7"></p>
+      <div style="text-align:right;margin-top:14px">
+        <button id="closeModal" class="btn secondary">Cerrar</button>
       </div>
     </div>
-  )}
+  </div>
 
-  {/* decorative CSS and animations */}
-  <style>{`
-    .animate-flame { background: radial-gradient(circle at 30% 30%, rgba(255,220,130,1), rgba(255,140,0,0.9)); border-radius: 50%; }
-    .shadow-glow { box-shadow: 0 6px 30px rgba(120,200,255,0.12), inset 0 -6px 10px rgba(0,0,0,0.4); }
-    @keyframes flame { 0% { transform: scaleY(1); opacity:1 } 50% { transform: scaleY(1.05); opacity:0.9 } 100% { transform: scaleY(1); opacity:1 } }
-    .animate-flame { animation: flame 900ms infinite ease-in-out; }
-    @keyframes float { 0%{ transform: translateY(0) } 50%{ transform: translateY(-8px) } 100%{ transform: translateY(0) } }
-    .animate-float { animation: float 4s ease-in-out infinite; }
+  <script>
+    /**********************
+     * Datos: 30 artículos
+     **********************/
+    const ARTICLES = [
+      {id:1,title:"Respira: el primer acto de presencia",content:"La respiración es la ancla que nos trae de vuelta al ahora. En cada inhalación recogemos la vida; en cada exhalación soltamos lo que ya no sirve. Practicar 5 minutos diarios conecta cuerpo y mente y reduce la velocidad del diálogo interno."},
+      {id:2,title:"Pequeñas prácticas para potenciar la calma",content:"La calma no siempre requiere horas. Micro-prácticas como una pausa de 60 segundos, una taza de té consciente o una caminata lenta al sol cambian el patrón neuroquímico y te preparan para momentos más profundos de meditación."},
+      {id:3,title:"La música clásica como paisaje interior",content:"Las composiciones de piano y cuerdas crean espacios seguros para la mente. La estructura armónica y el tempo pausado facilitan la regulación emocional; prueba piezas lentas de Mozart, Debussy o Satie para acompañar tu práctica."},
+      {id:4,title:"Cómo elegir un sonido para tu meditación",content:"No hay un sonido universal; hay preferencias. Observa cómo reaccionas al timbre, a la velocidad y a la densidad sonora. Si la atención se dispersa, cambia a un sonido más simple o más amplio hasta encontrar tu resonancia."},
+      {id:5,title:"La vela: símbolo y herramienta",content:"Encender una vela antes de meditar es un ritual que envía señales al sistema límbico: cuidado, ahora es tiempo para interiorizar. En esta página la vela también anima su combustión y se apaga al finalizar la sesión."},
+      {id:6,title:"Límites digitales: proteger tu atención",content:"Apagar notificaciones o poner el móvil en modo avión prioriza la experiencia. Un entorno controlado reduce micro-interrupciones y permite profundizar en solo unos minutos más que con distracciones constantes."},
+      {id:7,title:"Ciclos de sueño y meditación",content:"La meditación antes de dormir regula la activación fisiológica y favorece la transición al sueño. Practica ejercicios de respiración lenta y evita pantallas 30 minutos antes para mejorar la calidad del descanso."},
+      {id:8,title:"La atención plena en tareas simples",content:"Hacer una tarea cotidiana con atención plena —como lavar los platos— convierte lo rutinario en práctica. Observa sensaciones, sonidos y movimientos sin juzgar, y descubrirás capas de presencia en lo ordinario."},
+      {id:9,title:"Armonía cuerpo-mente: movimiento consciente",content:"Yoga suave, estiramientos y caminatas lentas preparan al sistema nervioso para la quietud. El cuerpo siente antes que la mente; moverlo con intención facilita la llegada de la calma profunda."},
+      {id:10,title:"Frases que sostienen: pequeños mantras",content:"Un mantra corto puede anclar la atención cuando la mente divaga. 'Soy suficiente' o 'Aquí y ahora' funcionan como recordatorios afectivos que devuelven la conciencia al presente."},
+      {id:11,title:"Luz y color: cómo nos influyen",content:"Los colores fríos y gradientes suaves (como las auroras) inducen estados de relajación. Ajustar la iluminación de tu espacio de práctica puede facilitar la inmersión y modular la respuesta emocional."},
+      {id:12,title:"Meditaciones guiadas: cuándo y por qué",content:"Una voz guía reduce la carga de tener que dirigir la práctica. Si estás empezando, usa sesiones guiadas; cuando ganes confianza, alterna con prácticas silenciosas."},
+      {id:13,title:"Conexión con el cosmos: imaginar expansiones",content:"Visualizaciones que incluyen planetas y estrellas pueden ampliar el sentido del yo y disminuir la importancia de preocupaciones locales. Esto produce una sensación de perspectiva sanadora."},
+      {id:14,title:"Respirar en 4 tiempos: técnica simple",content:"Inhala 4, retén 4, exhala 4, espera 4. Este ciclo regula el sistema nervioso y es fácil de recordar; úsalo para volver al centro en cualquier momento del día."},
+      {id:15,title:"La importancia de la consistencia",content:"Cinco minutos todos los días superan una sesión larga esporádica. La consistencia crea hábitos neuronales que sostienen estados de presencia y bienestar a largo plazo."},
+      {id:16,title:"Escucha activa: la meditación como práctica relacional",content:"La atención plena no solo sirve para estar solo; también mejora la escucha cuando estamos con otros. Practicar la presencia cultivar empatía y diálogo genuino."},
+      {id:17,title:"Rituales previos a la práctica",content:"Pequeños rituales —encender una vela, beber agua— indican al cuerpo que comienza algo diferente. La coherencia ritual potencia la señal psicológica de cambio de estado."},
+      {id:18,title:"Silencio y sonido: balance necesario",content:"Combinar momentos de silencio con paisajes sonoros ayuda a integrar la experiencia. Alterna sesiones con y sin música para descubrir qué te ayuda más en cada etapa."},
+      {id:19,title:"Meditación en movimiento",content:"No toda práctica exige inmovilidad. El Tai Chi y la caminata consciente son formas de meditación que integran cuerpo y mente a través del movimiento rítmico."},
+      {id:20,title:"Atención compasiva hacia uno mismo",content:"Tratarte con la misma ternura que a un amigo reduce la crítica interna. Usa frases amables y recuerda que la práctica no es perfección, sino presencia."},
+      {id:21,title:"Respirar con intención: foco y claridad",content:"Antes de una decisión importante, 3 respiraciones profundas enfocadas clarifican la mente y reducen la reactividad emocional. La intención ordena el pensamiento."},
+      {id:22,title:"Vínculo tierra-cuerpo: grounding",content:"Conectar las plantas de los pies al suelo, caminar descalzo o sostener una piedra te ancla. Estas prácticas recuperan estabilidad y reducen la sensación de dispersión."},
+      {id:23,title:"Meditaciones breves para el trabajo",content:"Pausas de 2 a 5 minutos en la jornada laboral mejoran la productividad y reducen el desgaste. Integra respiraciones conscientes antes de reuniones o tareas creativas."},
+      {id:24,title:"El poder del agradecimiento",content:"Terminar la práctica con tres cosas por las que estás agradecido recalibra la percepción hacia lo positivo y crea un cierre afectivo que puede sostener el día."},
+      {id:25,title:"Visualizaciones para soltar el estrés",content:"Imagina una corriente que arrastra las tensiones lejos de tu cuerpo. Visualizaciones kinestésicas aceleran el desapego y ayudan al sistema nervioso a regenerarse."},
+      {id:26,title:"La duración importa menos que la calidad",content:"Una práctica breve, sincera y focalizada ofrece más beneficios que una larga y distraída. Mantén la intención y reduce el juicio sobre el tiempo empleado."},
+      {id:27,title:"Meditación y creatividad",content:"Estados de atención abierta potencian conexiones inéditas en la mente. Meditar antes de crear puede facilitar ideas frescas y asociaciones menos condicionadas."},
+      {id:28,title:"Ritmo cardiaco y respiración",content:"La respiración lenta influye directamente en el ritmo cardiaco. Prácticas coherentes de respiración generan una base fisiológica más calma y estable."},
+      {id:29,title:"Meditación y relaciones",content:"La práctica sostenida transforma la manera de relacionarnos: menos reactividad, más presencia y escucha. Estos cambios impactan positivamente en la calidad de nuestras relaciones."},
+      {id:30,title:"Pequeñas ceremonias para grandes cambios",content:"Repetir acciones conscientes -una vela, una canción- crea memoria emocional. Con el tiempo, estas ceremonias sostienen cambios duraderos en el cuerpo y la mente."}
+    ];
 
-    /* aurora gradient overlay */
-    body { background-image: linear-gradient(120deg, rgba(85,45,150,0.12), rgba(16,185,129,0.08)); }
-  `}</style>
-</div>
+    /*************************
+     * Sonidos: 20 placeholders
+     * Reemplazar src por archivos reales
+     *************************/
+    const SAMPLE_SOUNDS = Array.from({length:20}).map((_,i) => ({
+      id:`sound-${i+1}`,
+      title:`Relajante ${i+1}`,
+      // Pon tus archivos en /assets/sounds/relax-1.mp3 ... relax-20.mp3
+      src:`/assets/sounds/relax-${i+1}.mp3`,
+      durationSec:180 + (i % 5) * 30
+    }));
 
-); }
+    // referencias DOM
+    const soundSelect = document.getElementById('soundSelect');
+    const soundsList = document.getElementById('soundsList');
+    const player = document.getElementById('player');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const timeRemaining = document.getElementById('timeRemaining');
+    const candle = document.getElementById('candle');
+    const flame = document.getElementById('flame');
+    const articlesList = document.getElementById('articlesList');
+    const modalBack = document.getElementById('modalBack');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const closeModal = document.getElementById('closeModal');
+    const subForm = document.getElementById('subForm');
+    const emailInput = document.getElementById('email');
+    const subInfo = document.getElementById('subInfo');
 
+    // estado
+    let selectedSound = SAMPLE_SOUNDS[0];
+    let isPlaying = false;
+    let remaining = 0;
+    let timer = null;
+
+    // inicializa UI
+    function init() {
+      // llenar select
+      SAMPLE_SOUNDS.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id; opt.textContent = `${s.title} — ${Math.round(s.durationSec/60)} min`;
+        soundSelect.appendChild(opt);
+      });
+      soundSelect.addEventListener('change', (e) => {
+        const id = e.target.value;
+        selectedSound = SAMPLE_SOUNDS.find(x=>x.id===id);
+      });
+
+      // lista lateral
+      SAMPLE_SOUNDS.forEach(s => {
+        const li = document.createElement('div');
+        li.className = 'sound-item';
+        li.innerHTML = `
+          <div>
+            <div style="font-weight:600">${s.title}</div>
+            <div class="small">Duración aprox: ${Math.round(s.durationSec/60)} min</div>
+          </div>
+          <div class="sound-controls">
+            <button class="btn secondary" data-action="play" data-id="${s.id}">Play</button>
+            <button class="btn" data-action="use" data-id="${s.id}">Usar</button>
+          </div>
+        `;
+        soundsList.appendChild(li);
+      });
+
+      // artículos
+      ARTICLES.forEach(a => {
+        const el = document.createElement('article');
+        el.className = 'article';
+        el.innerHTML = `<h4>${a.title}</h4><p class="small">${a.content}</p><div style="margin-top:8px"><button class="read-btn" data-id="${a.id}">Leer completo</button></div>`;
+        articlesList.appendChild(el);
+      });
+
+      // cargar suscripción (local)
+      const s = localStorage.getItem('coralma_subscribed');
+      const e = localStorage.getItem('coralma_email');
+      if(s === 'true' && e){
+        emailInput.value = e;
+        subForm.style.display = 'none';
+        subInfo.style.display = 'block';
+        subInfo.innerHTML = `<strong>Suscrito:</strong> ${e}<br><em>${monthlyPhrase()}</em>`;
+      }
+    }
+
+    // monthly phrase
+    function monthlyPhrase(){
+      const now = new Date();
+      const phrases = ["Respira y deja que el universo haga lo suyo.","Hoy es terreno fértil para la calma.","Tu presencia es el acto más sanador.","Al soltar, te haces más ligero.","Escucha el latido que te sostiene."];
+      const idx = (now.getFullYear()+now.getMonth()) % phrases.length;
+      return phrases[idx];
+    }
+
+    // playback helpers
+    function startSession(durationSec = null) {
+      const dur = durationSec || selectedSound.durationSec || 180;
+      remaining = dur;
+      player.src = selectedSound.src;
+      player.play().catch(err => {
+        console.warn('No fue posible reproducir audio automáticamente. Revisa la ruta o permisos.', err);
+      });
+      isPlaying = true;
+      updateUIPlaying(true);
+      candle.classList.remove('off'); flame.classList.remove('off'); candle.classList.add('glow');
+      // timer
+      if(timer) clearInterval(timer);
+      timer = setInterval(() => {
+        remaining = Math.max(0, remaining - 1);
+        updateTime();
+        if(remaining === 0) {
+          stopSession();
+        }
+      },1000);
+    }
+
+    function stopSession(){
+      if(player){ player.pause(); player.currentTime = 0; }
+      isPlaying = false;
+      updateUIPlaying(false);
+      candle.classList.add('off'); flame.classList.add('off'); candle.classList.remove('glow');
+      remaining = 0;
+      updateTime();
+      if(timer) { clearInterval(timer); timer = null; }
+    }
+
+    function updateUIPlaying(flag){
+      startBtn.disabled = flag;
+      stopBtn.disabled = !flag;
+    }
+
+    function updateTime(){
+      const mm = String(Math.floor(remaining/60)).padStart(2,'0');
+      const ss = String(remaining%60).padStart(2,'0');
+      timeRemaining.textContent = `${mm}:${ss}`;
+    }
+
+    // eventos globales
+    startBtn.addEventListener('click', ()=> startSession());
+    stopBtn.addEventListener('click', stopSession);
+
+    // click en play/use de la lista
+    soundsList.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const action = btn.dataset.action;
+      const id = btn.dataset.id;
+      const s = SAMPLE_SOUNDS.find(x => x.id === id);
+      if(action === 'play' && s){
+        // play this track immediately
+        selectedSound = s;
+        startSession(s.durationSec);
+      } else if(action === 'use' && s){
+        selectedSound = s;
+        // set select value
+        soundSelect.value = s.id;
+        alert(`Sonido "${s.title}" seleccionado para futuras sesiones.`);
+      }
+    });
+
+    // modal abrir
+    articlesList.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const id = Number(btn.dataset.id);
+      const article = ARTICLES.find(a => a.id === id);
+      if(article){
+        modalTitle.textContent = article.title;
+        modalBody.textContent = article.content;
+        modalBack.classList.add('on');
+        modal.classList.add('on');
+        modalBack.setAttribute('aria-hidden','false');
+      }
+    });
+    closeModal.addEventListener('click', ()=> {
+      modalBack.classList.remove('on'); modal.classList.remove('on'); modalBack.setAttribute('aria-hidden','true');
+    });
+    modalBack.addEventListener('click', (e) => {
+      if(e.target === modalBack){
+        modalBack.classList.remove('on'); modal.classList.remove('on'); modalBack.setAttribute('aria-hidden','true');
+      }
+    });
+
+    // suscripción (localStorage demo)
+    subForm.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const email = (emailInput.value || '').trim();
+      if(!email.includes('@')) { alert('Introduce un correo válido'); return; }
+      localStorage.setItem('coralma_subscribed','true');
+      localStorage.setItem('coralma_email',email);
+      subForm.style.display = 'none';
+      subInfo.style.display = 'block';
+      subInfo.innerHTML = `<strong>Suscrito:</strong> ${email}<br><em>${monthlyPhrase()}</em>`;
+      alert('Gracias — (simulación) recibirás una frase mensual en tu correo.');
+    });
+
+    // player 'ended' event
+    player.addEventListener('ended', ()=> {
+      stopSession();
+    });
+
+    // init
+    init();
+    updateTime();
+
+  </script>
+
+  <!-- Fuentes/recursos sugeridos (lectura) con referencias -->
+  <div style="position:fixed;right:14px;bottom:14px;background:rgba(0,0,0,0.45);padding:10px;border-radius:10px;font-size:12px;color:#c9f0ff;z-index:60">
+    Recursos recomendados para audio/imagenes:<br>
+    • Pixabay Music — pistas relax sin copyright. 0<br>
+    • Freesound — efectos y paisajes sonoros (varias licencias CC). 1<br>
+    • Musopen — grabaciones clásicas en dominio público. 2<br>
+    • FreeSVG.org — SVGs dominio público (casco/astronauta). 3<br>
+    • Free Music Archive — colección curated de música libre. 4
+  </div>
+</body>
+</html>
