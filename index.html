@@ -4,242 +4,199 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coralma</title>
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #f9fafb;
-      color: #1f2937;
-      line-height: 1.6;
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      background: linear-gradient(270deg, #3a0ca3, #4361ee, #4cc9f0, #4ae54a, #7209b7);
+      background-size: 800% 800%;
+      animation: aurora 18s ease infinite;
     }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; }
-    section { max-width: 1000px; margin:auto; padding: 60px 20px; }
 
-    /* Navbar */
+    @keyframes aurora {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     header {
-      background: #fff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      padding: 14px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 15px 40px;
+      background: rgba(0,0,0,0.4);
       position: sticky;
       top: 0;
-      z-index: 50;
-    }
-    header nav a {
-      margin: 0 12px;
-      font-weight: 600;
-      color: #374151;
-    }
-    header nav a:hover {
-      color: #8b5cf6;
+      backdrop-filter: blur(6px);
     }
 
-    /* Hero */
-    #hero-coralma {
-      padding: 64px 20px;
-      text-align: center;
-      background: linear-gradient(135deg,#ede9fe 0%, #faf5ff 50%, #fff 100%);
+    header h1 {
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(200,255,255,0.8);
     }
 
-    /* Vela */
-    #vela-container {
-      margin-top: 40px;
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #e0f7ff;
+      font-weight: bold;
+      transition: 0.3s;
     }
-    #vela-btn {
-      background: #facc15;
-      color: #000;
-      border-radius: 50%;
-      width: 160px;
-      height: 160px;
+
+    nav a:hover {
+      color: #ffcc00;
+      text-shadow: 0 0 8px #ffcc00;
+    }
+
+    /* Vela animada */
+    .vela {
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin-top: 100px;
+      text-align: center;
+    }
+
+    .circulo {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff7e6, #ff9f43);
+      display: flex;
       justify-content: center;
-      font-size: 42px;
-      margin: auto;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-      cursor: pointer;
-      transition: background 0.3s ease;
-      overflow: hidden;
-      position: relative;
-    }
-    #vela-btn span {
-      margin-top: 10px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    #vela-llama {
-      position: absolute;
-      top: 10px;
-      font-size: 28px;
-      animation: parpadeo 1s infinite alternate;
-    }
-    @keyframes parpadeo {
-      from { opacity: 1; }
-      to { opacity: 0.6; }
-    }
-    #contador {
-      margin-top: 15px;
-      font-size: 24px;
+      align-items: center;
+      font-size: 1.2rem;
       font-weight: bold;
-      color: #374151;
+      color: #4b2e05;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .circulo:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px #ffd580;
+    }
+
+    .fuego {
+      width: 35px;
+      height: 55px;
+      background: radial-gradient(ellipse at center, #ff0 0%, #ff6600 80%);
+      border-radius: 50% 50% 50% 50%;
+      animation: flame 1.5s infinite alternate;
+      margin-top: -50px;
+      position: absolute;
+      z-index: 1;
+    }
+
+    @keyframes flame {
+      from { transform: scale(1) translateY(0); opacity: 1; }
+      to { transform: scale(1.2) translateY(-10px); opacity: 0.7; }
+    }
+
+    /* Secciones */
+    section {
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    section h2 {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+      text-shadow: 0 0 12px rgba(255,255,255,0.8);
+    }
+
+    section p {
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto 20px;
+    }
+
+    button {
+      padding: 12px 30px;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      color: #222;
+    }
+
+    button:hover {
+      background: #ffcc00;
+      color: #000;
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #ffcc00;
+    }
+
+    /* Donaciones */
+    #donaciones {
+      backdrop-filter: blur(4px);
+      border-radius: 12px;
+      margin: 40px auto;
+      max-width: 900px;
+      background: rgba(0,0,0,0.3);
+      padding: 60px 20px;
+    }
+
+    #donaciones p {
+      font-size: 1.3rem;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
-
-  <!-- Navbar -->
   <header>
-    <div style="display:flex;align-items:center;gap:10px;">
-      <strong style="font-family:'Merriweather',serif;font-size:18px;">Coralma</strong>
-    </div>
+    <h1>Coralma</h1>
     <nav>
-      <a href="#hero-coralma">Inicio</a>
-      <a href="#quienes">Quiénes somos</a>
       <a href="#articulos">Artículos</a>
-      <a href="#libros">Libros</a>
+      <a href="#ebooks">Ebooks</a>
       <a href="#donaciones">Donaciones</a>
-      <a href="#suscripcion">Suscripción</a>
     </nav>
   </header>
 
-  <!-- Hero -->
-  <section id="hero-coralma">
-    <h2>Con corazón se inicia,<br>con alma se trasciende</h2>
-    <p id="rotating-phrase"></p>
-
-    <!-- Vela con temporizador -->
-    <div id="vela-container">
-      <div id="vela-btn">
-        <div id="vela-llama">🔥</div>
-        🕯️
-        <span>Ven, medita con nosotros</span>
-      </div>
-      <div id="contador">03:00</div>
-    </div>
-  </section>
-
-  <!-- Quiénes somos -->
-  <section id="quienes">
-    <h2>Quiénes somos</h2>
-    <p>
-      <strong>Coralma</strong> es un espacio de conciencia y transformación interior.  
-      Compartimos reflexiones, prácticas y recursos para que actúes desde el corazón y te sumerjas en el trabajo del alma.
-    </p>
+  <!-- Vela -->
+  <section class="vela">
+    <div class="fuego"></div>
+    <div class="circulo" onclick="playSound()">✨ Ven, medita con nosotros ✨</div>
   </section>
 
   <!-- Artículos -->
   <section id="articulos">
-    <h2>Artículos</h2>
-    <div class="articles">
-      <div class="card"><h3>La fuerza del silencio</h3><p>Cómo la quietud abre puertas a la transformación.</p></div>
-      <div class="card"><h3>Vibraciones del alma</h3><p>Tu energía invisible atrae experiencias.</p></div>
-      <div class="card"><h3>El espiral interior</h3><p>Un viaje que comienza en el corazón.</p></div>
-    </div>
+    <h2>🌿 Artículos</h2>
+    <p>Explora reflexiones y enseñanzas sobre espiritualidad, conciencia y transformación interior.</p>
+    <button onclick="alert('Próximamente disponibles')">Ver artículos</button>
   </section>
 
   <!-- Libros -->
-  <section id="libros">
-    <h2>Libros PDF</h2>
-    <p>Explora nuestros ebooks para profundizar en tu viaje interior:</p>
-    <div style="text-align:center; margin-top:20px;">
-      <a href="assets/libros/ejemplo.pdf" target="_blank" style="display:inline-block;padding:12px 20px;background:#8b5cf6;color:#fff;border-radius:8px;margin:10px;text-decoration:none;">📘 Descargar Libro 1</a>
-      <a href="assets/libros/ejemplo2.pdf" target="_blank" style="display:inline-block;padding:12px 20px;background:#8b5cf6;color:#fff;border-radius:8px;margin:10px;text-decoration:none;">📗 Descargar Libro 2</a>
-    </div>
+  <section id="ebooks">
+    <h2>📖 Nuestra colección de Ebooks</h2>
+    <p>Descubre libros digitales en PDF que despiertan tu conciencia y expanden tu visión del mundo.</p>
+    <button onclick="alert('Próximamente disponibles')">Ver Ebooks</button>
   </section>
 
   <!-- Donaciones -->
   <section id="donaciones">
-    <h2>Apoya a Coralma</h2>
-    <p>Tu aporte ayuda a mantener vivo este espacio de conciencia y transformación.</p>
-    <div style="text-align:center; margin-top:20px;">
-      <a href="https://www.paypal.com/donate" target="_blank">
-        <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" 
-             alt="Donar con PayPal" 
-             style="max-width:180px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
-      </a>
-    </div>
+    <h2>🙏 Donaciones</h2>
+    <p>"Todo lo que das regresa a ti multiplicado."</p>
+    <button onclick="alert('Gracias por tu apoyo ❤️')">Donar</button>
   </section>
 
-  <!-- Suscripción -->
-  <section id="suscripcion">
-    <h2>Únete al viaje</h2>
-    <form>
-      <input type="email" placeholder="Tu correo electrónico" required style="padding:10px;border:1px solid #ccc;border-radius:6px;min-width:220px;">
-      <button type="submit" style="padding:10px 20px;background:#8b5cf6;color:#fff;border:none;border-radius:6px;">Suscribirme</button>
-    </form>
-  </section>
+  <!-- Audio -->
+  <audio id="natureSound" src="https://www.fesliyanstudios.com/play-mp3/387"></audio>
 
-  <!-- Script -->
   <script>
-    // Frases rotativas
-    (function() {
-      const frases = [
-        "Lo que haces con el corazón, se queda en el alma.",
-        "La calma es la voz del corazón.",
-        "Cada vibración crea un destino.",
-        "El alma reconoce lo eterno.",
-        "Con el corazón se inicia, con el alma se trasciende."
-      ];
-      const el = document.getElementById('rotating-phrase');
-      let idx = 0;
-      function mostrarFrase(i) { el.textContent = frases[i]; }
-      mostrarFrase(idx);
-      setInterval(() => { idx = (idx + 1) % frases.length; mostrarFrase(idx); }, 5000);
-    })();
-
-    // Vela + temporizador + sonido + efecto derretir
-    let tiempo = 180; // 3 min
-    let intervalo = null;
-    const btnVela = document.getElementById("vela-btn");
-    const contador = document.getElementById("contador");
-
-    // sonido relajante
-    const audio = new Audio("https://cdn.pixabay.com/download/audio/2021/08/04/audio_5f6d8d8b64.mp3?filename=forest-nature-sounds-ambient-4384.mp3");
-    audio.loop = true;
-
-    function actualizarContador() {
-      let min = String(Math.floor(tiempo / 60)).padStart(2,"0");
-      let seg = String(tiempo % 60).padStart(2,"0");
-      contador.textContent = `${min}:${seg}`;
-      // efecto derretir (reduce tamaño poco a poco)
-      let scale = tiempo / 180; 
-      btnVela.style.transform = `scale(${0.6 + scale * 0.4})`;
+    function playSound() {
+      const sound = document.getElementById('natureSound');
+      sound.currentTime = 0; // Reinicia para que siempre suene desde el inicio
+      sound.play();
     }
-
-    btnVela.addEventListener("click", () => {
-      if (intervalo) {
-        // reset
-        clearInterval(intervalo);
-        intervalo = null;
-        tiempo = 180;
-        actualizarContador();
-        btnVela.style.background = "#facc15";
-        audio.pause(); audio.currentTime = 0;
-      } else {
-        // iniciar
-        intervalo = setInterval(() => {
-          if (tiempo > 0) {
-            tiempo--;
-            actualizarContador();
-          } else {
-            clearInterval(intervalo);
-            intervalo = null;
-            btnVela.style.background = "#ef4444"; // apagada
-            audio.pause();
-          }
-        }, 1000);
-        btnVela.style.background = "#fb923c"; // encendida
-        audio.play();
-      }
-    });
-
-    actualizarContador();
   </script>
-
 </body>
 </html>
