@@ -1,169 +1,655 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coralma</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Georgia', serif;
-      color: white;
-      text-align: center;
-      background: linear-gradient(135deg, #1b0034, #4b0082, #006666, #003366);
-      background-size: 400% 400%;
-      animation: aurora 20s ease infinite;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Coralma — Conciencia y transformación interior</title>
 
-    @keyframes aurora {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-    header {
-      background: rgba(0,0,0,0.4);
-      padding: 15px;
-      display: flex;
-      justify-content: space-around;
-      position: sticky;
-      top: 0;
-    }
+<style>
+  :root{
+    --accent1:#7b61ff;
+    --accent2:#32d6b1;
+    --bg-dark:#071226;
+    --glass: rgba(255,255,255,0.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,Segoe UI,Arial;
+    color: #eef2ff;
+    background: radial-gradient(circle at 10% 20%, rgba(76, 201, 175,0.06) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(125, 97, 255,0.08) 0%, transparent 25%),
+                linear-gradient(120deg, #0b1220 0%, #1b2440 25%, #2a1a4a 55%, #04383a 100%);
+    overflow-x:hidden;
+  }
 
-    header a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      transition: 0.3s;
-    }
+  /* subtle aurora layers */
+  body::before{
+    content:"";
+    position:fixed;left:0;top:0;right:0;bottom:0;
+    background: linear-gradient(90deg,#2b0d52 0%, #3b2b8b 30%, #1aa7a3 60%, #0b6b8f 100%);
+    mix-blend-mode: screen;
+    opacity: .20;
+    z-index:-2;
+    background-size: 300% 300%;
+    animation: auroraMove 22s ease-in-out infinite;
+  }
+  @keyframes auroraMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
 
-    header a:hover {
-      color: #00ffaa;
-    }
+  /* header */
+  header{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;padding:14px 22px;
+    background:linear-gradient(180deg, rgba(6,10,20,0.6), rgba(6,10,20,0.35));
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo {
+    width:44px;height:44px;border-radius:8px;
+    background: linear-gradient(135deg,var(--accent1),var(--accent2));
+    display:flex;align-items:center;justify-content:center;
+    font-family: 'Playfair Display', serif;
+    font-weight:700;color:white;font-size:18px;box-shadow: 0 6px 18px rgba(50,40,70,0.35);
+  }
+  nav a{
+    color: #e6edff; text-decoration:none; margin:0 10px; font-weight:600;
+  }
+  nav a:hover{color:#fff9c4;text-shadow:0 0 10px rgba(255,240,190,0.12)}
 
-    h1 {
-      margin-top: 60px;
-      font-size: 2rem;
-    }
+  main{max-width:1100px;margin:0 auto;padding:20px}
 
-    section {
-      margin: 40px auto;
-      max-width: 800px;
-    }
+  /* Hero */
+  .hero{
+    padding:48px 18px 36px;
+    display:flex;flex-direction:column;align-items:center;gap:18px;
+    text-align:center;
+  }
+  .hero h1{
+    font-family:'Playfair Display', serif;
+    font-size:36px; line-height:1.05; margin:0; color: #f3f8ff;
+    text-shadow: 0 6px 30px rgba(40,20,80,0.3);
+  }
+  .phrases{
+    height:48px; display:flex;align-items:center;justify-content:center;
+    font-style:italic;color: #dbe7ff; font-size:18px; margin-top:6px;
+    position:relative;
+  }
+  .phrase{
+    position:absolute;opacity:0; transform:translateY(10px);
+    transition: all 450ms cubic-bezier(.2,.9,.3,1);
+    padding:0 12px;
+  }
+  .phrase.show{opacity:1; transform:translateY(0)}
+  /* small subtitle */
+  .hero p.lead{max-width:760px;color:#cbd9ff;margin:0;font-size:16px}
 
-    /* Vela circular con temporizador */
-    .vela {
-      margin: 40px auto;
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: radial-gradient(circle at center, #ffaa00, #550000);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      animation: encoger 60s linear forwards;
-    }
+  /* floating magician hat + wand */
+  .magician{
+    position: fixed; right: 18px; top: 140px; z-index:60;
+    display:flex;flex-direction:column;align-items:center; gap:10px;
+    pointer-events:none; /* decorative */
+  }
+  .hat{
+    width:86px;height:56px;border-radius:12px 12px 30px 30px;
+    background: linear-gradient(180deg,#2d1546,#5c2fe0);
+    box-shadow: 0 12px 30px rgba(90,55,220,0.24);
+    transform-origin:center;
+    animation: floatHat 6s ease-in-out infinite;
+    position:relative;
+  }
+  .hat::after{
+    content:"";position:absolute;left:8px;top:-14px;width:68px;height:24px;border-radius:50%;
+    background: radial-gradient(circle at 50% 30%, #ffd38c, transparent 40%);
+    opacity:0.2;
+  }
+  @keyframes floatHat{
+    0%{transform: translateY(0) rotate(-4deg)}
+    50%{transform: translateY(8px) rotate(4deg)}
+    100%{transform: translateY(0) rotate(-4deg)}
+  }
+  .wand{
+    width:120px;height:8px;border-radius:20px;background:linear-gradient(90deg,#ffd36b,#fff1d6);
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+    transform-origin:left center;
+    animation: swayWand 4s ease-in-out infinite;
+  }
+  @keyframes swayWand{
+    0%{transform: rotate(-12deg) translateX(0)}
+    50%{transform: rotate(6deg) translateX(6px)}
+    100%{transform: rotate(-12deg) translateX(0)}
+  }
+  .spark{
+    position:absolute;right:8px;top:-8px;width:8px;height:8px;border-radius:50%;
+    background: radial-gradient(circle,#fff7b2,#ffd36b); box-shadow:0 0 12px #ffd36b;
+    animation: sparkPop 1.1s infinite ease-in-out;
+    opacity:0;
+  }
+  @keyframes sparkPop{
+    0%{opacity:0; transform:translateY(0) scale(.6)}
+    40%{opacity:1; transform:translateY(-12px) scale(1.2)}
+    100%{opacity:0; transform:translateY(-28px) scale(.4)}
+  }
 
-    @keyframes encoger {
-      from { transform: scale(1); }
-      to { transform: scale(0); }
-    }
+  /* meditation area */
+  #meditacion{
+    margin-top:10px;padding:36px 14px;display:flex;flex-direction:column;align-items:center;gap:14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px; box-shadow: 0 10px 40px rgba(15,10,40,0.28);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .circle{
+    width:200px;height:200px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background: radial-gradient(circle at 35% 30%, #fff3c3 0%, #ffb74d 40%, #f59e0b 70%);
+    color:#1b1b1b;font-weight:700;font-size:18px;text-align:center;padding:14px;
+    box-shadow: 0 10px 40px rgba(250, 180, 40,0.24);
+    transition: width 1s linear, height 1s linear, transform 0.4s ease;
+    cursor:pointer;
+  }
+  .circle.small{ width:80px;height:80px;font-size:12px }
+  .timer-text{ margin-top:8px;font-size:20px;color:#eaf6ff;text-shadow:0 6px 18px rgba(50,120,200,0.16)}
 
-    .articulos {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
+  /* articles list */
+  #articulos{padding:36px 6px; margin-top:20px}
+  #articulos h2{text-align:left;margin-left:6px;color:#fff;font-size:26px}
+  .article{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    margin:18px 6px;padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 8px 30px rgba(10,8,20,0.25);
+  }
+  .article h3{margin:0 0 8px;color:#fff}
+  .article p{color:#e6f0ff;line-height:1.7;text-align:left}
 
-    .articulos a {
-      display: block;
-      padding: 15px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      text-decoration: none;
-      color: white;
-      transition: 0.3s;
-    }
+  /* ebooks and donations */
+  .grid-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px}
+  .card{background:var(--glass);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+  .ebook-cover{width:100%;height:160px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+  .donate{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px}
 
-    .articulos a:hover {
-      background: rgba(255,255,255,0.25);
-    }
+  /* subscription */
+  .subscribe{margin-top:18px;padding:18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));display:flex;gap:8px;align-items:center;justify-content:center}
+  .subscribe input{padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);min-width:220px}
+  .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:white;padding:12px 18px;border-radius:8px;font-weight:700;cursor:pointer}
 
-    .suscripcion {
-      margin-top: 50px;
-      padding: 20px;
-      background: rgba(0,0,0,0.4);
-      border-radius: 15px;
-    }
-
-    input[type="email"] {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      width: 70%;
-    }
-
-    button {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      margin-left: 10px;
-      background: #00ffaa;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #00cc88;
-    }
-  </style>
+  /* responsive */
+  @media (max-width:720px){
+    .hero h1{font-size:28px}
+    .logo{width:40px;height:40px;font-size:16px}
+    .magician{right:8px;top:110px}
+    .circle{width:160px;height:160px}
+  }
+</style>
 </head>
 <body>
-  <header>
+
+<header>
+  <div class="brand">
+    <div class="logo">C</div>
+    <div>
+      <div style="font-weight:700;color:#fff">Coralma</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px">Conciencia · Transformación · Alma</div>
+    </div>
+  </div>
+
+  <nav>
     <a href="#quienes">Quiénes somos</a>
     <a href="#articulos">Artículos</a>
     <a href="#meditacion">Meditación</a>
+    <a href="#ebooks">Ebooks</a>
     <a href="#donaciones">Donaciones</a>
-  </header>
+  </nav>
+</header>
 
-  <h1>Con corazón se inicia,<br> con alma se trasciende</h1>
+<!-- floating magician hat + wand (decorative) -->
+<div class="magician" aria-hidden="true">
+  <div class="hat"></div>
+  <div style="position:relative;">
+    <div class="wand"></div>
+    <div class="spark" style="right:6px;top:-16px"></div>
+  </div>
+</div>
 
-  <section id="quienes">
-    <h2>Quiénes somos</h2>
-    <p><b>Coralma</b> es un espacio de conciencia y transformación interior.</p>
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Con corazón se inicia,<br>con alma se trasciende</h1>
+    <div class="phrases" aria-live="polite">
+      <!-- phrases inserted by JS -->
+    </div>
+    <p class="lead">Bienvenido a Coralma: un espacio para el cultivo interior. Encuentra guías, lecturas, meditaciones y herramientas para el camino.</p>
   </section>
 
-  <section id="articulos">
-    <h2>Artículos</h2>
-    <div class="articulos">
-      <a href="#">La fuerza del silencio</a>
-      <a href="#">Vibraciones del alma</a>
-      <a href="#">El espiral interior</a>
-      <a href="#">El despertar consciente</a>
-      <a href="#">Símbolos y energía</a>
-      <a href="#">La ciencia del espíritu</a>
-      <a href="#">Meditación profunda</a>
-      <a href="#">Puentes entre mundos</a>
-      <a href="#">La alquimia interior</a>
-      <a href="#">Trascender la mente</a>
+  <!-- QUIÉNES SOMOS -->
+  <section id="quienes" style="padding:26px 12px 6px">
+    <h2 style="text-align:left">Quiénes somos</h2>
+    <p style="max-width:900px;margin:6px auto 0;color:#dbeaff;line-height:1.8">
+      <strong>Coralma</strong> nace de la experiencia de recorrer el propio interior. Somos un equipo de facilitadores, lectores y guías cuyo propósito es ofrecer
+      prácticas, reflexiones y recursos que inviten al encuentro profundo. Nuestra misión es crear un refugio de calma: textos que despiertan la mirada, meditaciones que
+      sostienen la práctica y una comunidad que comparte desde la honestidad. Compartimos aprendizaje práctico (ejercicios de atención, respiración y contemplación),
+      relatos que abren preguntas y libros digitales que ordenan el camino en capítulos para leer con calma.
+    </p>
+  </section>
+
+  <!-- MEDITACIÓN -->
+  <section id="meditacion" aria-label="Meditación">
+    <h2>Meditación guiada</h2>
+    <p style="max-width:700px;color:#d6e7ff">Cierra los ojos un instante y deja que la respiración te guíe. Pulsa el círculo para iniciar la meditación guiada de 5 minutos.</p>
+
+    <div id="circle" class="circle" role="button" aria-pressed="false" tabindex="0" title="Iniciar meditación">
+      ✨ Ven, medita con nosotros ✨
+    </div>
+    <div class="timer-text" id="timerText">05:00</div>
+
+    <div style="margin-top:12px">
+      <button class="btn-primary" onclick="iniciarMeditacion()">Iniciar meditación (5 min)</button>
     </div>
   </section>
 
-  <section id="donaciones">
-    <h2>Donaciones</h2>
-    <div class="vela">60s</div>
-    <p>"Tu luz sostiene este espacio. Cada aporte mantiene viva la llama."</p>
+  <!-- ARTÍCULOS - 10 artículos completos -->
+  <section id="articulos" aria-label="Artículos">
+    <h2>Artículos</h2>
+
+    <!-- Article 1 -->
+    <article class="article">
+      <h3>La fuerza del silencio</h3>
+      <p>
+        El silencio no es ausencia; es presencia pulida. Cuando nos sentamos en silencio, durante minutos apenas perceptibles, nuestra mente deja de
+        perseguir estímulos y empieza a registrar su propio eco. Ese eco contiene patrones de miedo, de historia y de identidad que, observados sin juicio,
+        se aflojan. En la práctica meditativa, el silencio se vuelve una herramienta de discernimiento: distingue entre la reacción automática y la
+        respuesta consciente.
+      </p>
+      <p>
+        Practicar el silencio no exige retirarse del mundo ni acumular horas. Podemos llevar pequeños intervalos conscientes a la vida cotidiana: un minuto
+        antes de contestar un mensaje; dos respiraciones antes de hablar; una pausa para escuchar sin planear la respuesta. Estos fragmentos de quietud,
+        repetidos con constancia, reorganizan la respiración, alivian la tensión y permiten que aflore la perspectiva. En el silencio, descubrimos que
+        muchas cosas no requieren acción inmediata. También emerge la claridad: la intuición que no grita, la visión que prefiere el tono sereno.
+      </p>
+      <p>
+        El silencio no rehúye la emoción; la acoge. Al sostener la tristeza o la rabia en silencio, se disuelven sus aristas. La energía se transforma y
+        deja de ser obstáculo. Por eso, más que huir del ruido, aprende a habitar el silencio: en él se despliegan las respuestas que la prisa no permite
+        ver. Escuchar ese latido interior es un acto de valentía y gentileza; el silencio pasa de ser ausencia a ser la base desde la cual se construye una
+        vida más nutritiva.
+      </p>
+    </article>
+
+    <!-- Article 2 -->
+    <article class="article">
+      <h3>Vibraciones del alma</h3>
+      <p>
+        Todo en el universo vibra: desde lo más sólido hasta lo que parece intangible. La vibración determina tono, color y resonancia. En el ámbito humano,
+        nuestras emociones y pensamientos generan frecuencias que atraen circunstancias. Esto no es superstición: responde a la idea de que la atención y la
+        intención orientan la energía. Cuando nos sintonizamos con estados de calma, gratitud y apertura, la vida tiende a devolver experiencias coherentes.
+      </p>
+      <p>
+        Entrenar la vibración del alma es un trabajo práctico. Se trata de reconocer los estados que alimentan y los que agotan, y elegir prácticas que
+        aumenten la sensibilidad: respiraciones profundas, movimiento consciente, lecturas que expandan, relaciones que sostengan. La vibración cambia con
+        hábitos sencillos: dormir lo suficiente, nutrirse bien, limitar estímulos que fragmentan. También con rituales interiores: agradecer antes de comer,
+        caminar sin prisa, dedicar un tiempo a la contemplación.
+      </p>
+      <p>
+        Al elevar la vibración, la vida parece abrir atajos. No porque todo sea perfecto, sino porque la mente encuentra soluciones con menor ruido. La
+        práctica consisten en sintonizar con un tono que respete la complejidad humana y, al mismo tiempo, conecte con lo que perdura: amor, curiosidad y
+        presencia. Esa vibración del alma no es un objetivo vacío; es un camino cotidiano que transforma decisiones, relaciones y el sentido del tiempo.
+      </p>
+    </article>
+
+    <!-- Article 3 -->
+    <article class="article">
+      <h3>El espiral interior</h3>
+      <p>
+        Imagina tu crecimiento como un espiral: avanzar no significa llegar a una línea recta, sino subir en círculos que abarcan cada vez mayor amplitud.
+        El espiral es un símbolo antiguo porque describe cómo las experiencias se integran y elevan. Cada giro trae aprendizajes; cada repetición ofrece
+        nuevas capas de sentido. En la práctica espiritual, esto se traduce en la paciencia de volver sobre los mismos temas: relaciones, miedos, hábitos.
+      </p>
+      <p>
+        Trabajar con el espiral implica reconocer que no existen fracasos permanentes: hay revisitas con más madurez. Cuando reaparece una dificultad, ya
+        no es exactamente la misma; lleva las huellas del aprendizaje anterior. El espiral invita a mirar la historia con curiosidad, no con autocrítica.
+        También ayuda a planificar la práctica: pequeños ejercicios diarios que, con el tiempo, producen transformaciones profundas.
+      </p>
+      <p>
+        La belleza del espiral es su abertura: no encierra ni limita; expande. Si lo aplicamos al cuerpo, a la mente y al corazón, descubrimos que la
+        coherencia aparece como resultado. La práctica sostenida nos permite subir por el espiral sin la ilusión de llegar a un punto final: la plenitud
+        se revela en cada vuelta.
+      </p>
+    </article>
+
+    <!-- Article 4 -->
+    <article class="article">
+      <h3>El despertar consciente</h3>
+      <p>
+        El despertar no siempre es dramático; muchas veces es una sucesión de reconocimientos sutiles: ver una emoción sin identificarse con ella, decir
+        "no sé" y sentir alivio, reconocer patrones heredados. El despertar consciente implica recuperar presencia: dejar de vivir en piloto automático y
+        prestar atención a la calidad del momento. Es menos una meta y más una práctica que se cultiva con curiosidad.
+      </p>
+      <p>
+        Una práctica útil es el anclaje: elegir tres acciones diarias para hacer con plena presencia -lavar los platos, caminar, beber agua- y realizarlas
+        sin multitarea. Con el tiempo, la mente aprende a estar más tiempo despierta. El despertar también clarifica prioridades: lo que antes parecía
+        urgente pierde peso frente a lo que importa verdaderamente.
+      </p>
+      <p>
+        No existe un "deber" de despertar; es una invitación. Y esa invitación responde mejor a la amabilidad que a la exigencia. Respira, observa y deja
+        que la vida despliegue sus lecciones. El proceso es íntimo, profundo y extraordariamente compasivo consigo mismo.
+      </p>
+    </article>
+
+    <!-- Article 5 -->
+    <article class="article">
+      <h3>Símbolos y energía</h3>
+      <p>
+        Los símbolos condensan significados y activan capas de la mente que el lenguaje directo no alcanza. Un símbolo puede ser una figura, una palabra,
+        un gesto repetido; su valor reside en la carga emocional y en la intención que le damos. En contextos espirituales, los símbolos actúan como puertas:
+        nos conectan con arquetipos, memorias y estados de conciencia.
+      </p>
+      <p>
+        Usar símbolos de forma consciente exige respeto y claridad: no funcionan por sí mismos, sino como vehículos. Por ejemplo, encender una vela antes
+        de meditar no "tiene poder" mágico por el objeto, sino porque el ritual enfoca la mente y prepara el cuerpo. La energía aparece como efecto de la
+        atención sostenida, y los símbolos nos ayudan a orientarla.
+      </p>
+      <p>
+        Al elegir un símbolo personal (una imagen, una palabra, un amuleto), pregúntate qué te evoca; mantén su uso sencillo y honesto. Con el tiempo,
+        el símbolo puede convertirse en un ancla que recoloca la atención cuando más se necesita.
+      </p>
+    </article>
+
+    <!-- Article 6 -->
+    <article class="article">
+      <h3>La ciencia del espíritu</h3>
+      <p>
+        La frontera entre ciencia y espiritualidad se vuelve fértil cuando dejamos de verlas como enemigas. Investigación reciente en neurociencia y
+        psicología muestra que prácticas de atención afectan redes cerebrales, reducen la reactividad emocional y mejoran la capacidad para recuperar la calma.
+        Esto no "prueba" lo trascendente, pero sí confirma que entrenar la mente modifica la biología.
+      </p>
+      <p>
+        La ciencia aporta métodos y medidas; la espiritualidad aporta sentido y práctica. Juntas, permiten construir protocolos eficaces para el bienestar:
+        respiraciones específicas para activar el nervio vago, prácticas de compasión que reducen estrés, ejercicios somáticos que regulan el sistema nervioso.
+      </p>
+      <p>
+        La invitación es integrar: usar evidencia práctica sin perder la profundidad de las experiencias subjetivas. Así la vida cotidiana se beneficia de
+        herramientas comprobadas y el sentido se sostiene en la experiencia vivida.
+      </p>
+    </article>
+
+    <!-- Article 7 -->
+    <article class="article">
+      <h3>Meditación profunda</h3>
+      <p>
+        La meditación profunda surge cuando la práctica prolongada permite que la mente reduzca su necesidad de narración constante. Ese estado no es
+        evasión, sino claridad: la atención permanece despierta sin aferrarse a pensamientos. Llegar ahí exige disciplina amable, pero también curiosidad.
+        La técnica es menos importante que la regularidad.
+      </p>
+      <p>
+        Comenzar con prácticas breves e ir sosteniendo tiempo ayuda a crear la cultura interior que permite la profundidad. La respiración consciente,
+        la atención en el cuerpo y las meditaciones guiadas son rutas complementarias. Con paciencia, el silencio se vuelve más fácil y menos raro, y la
+        experiencia interior gana estabilidad.
+      </p>
+      <p>
+        En esa estabilidad aparecen insights y transformaciones que no surgen con esfuerzo intelectual: la comprensión espontánea, la resolución de viejos
+        nudos afectivos y la sensación de pertenecer a algo mayor que el yo aislado.
+      </p>
+    </article>
+
+    <!-- Article 8 -->
+    <article class="article">
+      <h3>Puentes entre mundos</h3>
+      <p>
+        Habitamos varios "mundos" simultáneamente: el externo (trabajo, tareas), el interno (emoción, memoria) y el relacional (vínculos). Hacer puentes
+        entre ellos es la práctica de integrar la vida. La espiritualidad que se queda en la percha de la teoría no ayuda; la espiritualidad aplicada transforma
+        relaciones, decisiones y trabajo.
+      </p>
+      <p>
+        Para construir puentes, primero mapea tus mundos: identifica qué rituales sostienen cada uno, qué prácticas los desequilibran y qué acciones pueden
+        generar coherencia. Pequeños gestos (una pausa antes de hablar, una respiración antes de decidir) actúan como estribos que facilitan el paso de uno a
+        otro.
+      </p>
+      <p>
+        La meta no es fusionarlos en uno solo, sino permitir que dialoguen sin conflicto. La integración madura nace de la atención paciente y de la honestidad
+        con uno mismo.
+      </p>
+    </article>
+
+    <!-- Article 9 -->
+    <article class="article">
+      <h3>La alquimia interior</h3>
+      <p>
+        La alquimia interior habla del arte de transformar lo pesado en luz. No es negar la dificultad, sino convertirla en materia de aprendizaje. Esto
+        exige herramientas: atención, simbolismo, comunidad. Los ejercicios de escritura terapéutica, por ejemplo, permiten mirar la herida desde otra
+        perspectiva; el ritual de dejar ir al final del día facilita el cierre.
+      </p>
+      <p>
+        La alquimia funciona con ciclos: reconocimiento, aceptación, transformación y entrega. No es un proceso lineal; ocurre por capas y a veces retrocede.
+        Sin embargo, con práctica, lo que antes parecía un lastre se vuelve fuente de riqueza interior.
+      </p>
+      <p>
+        Cultivar la alquimia implica confiar en la vida y en la propia capacidad de aprendizaje. Es aprender a usar la experiencia como materia prima para la
+        sabiduría.
+      </p>
+    </article>
+
+    <!-- Article 10 -->
+    <article class="article">
+      <h3>Trascender la mente</h3>
+      <p>
+        Trascender la mente no significa anularla; es reconocer sus límites y ampliar el registro de experiencia. La mente categoriza, compara y protege;
+        esos procesos son útiles, pero no constituyen la totalidad del ser. La práctica contemplativa permite que la mente recupere su lugar como herramienta,
+        no como gobernante.
+      </p>
+      <p>
+        Herramientas para trascender la mente incluyen la contemplación de la impermanencia, el trabajo corporal y la atención sostenida. También ayuda la
+        lectura que desafía supuestos y las conversaciones que expanden la perspectiva. Transitar este camino requiere humildad: saber que siempre habrá más
+        por comprender.
+      </p>
+      <p>
+        Al integrar mente y presencia, la vida se vuelve más flexible. Las decisiones nacen desde un espacio más profundo y menos condicionado por el ruido.
+        Eso es trascender: usar la mente sin ser usado por ella.
+      </p>
+    </article>
+
   </section>
 
-  <section class="suscripcion">
-    <h2>Suscríbete</h2>
-    <p>Recibe una frase inspiradora cada mes en tu correo.</p>
-    <form>
-      <input type="email" placeholder="Tu correo electrónico">
-      <button>Suscribirme</button>
-    </form>
+  <!-- EBOOKS -->
+  <section id="ebooks">
+    <h2>Ebooks</h2>
+    <div class="grid-two">
+      <div class="card">
+        <div class="ebook-cover">Libro: Camino al Centro</div>
+        <p style="margin-top:12px;color:#e6f3ff">Un libro práctico que reúne ejercicios, reflexiones y mapas para la práctica interior.</p>
+        <div style="margin-top:12px">
+          <a href="assets/libros/ebook1.pdf" target="_blank" class="btn-primary">Descargar PDF</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ebook-cover">Libro: El Espiral</div>
+        <p style="margin-top:12px;color:#e6f3ff">Ensayos y prácticas para comprender el crecimiento en espiral y aplicarlo en la vida cotidiana.</p>
+        <div style="margin-top:12px">
+          <a href="assets/libros/ebook2.pdf" target="_blank" class="btn-primary">Descargar PDF</a>
+        </div>
+      </div>
+    </div>
   </section>
+
+  <!-- DONACIONES -->
+  <section id="donaciones" style="margin-top:28px">
+    <h2>Donaciones</h2>
+    <p style="color:#dfefff;font-style:italic">"Todo lo que das regresa a ti multiplicado"</p>
+
+    <div class="grid-two" style="margin-top:12px;align-items:center">
+      <div class="card donate" style="align-items:center">
+        <div style="max-width:220px">
+          <!-- PayPal logo official image -->
+          <img src="https://www.paypalobjects.com/webstatic/i/logo/rebrand/ppcom.svg" alt="PayPal" style="width:160px;height:auto;display:block;margin:0 auto">
+        </div>
+        <p style="color:#e6f3ff;max-width:300px">Si este proyecto te nutre, tu apoyo hace posible contenidos gratuitos, mantenimiento y nuevas meditaciones.</p>
+        <a href="https://www.paypal.com/donate" target="_blank" class="btn-primary" style="display:inline-block;margin-top:6px">Donar con PayPal</a>
+      </div>
+
+      <div class="card" style="display:flex;flex-direction:column;justify-content:center;align-items:center">
+        <div style="font-size:14px;color:#dfefff">Vela de meditación</div>
+        <div id="donCircle" class="circle" style="margin-top:12px;width:140px;height:140px">05:00</div>
+        <div style="margin-top:12px;color:#dfefff">Pulsa la vela para iniciar (sin afectar donaciones)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUBSCRIBE -->
+  <section style="margin-top:28px">
+    <h2>Suscripción</h2>
+    <p style="max-width:720px;margin:0 auto 12px;color:#dbe7ff">Recibe una frase inspiradora cada mes y novedades sobre ebooks y meditaciones.</p>
+    <div class="subscribe" role="form" aria-label="Suscripción">
+      <input id="subEmail" type="email" placeholder="Tu correo electrónico" aria-label="correo">
+      <button onclick="suscribirse()" class="btn-primary">Suscribirme</button>
+    </div>
+  </section>
+
+  <footer style="margin-top:36px;padding:20px 8px;text-align:center;color:#cfdfff">
+    © Coralma 2025 — Inspirando conciencia y transformación interior.
+    <div style="margin-top:10px;font-size:13px;color:#b9cfff">Hecho con calma · Contenido original</div>
+  </footer>
+</main>
+
+<!-- audio (meditación guiada) -->
+<!-- REEMPLAZA assets/audio/meditacion.mp3 por tu archivo; también hay un fallback remoto si no subes -->
+<audio id="audioGuided" preload="auto">
+  <source src="assets/audio/meditacion.mp3" type="audio/mpeg">
+  <!-- Fallback remote gentle nature if local missing -->
+  <source src="https://cdn.pixabay.com/download/audio/2023/05/30/audio_6f6b1c63a4.mp3?filename=forest-river-birds-nature-ambient-146184.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* -------------------------
+   Rotating phrases (30)
+   ------------------------- */
+const frases = [
+  "Con corazón se inicia, con alma se trasciende.",
+  "Lo que das, regresa a ti multiplicado.",
+  "El silencio es el lenguaje del espíritu.",
+  "Somos un puente entre mundos.",
+  "La luz interior nunca se apaga.",
+  "Todo lo que buscas, ya habita en ti.",
+  "La conciencia es la llave de la libertad.",
+  "Cada respiración es un renacer.",
+  "La energía sigue a la intención.",
+  "Escucha a tu alma, ella siempre sabe.",
+  "El amor transforma más que mil palabras.",
+  "Meditar es volver a casa.",
+  "Tu vibración atrae tu realidad.",
+  "La gratitud abre puertas invisibles.",
+  "La fe mueve lo que parece imposible.",
+  "El tiempo se disuelve en la presencia.",
+  "Lo eterno habita en cada instante.",
+  "El alma recuerda lo que la mente olvida.",
+  "La verdadera riqueza es interior.",
+  "La paz es la mayor revolución.",
+  "Donde pones tu atención, florece la vida.",
+  "La compasión sana sin hacer ruido.",
+  "Cada ser es un reflejo del universo.",
+  "El vacío está lleno de posibilidades.",
+  "La unidad se revela en el silencio.",
+  "La vibración del amor nunca muere.",
+  "La magia sucede cuando confías.",
+  "El despertar comienza con una chispa.",
+  "La mente calla, el espíritu habla.",
+  "La eternidad cabe en un suspiro."
+];
+
+const phrasesContainer = document.querySelector('.phrases');
+// create nodes
+frases.forEach((t,i)=>{
+  const span = document.createElement('div');
+  span.className = 'phrase';
+  span.textContent = t;
+  phrasesContainer.appendChild(span);
+});
+let current = 0;
+const nodes = document.querySelectorAll('.phrase');
+function showPhrase(idx){
+  nodes.forEach(n=>n.classList.remove('show'));
+  nodes[idx].classList.add('show');
+}
+showPhrase(0);
+setInterval(()=>{
+  current = (current+1)%nodes.length;
+  showPhrase(current);
+  // also trigger a wand spark visual: find spark and animate (it loops by CSS)
+},5000);
+
+/* -------------------------
+   Meditation: circle shrink + audio
+   ------------------------- */
+const circle = document.getElementById('circle');
+const timerText = document.getElementById('timerText');
+const audio = document.getElementById('audioGuided');
+
+let medInterval=null;
+function iniciarMeditacion(){
+  // if already running, reset
+  if(medInterval){ clearInterval(medInterval); medInterval=null; audio.pause(); audio.currentTime=0; circle.classList.remove('small') }
+  let time = 300; // 5 minutes
+  audio.play().catch(e=>{ /* autoplay may be blocked until user interacts, but we trigger by user click so should play */ });
+  timerText.textContent = formatTime(time);
+  // shrink circle proportional to remaining time
+  medInterval = setInterval(()=>{
+    time--;
+    timerText.textContent = formatTime(time);
+    const scale = Math.max(0.4, time/300); // keep min size
+    circle.style.transform = `scale(${scale})`;
+    if(time<=0){
+      clearInterval(medInterval); medInterval=null;
+      audio.pause(); audio.currentTime=0;
+      timerText.textContent = "✨ Meditación finalizada ✨";
+      circle.classList.add('small');
+      setTimeout(()=>{ circle.style.transform='scale(1)'; circle.classList.remove('small'); timerText.textContent='05:00' }, 3200);
+    }
+  },1000);
+}
+function formatTime(s){
+  const m = Math.floor(s/60);
+  const sec = s%60;
+  return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+}
+
+// allow clicking directly on circle as well
+circle.addEventListener('click', iniciarMeditacion);
+circle.addEventListener('keydown', (e)=>{ if(e.key==='Enter') iniciarMeditacion() });
+
+/* DONATION small med circle (optional) */
+const donCircle = document.getElementById('donCircle');
+let donInterval=null;
+donCircle.addEventListener('click', ()=>{
+  if(donInterval){ clearInterval(donInterval); donInterval=null; donCircle.textContent='05:00'; return; }
+  let t=300;
+  donCircle.textContent = formatTime(t);
+  donInterval = setInterval(()=>{
+    t--; donCircle.textContent=formatTime(t);
+    // visual shrink
+    const s = Math.max(0.55, t/300);
+    donCircle.style.transform = `scale(${s})`;
+    if(t<=0){ clearInterval(donInterval); donInterval=null; donCircle.textContent='✨'; donCircle.style.transform='scale(1)'; }
+  },1000);
+});
+
+/* SUBSCRIPTION (placeholder) */
+function suscribirse(){
+  const email = document.getElementById('subEmail').value;
+  if(!email || !email.includes('@')){ alert('Ingresa un correo válido'); return; }
+  // placeholder action: show message (you should connect to Mailchimp/Formspree)
+  alert('Gracias. Pronto recibirás una frase mensual en: ' + email);
+  document.getElementById('subEmail').value='';
+}
+
+/* ensure Play on user gesture for mobile */
+document.addEventListener('touchstart', function once(){ /* Preload audio permission on first touch */ 
+  document.removeEventListener('touchstart', once);
+  try{ audio.play().then(()=>{ audio.pause(); audio.currentTime=0 }) }catch(e){}
+});
+</script>
 </body>
 </html>
