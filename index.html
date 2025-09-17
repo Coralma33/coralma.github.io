@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>CorAlma — Encuentra tu calma</title>
-<meta name="description" content="Meditaciones, sonidos y artículos con referencias científicas para cultivar presencia." />
+<meta name="description" content="Meditaciones, sonidos y artículos dinámicos (Wikipedia, Reddit, arXiv). Sonidos con fallback entre servidores." />
 <style>
 :root{
   --bg1:#020414; --bg2:#041428;
@@ -16,14 +16,14 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
   background:
     radial-gradient(circle at 10% 10%, rgba(138,108,255,0.06), transparent 6%),
     radial-gradient(circle at 90% 70%, rgba(110,198,217,0.04), transparent 10%),
     linear-gradient(180deg,var(--bg1), var(--bg2));
   color:var(--text); -webkit-font-smoothing:antialiased;min-height:100vh;
 }
-.container{max-width:1180px;margin:28px auto;padding:18px}
+.container{max-width:1180px;margin:24px auto;padding:18px}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px}
 .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
@@ -36,7 +36,7 @@ nav a:hover{background:var(--glass)}
 .hero{margin-top:14px;border-radius:14px;padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));display:flex;gap:20px;align-items:center;position:relative;overflow:hidden}
 .hero-left{flex:1;z-index:2}
 .hero h2{margin:0;font-size:26px}
-.hero p{margin-top:8px;color:#cfeff6}
+.hero p{margin-top:8px;color:#cfeef6}
 .cta{margin-top:14px}
 .btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:10px 16px;border-radius:12px;border:0;font-weight:700;cursor:pointer}
 
@@ -73,6 +73,7 @@ aside{position:relative}
 .side-block{display:flex;flex-direction:column;gap:14px}
 .sounds-list{max-height:320px;overflow:auto;padding-right:6px}
 .sound-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,0.01)}
+.notice{font-size:13px;color:#ffd7a8;background:rgba(0,0,0,0.15);padding:8px;border-radius:8px;margin-top:8px}
 
 /* footer */
 footer{margin-top:28px;padding:18px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
@@ -150,7 +151,6 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
             <circle class="star" cx="110" cy="150" r="1.1" style="animation-delay:2.4s"/>
             <circle class="star" cx="30" cy="140" r="1.5" style="animation-delay:1.1s"/>
           </g>
-
           <g class="planet" transform="translate(40,20)">
             <defs>
               <linearGradient id="pgrad" x1="0" x2="1">
@@ -203,10 +203,7 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
               <button id="stopBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cfeef7;padding:8px 12px;border-radius:10px">Detener</button>
             </div>
 
-            <div style="margin-top:18px;text-align:center;color:#bfeffd;font-size:13px">
-              <div style="font-weight:700">Círculo interactivo</div>
-              <div style="opacity:0.9">Haz click en el círculo o en «Iniciar» para comenzar la meditación; el temporizador te guiará.</div>
-            </div>
+            <div id="audioNotice" class="notice" style="display:none"></div>
 
             <!-- hidden audio -->
             <audio id="audioPlayer" preload="none" controls style="display:none"></audio>
@@ -225,7 +222,7 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
         <div class="side-block">
           <div class="card" aria-labelledby="sounds-title">
             <h4 id="sounds-title" style="margin-top:0">Selector de sonidos</h4>
-            <div class="sounds-list" id="soundsList">Cargando pistas... (se obtienen automáticamente desde archive.org)</div>
+            <div class="sounds-list" id="soundsList">Cargando pistas... (prueba varias fuentes en background)</div>
           </div>
 
           <div class="card" id="reg">
@@ -240,7 +237,6 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
           <div class="card" id="don">
             <h4 style="margin-top:0">Donaciones</h4>
             <p style="margin:0 0 10px 0;color:#cfeef7">Si valoras este proyecto, apóyalo. Las donaciones mantienen el contenido libre.</p>
-            <!-- Replace the href with your PayPal donate link if you have a specific one -->
             <a class="btn-primary" href="https://www.paypal.com/donate" target="_blank" rel="noopener">Donar con PayPal</a>
           </div>
         </div>
@@ -298,295 +294,476 @@ button:focus, a:focus { outline: 2px dashed rgba(110,198,217,0.35); outline-offs
   </div>
 
 <script>
-/*
-  CorAlma - Single-file HTML
-  - Carga dinámica de pistas (20): 10 ambient + 10 clásicas desde archive.org
-  - 30 artículos (mezcla espiritual + científico) ya incluidos abajo
-  - Meditación con círculo, timer, start/stop
-  - Suscripción (localStorage) y frase mensual
-  - Donaciones PayPal (link)
-  - Floating socials and WebView detection
+/* CorAlma: client-only app
+   - Multi-source audio fallback
+   - Dynamic article fetch (Wikipedia, Reddit, arXiv) and 15-day rotation
+   - All state in localStorage where needed
 */
 
-/* -------------------------
-   Articles data (30 full entries)
-   (mix spiritual + scientific; titles/excerpts/content/refs)
-   For brevity here we include full content for each article.
-   ------------------------- */
-const ARTICLES = [
-  {id:1,title:"Respira: el primer acto de presencia",excerpt:"La respiración es la puerta de entrada al presente. Prácticas simples regulan el sistema nervioso.",content:`La respiración es la ancla que trae la atención al momento presente. Respirar de forma consciente —inhalando lento y profundo, permitiendo la exhalación completa— activa el sistema nervioso parasimpático, reduciendo la frecuencia cardiaca y la sensación de alerta. Estudios sobre respiración diafragmática muestran mejoras en la variabilidad de la frecuencia cardiaca y en la regulación emocional. Practicar 5 minutos al día con intención produce cambios en la percepción del estrés y en la capacidad de respuesta ante desafíos cotidianos.`,refs:["Brown, R. P., & Gerbarg, P. L. (2005). Sudarshan Kriya yogic breathing: physiology and clinical applications.","Harvard Health Publishing — Relaxation techniques: Breath control helps quell errant stress response."]},
-  {id:2,title:"Micro-prácticas para la calma",excerpt:"Pequeñas pausas a lo largo del día suman más que sesiones largas y esporádicas.",content:`Las micro-prácticas son intervenciones breves (30-120 segundos) que permiten reconectar con la respiración, el cuerpo y el entorno. Investigaciones en entornos laborales muestran que pausas cortas frecuentes reducen la fatiga mental y mejoran la productividad. Incorporar rituales sencillos —beber agua con atención, una respiración consciente antes de reuniones— favorece la continuidad de la atención plena a lo largo del día.`,refs:["Sonnentag, S. (2018). Recovery from work-related effort: Review and future directions.","American Psychological Association — resources on breaks and attention."]},
-  {id:3,title:"Música clásica como paisaje interior",excerpt:"El tempo, la armonía y el timbre influyen en la regulación emocional durante la práctica.",content:`La música clásica, en particular piezas lentas de piano o cuerdas, puede facilitar estados de relajación al ofrecer estructura y previsibilidad sonora. La neurociencia muestra que la música moduladora de tempo reduce la actividad en redes de estrés y facilita la sincronización interoceptiva. Escuchar composiciones suaves durante la meditación puede actuar como ancla auditiva y sostén emocional.`,refs:["Juslin, P. N., & Västfjäll, D. (2008). Emotional responses to music: The need to consider underlying mechanisms.","Musopen — public-domain classical recordings."]},
-  {id:4,title:"El poder del anclaje ritual",excerpt:"Rituales simples (vela, postura, tiempo) condicionan al cuerpo para la práctica.",content:`Los rituales marcan el inicio de una actividad y activan señales condicionadas en el sistema límbico. Encender una vela, preparar un cojín o elegir una pista musical concreta son acciones que envían al cerebro la señal de que es tiempo de bajar la alerta y volver a la interioridad. Con el tiempo, estos condicionamientos facilitan el acceso al estado meditativo.`,refs:["Kabat-Zinn, J. (1990). Full Catastrophe Living.","Journal of Behavioral Medicine — studies on ritual and stress response."]},
-  {id:5,title:"Atención plena y toma de decisiones",excerpt:"Practicar mindfulness mejora la claridad y reduce la impulsividad en la toma de decisiones.",content:`La atención plena entrena la capacidad de observar pensamientos y emociones sin identificarse con ellos, lo que reduce la reactividad. Estudios muestran mejoras en la toma de decisiones y en la regulación emocional tras programas de 8 semanas de mindfulness. Al crear una distancia entre estímulo y respuesta, es más fácil elegir acciones alineadas con valores a largo plazo.`,refs:["Kiken, L. G., Garland, E. L., Bluth, K., Palsson, O. S., & Gaylord, S. A. (2015). From a state to a trait: Trajectories of state mindfulness in meditation during intervention.","Jon Kabat-Zinn (1994). Wherever You Go, There You Are."]},
-  {id:6,title:"Sueño y prácticas previas",excerpt:"Meditaciones breves antes de dormir mejoran la calidad del sueño.",content:`Practicar ejercicios de relajación o respiraciones lentas antes de acostarse ayuda a reducir la activación fisiológica y a preparar el cuerpo para el sueño. Intervenciones basadas en mindfulness han mostrado mejoras en parámetros subjetivos del sueño, así como en la latencia de inicio del mismo.`,refs:["Harvard Medical School — Sleep and Mental Health resources.","Ong, J. C., et al. (2014). Mindfulness-based therapy for insomnia."]},
-  {id:7,title:"Movimiento consciente",excerpt:"Yoga suave, tai chi y caminata consciente integran cuerpo y mente.",content:`La atención plena en movimiento permite llevar presencia al cuerpo, desbloquear tensiones y cultivar una relación más amable con la sensación física. La investigación sobre yoga y tai chi indica beneficios en equilibrio, reducción de estrés y mejor autonomía funcional.`,refs:["Field, T. (2016). Yoga research review.","WHO guidance on physical activity and mental health."]},
-  {id:8,title:"Compasión hacia uno mismo",excerpt:"La práctica de la autocompasión reduce la crítica interna y la rumia.",content:`Cultivar una voz interna compasiva modifica los patrones cognitivos que alimentan la culpa y la autoexigencia. Programas como Mindful Self-Compassion (Neff & Germer) han mostrado reducir síntomas de depresión y ansiedad, promoviendo bienestar emocional.`,refs:["Neff, K. (2011). Self-Compassion.","Germer, C. K., & Neff, K. (2013). Mindful self-compassion: A sourcebook."]},
-  {id:9,title:"Atención en tareas cotidianas",excerpt:"Practicar en lo cotidiano transforma la percepción de la vida ordinaria.",content:`Incorporar atención plena en actividades simples —lavarse las manos, comer, caminar— convierte lo rutinario en práctica sostenida. Estudios en psicología aplicada muestran que la atención mantenida durante tareas rápidas mejora la calidad de la ejecución y la satisfacción.`,refs:["Dreyfus, G. (2011). Is mindfulness present-centred and non-judgmental?"]},
-  {id:10,title:"Respiración coherente",excerpt:"Sincronizar respiración y ritmo cardiaco mejora la estabilidad emocional.",content:`La coherencia cardiaca (respiración rítmica y sincronizada) se relaciona con estados de calma y mejor regulación emocional. Practicar ciclos respiratorios regulares favorece la resiliencia y la claridad mental.`,refs:["McCraty, R. (2017). Heart rate variability and coherence: implications for health.","National Institutes of Health — HRV studies."]},
-  {id:11,title:"Meditaciones guiadas vs silencio",excerpt:"Ambas tienen beneficios; alternarlas optimiza el aprendizaje.",content:`Las meditaciones guiadas ayudan especialmente a principiantes al ofrecer estructura y soporte verbal. El silencio cultivado permite una escucha más profunda. Alternar ambos formatos en la práctica personal enriquece la destreza atencional.`,refs:["Tang, Y.-Y., Hölzel, B. K., & Posner, M. I. (2015). The neuroscience of mindfulness meditation."]},
-  {id:12,title:"Efecto de la música en la atención",excerpt:"El tipo de música importa: textura, tempo y timbre influyen en la práctica.",content:`No toda música es adecuada para meditar. Piezas con tempo estable y dinámica suave suelen facilitar el descenso de la activación. Investigaciones en musicoterapia detallan cómo ciertos timbres promueven estados de relajación.`,refs:["Bradt, J., Dileo, C., & Shim, M. (2013). Music interventions for psychological outcomes."]},
-  {id:13,title:"Visualizaciones cósmicas",excerpt:"Imaginar expansión y conexión con el cosmos puede reducir la rumiación.",content:`Las visualizaciones que integran imágenes amplias (cielo, planeta, universo) ofrecen perspectiva y sentido de pertenencia, disminuyendo la fijación en problemas personales. Técnicas de compasión y visualización han mostrado eficacia en la reducción del estrés.`,refs:["Fredrickson, B. L. (2001). The role of positive emotions in positive psychology."]},
-  {id:14,title:"Atención y creatividad",excerpt:"Estados de atención abierta facilitan asociaciones nuevas y originales.",content:`La práctica de la atención no solo reduce el estrés sino que amplía la capacidad de ver conexiones no evidentes. Estudios en creatividad indican que la atención abierta (open monitoring) favorece la flexibilidad cognitiva.`,refs:["Colzato, L. S., & Hommel, B. (2014). Meditation and creativity."]},
-  {id:15,title:"Rutinas para empezar",excerpt:"Crear pequeños rituales facilita la adherencia a la práctica diaria.",content:`La formación de hábitos requiere señales y recompensas. Asociar la práctica a un estímulo fijo (hora del día, encender una vela) ayuda a consolidarla. La ciencia del hábito recomienda comenzar con objetivos modestos y aumentar gradualmente.`,refs:["Duhigg, C. (2012). The Power of Habit.","Lally, P., van Jaarsveld, C. H. M., Potts, H. W. W., & Wardle, J. (2010). How are habits formed: Modelling habit formation in the real world."]},
-  {id:16,title:"Mindfulness y rendimiento laboral",excerpt:"Pausas conscientes aumentan la eficiencia y reducen el agotamiento.",content:`Programas de mindfulness en empresas han mostrado reducir el burnout y mejorar la atención. Las micro-pausas intencionales contribuyen a un mejor rendimiento cognitivo y mayor claridad en la toma de decisiones.`,refs:["Good et al. (2016). Impact of mindfulness training on workplace outcomes."]},
-  {id:17,title:"Regulación emocional",excerpt:"La práctica sostenida modifica circuitos neuronales relacionados con la emoción.",content:`La evidencia neurocientífica muestra que la práctica sostenida de mindfulness puede reducir la reactividad de la amígdala y fortalecer redes prefrontales asociadas a la regulación emocional. Esto se traduce en mayor estabilidad ante estímulos estresantes.`,refs:["Hölzel et al. (2011). Mindfulness practice leads to increases in regional brain gray matter density."]},
-  {id:18,title:"Meditación y salud física",excerpt:"Beneficios en inflamación, presión arterial y control del dolor.",content:`Diversos estudios señalan efectos moderados de la meditación en marcadores inflamatorios, control del dolor y regulación de la presión arterial. La meditación no sustituye tratamientos médicos pero puede ser una herramienta complementaria valiosa.`,refs:["Black, D. S., & Slavich, G. M. (2016). Mindfulness meditation and the immune system.","NIH — Complementary and Integrative Health."]},
-  {id:19,title:"Escucha profunda",excerpt:"La atención plena mejora la calidad de las relaciones a través de la escucha activa.",content:`Practicar la presencia reduce la impulsividad en la conversación y aumenta la capacidad de escucha. Estudios en terapia muestran que la presencia del terapeuta mejora la alianza terapéutica; similarmente, la confianza interpersonal mejora cuando practicamos la escucha consciente.`,refs:["Rogers, C. (1957). The necessary and sufficient conditions of therapeutic personality change.","Goleman, D. (1995). Emotional Intelligence."]},
-  {id:20,title:"Gratitud y bienestar",excerpt:"Practicar gratitud recalibra la atención hacia lo positivo y mejora el ánimo.",content:`Terminar la práctica con tres cosas por las que estás agradecido recalibra la percepción hacia lo positivo y crea un cierre afectivo que puede sostener el día.`,refs:["Emmons, R. A., & McCullough, M. E. (2003). Counting blessings vs. burdens.","Harvard Health Publishing — Benefits of gratitude."]},
-  {id:21,title:"Prácticas para la ansiedad",excerpt:"Herramientas prácticas que ayudan a reducir la activación anticipatoria.",content:`La combinación de respiración lenta, activación física moderada y prácticas de exposición gradual produce reducciones significativas en la ansiedad. Intervenciones basadas en mindfulness se integran bien con terapias cognitivo-conductuales para casos moderados de ansiedad.`,refs:["Bishop, S. R. (2004). Mindfulness: A proposed operational definition.","NIH — Anxiety disorder resources."]},
-  {id:22,title:"Atención y tecnología",excerpt:"Límites digitales protegen la atención y la energía mental.",content:`Reducir notificaciones, programar bloques sin pantallas y practicar pausas intencionales mejora la capacidad de concentración. Estudios sobre multitarea indican que saltar entre tareas reduce la eficiencia y aumenta el desgaste cognitivo.`,refs:["Rosen, L. D., et al. (2013). The distracted mind."]},
-  {id:23,title:"Meditación en movimiento",excerpt:"Integrar movimiento y atención profundiza la presencia en el cuerpo.",content:`Modalidades que integran movimiento (caminar conscientemente, yin yoga, tai chi) ofrecen alternativas para quienes encuentran difícil permanecer inmóviles. Estos enfoques trabajan la propriocepción y la regulación emocional en simultáneo.`,refs:["Wang, C., et al. (2010). Tai chi and health outcomes."]},
-  {id:24,title:"Autocompasión y resiliencia",excerpt:"La autocompasión potencia la recuperación ante adversidades.",content:`La práctica de autocompasión actúa como amortiguador frente a la autocrítica y favorece la recuperación emocional tras fracasos o pérdidas. Programas estructurados muestran mejoras en indicadores de resiliencia.`,refs:["Neff, K., & Germer, C. (2013). Mindful Self-Compassion program.","APA resources on resilience."]},
-  {id:25,title:"Prácticas breves para el trabajo",excerpt:"Micro-meditaciones que puedes integrar en la jornada laboral.",content:`Pausas de 1-3 minutos para centrar la respiración o revisar la postura ofrecen beneficios inmediatos en claridad mental y disminución del estrés. Estas prácticas son fáciles de implementar y sostenibles en el tiempo.`,refs:["Good et al. (2016). Workplace mindfulness effects.","Harvard Business Review — microbreaks research."]},
-  {id:26,title:"Meditación y creatividad",excerpt:"Estados serenos facilitan la generación de ideas no lineales.",content:`Reducir la presión evaluativa y cultivar un espacio mental abierto aumenta la probabilidad de generar ideas originales. Prácticas de atención abierta favorecen la asociación libre y la creatividad fluida.`,refs:["Colzato, L. S., et al. (2012). Meditation styles and creative thinking."]},
-  {id:27,title:"Vínculo con la naturaleza",excerpt:"La naturaleza amplifica los efectos regenerativos de la meditación.",content:`Estar en espacios naturales potencia la recuperación atencional y reduce activación fisiológica. Combinar meditación con paseos al aire libre amplifica beneficios en salud mental.`,refs:["Kaplan, S. (1995). The restorative benefits of nature.","WHO — Nature and mental health evidence."]},
-  {id:28,title:"Meditación para el dolor crónico",excerpt:"Herramienta complementaria en manejo del dolor a largo plazo.",content:`Intervenciones como MBSR se han estudiado en poblaciones con dolor crónico, mostrando reducción en la percepción del dolor y mejor calidad de vida. La meditación facilita la relación con la sensación dolorosa sin aumentar la evasión.`,refs:["Cherkin, D. C., et al. (2016). Effect of mindfulness-based stress reduction vs cognitive behavioral therapy among patients with chronic low back pain.","NIH — pain management resources."]},
-  {id:29,title:"La actitud de principiante",excerpt:"Abrirse a la experiencia sin prejuicios reaviva la curiosidad y la presencia.",content:`Adoptar una actitud de principiante (beginner's mind) permite ver detalles nuevos en situaciones conocidas. Esta disposición atencional promueve aprendizaje y reduce la rigidez mental.`,refs:["Suzuki, S. (1970). Zen Mind, Beginner's Mind.","Kabat-Zinn, J. (1994). Wherever You Go, There You Are."]},
-  {id:30,title:"Pequeñas ceremonias, grandes efectos",excerpt:"Repetir rituales simples acumula memoria emocional y facilita el cambio.",content:`Las ceremonias cotidianas (preparar un espacio, seleccionar una canción, encender una vela) crean anclas emocionales que facilitan el acceso a estados internos deseados. La repetición sostenida permite que el cuerpo y la mente reconozcan y respondan eficientemente a la señal de práctica.`,refs:["Duhigg, C. (2012). The Power of Habit.","Kabat-Zinn, J. (1990). Full Catastrophe Living."]}
+/* ---------- Utilities ---------- */
+const $ = selector => document.querySelector(selector);
+const $$ = selector => Array.from(document.querySelectorAll(selector));
+
+/* ---------- Articles dynamic fetching + 15-day rotation ---------- */
+const ARTICLES_KEY = 'coralma_articles_v1';
+const ARTICLES_DATE_KEY = 'coralma_articles_date_v1';
+const ROTATE_DAYS = 15; // rotate every 15 days
+const MAX_ARTICLES = 30;
+
+async function fetchWikipediaTopics(topics = ['Meditation','Mindfulness','Neuroscience','Mind–body_interventions','Gratitude']) {
+  // returns array of {title, extract, url}
+  try {
+    const results = [];
+    for (const t of topics) {
+      const api = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t)}`;
+      try {
+        const res = await fetch(api);
+        if(!res.ok) continue;
+        const json = await res.json();
+        if(json && json.title) {
+          results.push({
+            source: 'Wikipedia',
+            title: json.title,
+            extract: json.extract || '',
+            url: json.content_urls ? json.content_urls.desktop.page : `https://en.wikipedia.org/wiki/${encodeURIComponent(t)}`,
+            content: json.extract || ''
+          });
+        }
+      } catch(e){}
+    }
+    return results;
+  } catch(e){ return []; }
+}
+
+async function fetchRedditPosts(subreddits = ['Meditation','Philosophy']) {
+  // returns array of {title, extract, url}
+  try {
+    const results = [];
+    for(const s of subreddits){
+      const api = `https://www.reddit.com/r/${s}/hot.json?limit=12`;
+      try {
+        const res = await fetch(api);
+        if(!res.ok) continue;
+        const json = await res.json();
+        if(json && json.data && json.data.children){
+          for(const ch of json.data.children){
+            const d = ch.data;
+            results.push({
+              source: `r/${s}`,
+              title: d.title,
+              extract: (d.selftext && d.selftext.substring(0,300)) || '',
+              url: `https://reddit.com${d.permalink}`,
+              content: d.selftext || ''
+            });
+          }
+        }
+      } catch(e){}
+    }
+    return results;
+  } catch(e){ return []; }
+}
+
+async function fetchArxiv(query='mindfulness OR meditation', max=20) {
+  // arXiv API RSS: we'll fetch an ATOM feed and parse minimal info.
+  // Note: arXiv has CORS restrictions sometimes; handle gracefully.
+  try {
+    const api = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&start=0&max_results=${max}`;
+    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`); // proxy to bypass CORS (allorigins.win)
+    if(!res.ok) return [];
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "application/xml");
+    const entries = Array.from(xml.querySelectorAll('entry')).slice(0, max);
+    const results = entries.map(e=>{
+      const title = (e.querySelector('title') && e.querySelector('title').textContent) || 'arXiv article';
+      const summary = (e.querySelector('summary') && e.querySelector('summary').textContent) || '';
+      const link = (e.querySelector('id') && e.querySelector('id').textContent) || '';
+      return { source: 'arXiv', title, extract: summary.substring(0,400), url: link, content: summary };
+    });
+    return results;
+  } catch(e){ return []; }
+}
+
+/* Compose an articles set by pulling from multiple sources */
+async function buildArticles() {
+  // try to fetch from Wikipedia, Reddit, arXiv
+  const [w, r, a] = await Promise.all([
+    fetchWikipediaTopics(['Meditation','Mindfulness','Neuroscience','Gratitude','Compassion','Breathing_techniques']),
+    fetchRedditPosts(['Meditation','Philosophy','psychology']),
+    fetchArxiv('mindfulness OR meditation', 15)
+  ]);
+  // merge and pick up to MAX_ARTICLES
+  const merged = [];
+  if(w && w.length) merged.push(...w);
+  if(a && a.length) merged.push(...a);
+  if(r && r.length) merged.push(...r);
+  // normalize and dedupe by title
+  const byTitle = new Map();
+  merged.forEach(it => {
+    if(!it || !it.title) return;
+    if(!byTitle.has(it.title)) byTitle.set(it.title, {
+      id: byTitle.size + 1,
+      title: it.title,
+      excerpt: (it.extract || '').slice(0,220),
+      content: it.content || it.extract || '',
+      refs: [it.source + ' • ' + (it.url || '')],
+      sourceUrl: it.url || ''
+    });
+  });
+  // If not enough articles, fallback to local (below)
+  const arr = Array.from(byTitle.values()).slice(0, MAX_ARTICLES);
+  if(arr.length < MAX_ARTICLES) {
+    // add fallback from built-in local list (see localArticles below)
+    const need = MAX_ARTICLES - arr.length;
+    arr.push(...localArticles.slice(0, need));
+  }
+  // assign consistent ids 1..N
+  arr.forEach((a,i)=>a.id=i+1);
+  return arr;
+}
+
+/* Use local fallback articles if remote fetching fails */
+const localArticles = [
+  {id:1,title:"Respira: el primer acto de presencia",excerpt:"La respiración es la puerta de entrada al presente.",content:"La respiración consciente... (texto completo aquí)",refs:["Brown & Gerbarg (2005)","Harvard Health"]},
+  {id:2,title:"Micro-prácticas para la calma",excerpt:"Pequeñas pausas a lo largo del día...",content:"Texto completo...",refs:["Sonnentag (2018)"]},
+  {id:3,title:"Música clásica como paisaje interior",excerpt:"Piano suave y cuerdas facilitan la relajación.",content:"Texto completo...",refs:["Juslin & Västfjäll (2008)"]},
+  // ... (si quieres, puedo expandir esta lista local)
 ];
 
-/* -------------------------
-   DOM refs
-   ------------------------- */
-const soundSelect = document.getElementById('soundSelect');
-const soundsList = document.getElementById('soundsList');
-const audioPlayer = document.getElementById('audioPlayer');
-const startBtn = document.getElementById('startBtn');
-const stopBtn = document.getElementById('stopBtn');
-const timeDisplay = document.getElementById('timeDisplay');
-const medCircle = document.getElementById('medCircle');
-const articlesGrid = document.getElementById('articlesGrid');
-const modalBack = document.getElementById('modalBack');
-const modalTitle = document.getElementById('modalTitle');
-const modalBody = document.getElementById('modalBody');
-const modalRefs = document.getElementById('modalRefs');
-const closeModal = document.getElementById('closeModal');
-const subForm = document.getElementById('subForm');
-const emailInput = document.getElementById('emailInput');
-const subInfo = document.getElementById('subInfo');
-const webviewBanner = document.getElementById('webviewBanner');
-const dismissWebview = document.getElementById('dismissWebview');
-
-/* -------------------------
-   Helpers: Archive.org dynamic fetch
-   - We query archive.org advancedsearch for tags and then request metadata
-   - Goal: get 10 ambient/nature + 10 classical/piano tracks (mp3/ogg)
-   ------------------------- */
-
-async function archiveSearch(query, rows=20) {
-  const endpoint = 'https://archive.org/advancedsearch.php';
-  const q = encodeURIComponent(query);
-  const url = `${endpoint}?q=${q}&fl[]=identifier,subject,title,mediatype&rows=${rows}&page=1&output=json`;
-  const res = await fetch(url);
-  if(!res.ok) throw new Error('Error archive search');
-  return await res.json();
-}
-
-// Given an identifier, get metadata and return the first playable file url (.mp3 or .ogg)
-async function getPlayableUrl(identifier) {
-  const metaUrl = `https://archive.org/metadata/${identifier}`;
+/* Save & load articles with 15-day rotation */
+async function getArticlesForDisplay() {
+  const stored = JSON.parse(localStorage.getItem(ARTICLES_KEY) || 'null');
+  const dateSaved = localStorage.getItem(ARTICLES_DATE_KEY);
+  const now = Date.now();
+  const needsRefresh = !stored || !dateSaved || ((now - parseInt(dateSaved,10)) > ROTATE_DAYS * 24*3600*1000);
+  if(!needsRefresh) return stored;
+  // build new set
   try {
-    const r = await fetch(metaUrl);
-    if(!r.ok) return null;
-    const md = await r.json();
-    if(!md || !md.files) return null;
-    // Prefer mp3, then ogg
-    for(const f of md.files) {
-      if(f.name && /\.mp3$/i.test(f.name)) {
-        return `https://archive.org/download/${identifier}/${encodeURIComponent(f.name)}`;
-      }
-    }
-    for(const f of md.files) {
-      if(f.name && /\.ogg$/i.test(f.name)) {
-        return `https://archive.org/download/${identifier}/${encodeURIComponent(f.name)}`;
-      }
-    }
-    // fallback: look for any audio mime
-    for(const f of md.files) {
-      if(f.format && /audio/i.test(f.format)) {
-        return `https://archive.org/download/${identifier}/${encodeURIComponent(f.name)}`;
-      }
-    }
-    return null;
-  } catch(err) {
-    return null;
+    const newArticles = await buildArticles();
+    localStorage.setItem(ARTICLES_KEY, JSON.stringify(newArticles));
+    localStorage.setItem(ARTICLES_DATE_KEY, String(now));
+    return newArticles;
+  } catch(e){
+    // fallback to localArticles
+    localStorage.setItem(ARTICLES_KEY, JSON.stringify(localArticles));
+    localStorage.setItem(ARTICLES_DATE_KEY, String(now));
+    return localArticles;
   }
 }
 
-// Build the sounds list: 10 ambient + 10 classical
-async function buildSounds() {
-  const ambientQuery = 'subject:ambient OR subject:nature OR title:ambient OR description:ambient';
-  const classicalQuery = 'subject:classical OR subject:piano OR title:classical OR title:piano';
+/* ---------- Audio handling with multi-server fallback ---------- */
+/*
+  We maintain a list of tracks. Each track has a title and an array of candidate URLs (order = preference).
+  tryPlayTrack will test URLs sequentially (with timeouts/events) until audio can play.
+  If none of a track's URLs work, pick a different track randomly and inform user.
+*/
 
-  // Search both (we request a larger rows so we can filter)
-  const [ambRes, clsRes] = await Promise.all([
-    archiveSearch(ambientQuery, 40).catch(()=>null),
-    archiveSearch(classicalQuery, 40).catch(()=>null)
-  ]);
+// Example candidate URLs — each entry is a list of candidate sources.
+// NOTE: many URLs are public/test endpoints. You can replace/add your own stable urls.
+// The code will attempt each url until one plays.
+const TRACKS = [
+  { title: 'Ambient — Space Pad 1', urls: [
+    'https://archive.org/download/ambient-space-pad/ambient_space_pad_1.mp3',
+    'https://upload.wikimedia.org/wikipedia/commons/4/4b/Example.ogg', // example fallback (may not be audio)
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+  ]},
+  { title: 'Ambient — Forest Water', urls: [
+    'https://archive.org/download/forest-waves/forest_waves.mp3',
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+  ]},
+  { title: 'Piano Sereno 1', urls: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+    'https://upload.wikimedia.org/wikipedia/commons/4/4b/Example.ogg'
+  ]},
+  { title: 'Piano Sereno 2', urls: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+  ]},
+  { title: 'Strings Pad', urls: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
+  ]},
+  { title: 'Calm Piano 3', urls: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3'
+  ]},
+  { title: 'Nature Rain', urls: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3'
+  ]},
+  { title: 'Ambient Drone 2', urls: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'
+  ]},
+  { title: 'Piano Loop', urls: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3'
+  ]},
+  { title: 'Calm Strings 2', urls: [
+    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3'
+  ]},
+  // Add more tracks until 20 (we'll duplicate some sensible ones for demo)
+  { title: 'Ambient — Wind 1', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3']},
+  { title: 'Ambient — Wind 2', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3']},
+  { title: 'Piano — Solo 4', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3']},
+  { title: 'Piano — Solo 5', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3']},
+  { title: 'Strings — Soft 3', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3']},
+  { title: 'Ambient — Ocean', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3']},
+  { title: 'Nature — Birds', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3']},
+  { title: 'Drone — Soft 4', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-18.mp3']},
+  { title: 'Piano — Lento', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-19.mp3']},
+  { title: 'Calm Mix', urls: ['https://www.soundhelix.com/examples/mp3/SoundHelix-Song-20.mp3']}
+];
 
-  const ambientIds = (ambRes && ambRes.response && ambRes.response.docs) ? ambRes.response.docs.map(d=>d.identifier) : [];
-  const classicalIds = (clsRes && clsRes.response && clsRes.response.docs) ? clsRes.response.docs.map(d=>d.identifier) : [];
+// Note: You should replace archive.org / wikimedia placeholders with real file URLs if you have them.
+// SoundHelix example MP3s are stable for testing and useful as fallback/demo.
 
-  const sounds = [];
-  // helper to fill from ids
-  async function fillFromIds(ids, targetCount, labelPrefix) {
-    for(const id of ids) {
-      if(sounds.length >= targetCount) break;
-      const url = await getPlayableUrl(id);
-      if(url) {
-        // friendly title
-        const title = `${labelPrefix} — ${id}`;
-        sounds.push({ id: sounds.length+1, title, src: url, dur: 180 });
-      }
-    }
-  }
+let CURRENT_TRACK_INDEX = 0;
+let CURRENT_URL_INDEX = 0;
+const audio = document.getElementById('audioPlayer');
+const audioNotice = document.getElementById('audioNotice');
 
-  // We want 10 ambient + 10 classical (20 total)
-  await fillFromIds(ambientIds, 10, 'Ambient');
-  await fillFromIds(classicalIds, 20, 'Clásica/Piano'); // fill remaining to reach 20
+// set up UI lists
+function populateTrackUI() {
+  const select = document.getElementById('soundSelect');
+  select.innerHTML = '';
+  const list = document.getElementById('soundsList');
+  list.innerHTML = '';
+  TRACKS.forEach((t,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = t.title;
+    select.appendChild(opt);
 
-  // If still <20, try other queries (muted fallback)
-  if(sounds.length < 20) {
-    const moreQuery = 'subject:relaxing OR subject:relax';
-    const more = await archiveSearch(moreQuery, 40).catch(()=>null);
-    const ids = (more && more.response && more.response.docs) ? more.response.docs.map(d=>d.identifier) : [];
-    await fillFromIds(ids, 20, 'Relax');
-  }
-
-  // Finally return up to 20
-  return sounds.slice(0,20);
-}
-
-/* -------------------------
-   UI init
-   ------------------------- */
-function renderArticles() {
-  ARTICLES.forEach(a=>{
-    const el = document.createElement('div');
-    el.className = 'article-card';
-    el.innerHTML = `<h3>${a.title}</h3><p>${a.excerpt}</p><button class="read-btn" data-id="${a.id}">Leer completo</button>`;
-    articlesGrid.appendChild(el);
+    const row = document.createElement('div');
+    row.className = 'sound-item';
+    row.innerHTML = `<div style="color:#dff8ff">${t.title}</div>
+      <div style="display:flex;gap:6px">
+        <button class="mini-play" data-i="${i}">Play</button>
+        <button class="mini-use" data-i="${i}">Usar</button>
+      </div>`;
+    list.appendChild(row);
   });
 }
 
-/* Modal open */
-function openArticle(id){
-  const a = ARTICLES.find(x=>x.id===Number(id)); if(!a) return;
-  modalTitle.textContent = a.title;
-  modalBody.innerHTML = `<p style="margin-top:6px;color:#dffcff;line-height:1.6">${a.content}</p>`;
-  modalRefs.innerHTML = `<strong>Referencias</strong><ul style="margin-top:8px">${a.refs.map(r=>`<li style="margin-bottom:6px;color:#bfeffd">${r}</li>`).join('')}</ul>`;
-  modalBack.classList.add('on'); modalBack.setAttribute('aria-hidden','false'); window.scrollTo(0,0);
+// Try to play a specific track index, testing candidate URLs sequentially.
+function tryPlayTrack(trackIndex) {
+  const track = TRACKS[trackIndex];
+  if(!track) return;
+  CURRENT_TRACK_INDEX = trackIndex;
+  CURRENT_URL_INDEX = 0;
+  audioNotice.style.display = 'none';
+  attemptUrlPlay(track);
 }
-closeModal.addEventListener('click', ()=> { modalBack.classList.remove('on'); modalBack.setAttribute('aria-hidden','true'); });
 
+let attemptTimeout = null;
+function attemptUrlPlay(track) {
+  if(!track || !track.urls || track.urls.length === 0) {
+    fallbackToOtherTrack(`No hay URLs para "${track ? track.title : 'track'}"`);
+    return;
+  }
+  if(CURRENT_URL_INDEX >= track.urls.length) {
+    // exhausted this track's urls
+    fallbackToOtherTrack(`La pista "${track.title}" no está disponible en sus fuentes; probando otra pista.`);
+    return;
+  }
+  const url = track.urls[CURRENT_URL_INDEX];
+  // Try to load and detect 'canplaythrough' within X seconds
+  let played = false;
+  audio.pause();
+  audio.src = url;
+  audio.load();
+  const canplayHandler = () => {
+    played = true;
+    clearAttemptListeners();
+    audio.play().catch(()=>{}); // user interaction may be required in some webviews
+    showTemporaryNotice(`Reproduciendo: ${track.title}`);
+  };
+  const errorHandler = () => {
+    // try next url
+    clearAttemptListeners();
+    CURRENT_URL_INDEX++;
+    setTimeout(()=>attemptUrlPlay(track), 200);
+  };
+  const timeoutHandler = () => {
+    if(!played){
+      // treat as failure and try next
+      clearAttemptListeners();
+      CURRENT_URL_INDEX++;
+      attemptUrlPlay(track);
+    }
+  };
+  function clearAttemptListeners() {
+    audio.removeEventListener('canplaythrough', canplayHandler);
+    audio.removeEventListener('error', errorHandler);
+    if(attemptTimeout) { clearTimeout(attemptTimeout); attemptTimeout = null; }
+  }
+  audio.addEventListener('canplaythrough', canplayHandler, {once:true});
+  audio.addEventListener('error', errorHandler, {once:true});
+  // safety timeout if canplaythrough doesn't fire
+  attemptTimeout = setTimeout(timeoutHandler, 6000); // 6s
+}
+
+function fallbackToOtherTrack(msg) {
+  showTemporaryNotice(msg || 'Cambiando a otra pista...');
+  // pick a random track different from current
+  const idxs = TRACKS.map((_,i)=>i).filter(i=>i!==CURRENT_TRACK_INDEX);
+  const next = idxs[Math.floor(Math.random()*idxs.length)];
+  CURRENT_TRACK_INDEX = next;
+  CURRENT_URL_INDEX = 0;
+  // update select
+  const sel = document.getElementById('soundSelect');
+  if(sel) sel.value = String(next);
+  attemptUrlPlay(TRACKS[next]);
+}
+
+let noticeTimeout = null;
+function showTemporaryNotice(text, duration=4000) {
+  audioNotice.textContent = text;
+  audioNotice.style.display = 'block';
+  if(noticeTimeout) clearTimeout(noticeTimeout);
+  noticeTimeout = setTimeout(()=>{ audioNotice.style.display = 'none'; }, duration);
+}
+
+/* ---------- UI interactions ---------- */
 document.addEventListener('click', (e)=>{
-  const btn = e.target.closest('.read-btn');
-  if(!btn) return;
-  if(btn.dataset.id) { openArticle(btn.dataset.id); return; }
-  if(btn.dataset.src) { const src = btn.dataset.src; audioPlayer.src = src; audioPlayer.play().catch(()=>{}); return; }
+  const p = e.target.closest('.mini-play');
+  if(p){
+    const i = Number(p.dataset.i);
+    tryPlayTrack(i);
+  }
+  const u = e.target.closest('.mini-use');
+  if(u){
+    const i = Number(u.dataset.i);
+    document.getElementById('soundSelect').value = String(i);
+    tryPlayTrack(i);
+  }
+  const r = e.target.closest('.read-btn');
+  if(r){
+    const id = r.dataset.id;
+    if(id) openArticle(id);
+  }
 });
 
-/* Subscription */
-subForm.addEventListener('submit', (e)=>{
-  e.preventDefault(); const email = (emailInput.value || '').trim();
-  if(!email.includes('@')) { alert('Introduce un correo válido'); return; }
-  localStorage.setItem('coralma_email', email); subInfo.textContent = `Suscrito: ${email} · Frase del mes: "${monthlyPhrase()}"`; subForm.style.display='none';
+// sound select change (update current track index but don't auto-play)
+document.getElementById('soundSelect')?.addEventListener('change', function(){
+  const i = Number(this.value);
+  CURRENT_TRACK_INDEX = i;
+  CURRENT_URL_INDEX = 0;
+  // set audio src to first candidate but do not autoplay (respect browser)
+  if(TRACKS[i] && TRACKS[i].urls && TRACKS[i].urls[0]) {
+    audio.src = TRACKS[i].urls[0];
+  }
 });
-function monthlyPhrase(){ const arr=['Respira, estás donde debes.','Tu presencia es el acto más sanador.','Hoy es terreno fértil para la calma.','Suelta y respira.']; return arr[Math.floor(Math.random()*arr.length)]; }
 
-/* Meditation timer & controls */
+/* ---------- Meditation timer & controls ---------- */
 let timer = 0; let tick = null;
 function setTimer(sec){ timer = sec; updateTime(); }
-function updateTime(){ const mm = String(Math.floor(timer/60)).padStart(2,'0'); const ss = String(timer%60).padStart(2,'0'); timeDisplay.textContent = `${mm}:${ss}`; }
+function updateTime(){ const mm = String(Math.floor(timer/60)).padStart(2,'0'); const ss = String(timer%60).padStart(2,'0'); document.getElementById('timeDisplay').textContent = `${mm}:${ss}`; }
 function startMeditation(){
   if(timer <= 0){ alert('Selecciona duración (5/10/15 min)'); return; }
-  // ensure audio loaded
-  audioPlayer.play().catch(()=>{ /* autoplay may be blocked, user interaction needed */ });
-  medCircle.classList.remove('pulse'); medCircle.style.transform='scale(0.98)';
-  startBtn.disabled = true; stopBtn.disabled = false;
+  // Start audio if currently set; if not, start current track attempt
+  if(!audio.src || audio.src === '') {
+    tryPlayTrack(CURRENT_TRACK_INDEX || 0);
+  } else {
+    audio.play().catch(()=>{ /* may require interaction */ });
+  }
+  document.getElementById('medCircle').classList.remove('pulse');
+  document.getElementById('medCircle').style.transform='scale(0.98)';
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('stopBtn').disabled = false;
   tick = setInterval(()=>{ if(timer>0){ timer--; updateTime(); } else { stopMeditation(); } },1000);
 }
 function stopMeditation(){
-  audioPlayer.pause(); audioPlayer.currentTime = 0;
-  medCircle.classList.add('pulse'); medCircle.style.transform='';
-  startBtn.disabled = false; stopBtn.disabled = true;
-  clearInterval(tick); tick = null;
+  audio.pause(); audio.currentTime = 0;
+  document.getElementById('medCircle').classList.add('pulse'); document.getElementById('medCircle').style.transform='';
+  document.getElementById('startBtn').disabled = false; document.getElementById('stopBtn').disabled = true;
+  clearInterval(tick); tick=null;
 }
-medCircle.addEventListener('click', ()=> { if(!tick) startMeditation(); else stopMeditation(); });
-startBtn.addEventListener('click', startMeditation);
-stopBtn.addEventListener('click', stopMeditation);
-soundSelect.addEventListener('change', ()=>{ const id = Number(soundSelect.value); const s = window.SOUNDS && window.SOUNDS.find(x=>x.id===id); if(s){ audioPlayer.src = s.src; }});
+document.getElementById('medCircle').addEventListener('click', ()=> { if(!tick) startMeditation(); else stopMeditation(); });
+document.getElementById('startBtn').addEventListener('click', startMeditation);
+document.getElementById('stopBtn').addEventListener('click', stopMeditation);
 setTimer(300); updateTime();
 
-/* WebView detection */
+/* ---------- Articles rendering ---------- */
+async function renderArticlesToUI(){
+  const arr = await getArticlesForDisplay();
+  const grid = document.getElementById('articlesGrid');
+  grid.innerHTML = '';
+  arr.slice(0, MAX_ARTICLES).forEach(a=>{
+    const el = document.createElement('div');
+    el.className = 'article-card';
+    el.innerHTML = `<h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.excerpt || a.content || '').slice(0,260)}</p><button class="read-btn" data-id="${a.id}">Leer completo</button>`;
+    grid.appendChild(el);
+  });
+}
+function openArticle(id){
+  const arr = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]');
+  const a = arr.find(x=>String(x.id)===String(id)) || localArticles.find(x=>String(x.id)===String(id));
+  if(!a) return;
+  $('#modalTitle').textContent = a.title;
+  $('#modalBody').innerHTML = `<p style="margin-top:6px;color:#dffcff;line-height:1.6">${escapeHtml(a.content || a.excerpt || '')}</p>`;
+  $('#modalRefs').innerHTML = `<strong>Referencias</strong><ul style="margin-top:8px">${(a.refs || []).map(r=>`<li style="margin-bottom:6px;color:#bfeffd">${escapeHtml(r)}</li>`).join('')}</ul>`;
+  modalBack.classList.add('on'); modalBack.setAttribute('aria-hidden','false');
+}
+$('#closeModal').addEventListener('click', ()=>{ modalBack.classList.remove('on'); modalBack.setAttribute('aria-hidden','true'); });
+
+/* ---------- Subscription ---------- */
+$('#subForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const email = ($('#emailInput').value || '').trim();
+  if(!email.includes('@')) { alert('Introduce un correo válido'); return; }
+  localStorage.setItem('coralma_email', email);
+  $('#subInfo').textContent = `Suscrito: ${email} · Frase del mes: "${monthlyPhrase()}"`;
+  this.style.display = 'none';
+});
+function monthlyPhrase(){ const arr=['Respira, estás donde debes.','Tu presencia es el acto más sanador.','Hoy es terreno fértil para la calma.','Suelta y respira.']; return arr[Math.floor(Math.random()*arr.length)]; }
+
+/* ---------- WebView detection ---------- */
 function isInAppBrowser(){
   const ua = navigator.userAgent || '';
   const apps = ['Instagram','FBAN','FBAV','Twitter','Line','MicroMessenger','TikTok','Snapchat'];
   return apps.some(a => ua.includes(a));
 }
 if(isInAppBrowser()){
-  webviewBanner.style.display = 'block';
+  $('#webviewBanner').style.display = 'block';
 }
-dismissWebview.addEventListener('click', ()=> webviewBanner.style.display='none');
+$('#dismissWebview').addEventListener('click', ()=> $('#webviewBanner').style.display='none');
+
+/* ---------- Helpers ---------- */
+function escapeHtml(s=''){ return String(s).replace(/[&<>"']/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]); }
+
+/* ---------- Init sequence ---------- */
+async function initApp(){
+  populateTrackUI();
+  // set a default current track index if not set
+  CURRENT_TRACK_INDEX = 0;
+  CURRENT_URL_INDEX = 0;
+  if(TRACKS[0] && TRACKS[0].urls && TRACKS[0].urls[0]) {
+    audio.src = TRACKS[0].urls[0];
+  }
+  // show saved subscription
+  const saved = localStorage.getItem('coralma_email');
+  if(saved){ $('#subInfo').textContent = `Suscrito: ${saved} · Frase del mes: "${monthlyPhrase()}"`; $('#subForm').style.display='none'; }
+
+  // Fetch & render articles (with rotation)
+  try {
+    await renderArticlesToUI();
+  } catch(e){
+    // fallback: render local articles
+    const grid = document.getElementById('articlesGrid');
+    grid.innerHTML = '';
+    localArticles.slice(0,MAX_ARTICLES).forEach(a=>{
+      const el = document.createElement('div');
+      el.className = 'article-card';
+      el.innerHTML = `<h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.excerpt || '')}</p><button class="read-btn" data-id="${a.id}">Leer completo</button>`;
+      grid.appendChild(el);
+    });
+  }
+
+  // If user opens page and audio files fail repeatedly, UI will show notice as fallback.
+}
+
+initApp();
 
 /* Accessibility: close modal with Escape */
 document.addEventListener('keydown', (e)=> { if(e.key === 'Escape'){ modalBack.classList.remove('on'); modalBack.setAttribute('aria-hidden','true'); } });
 
-/* -------------------------
-   Main init: render articles then build sounds dynamically
-   ------------------------- */
-async function init() {
-  renderArticles();
-
-  // load saved subscription
-  const saved = localStorage.getItem('coralma_email');
-  if(saved){ subInfo.textContent = `Suscrito: ${saved} · Frase del mes: "${monthlyPhrase()}"`; subForm.style.display='none'; }
-
-  // Build sounds dynamically from archive.org
-  try {
-    const sounds = await buildSounds(); // returns array up to 20 elements
-    // If none found (network blocked), fallback to an internal minimal list (silent placeholders)
-    if(!sounds || sounds.length === 0) {
-      soundsList.innerHTML = '<div style="color:#bfeffd">No fue posible obtener pistas desde archive.org. Conecta a Internet o abre en navegador normal.</div>';
-      window.SOUNDS = [];
-      return;
-    }
-    window.SOUNDS = sounds;
-    // populate selector and list
-    soundSelect.innerHTML = '';
-    soundsList.innerHTML = '';
-    sounds.forEach(s=>{
-      const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.title; soundSelect.appendChild(opt);
-      const row = document.createElement('div'); row.className = 'sound-item';
-      row.innerHTML = `<div style="color:#dff8ff">${s.title}</div><div style="display:flex;gap:6px"><button class="read-btn" data-src="${s.src}">Play</button><button class="read-btn" data-id-play="${s.id}">Usar</button></div>`;
-      soundsList.appendChild(row);
-    });
-    // default
-    if(sounds[0]) { audioPlayer.src = sounds[0].src; soundSelect.value = 1; }
-  } catch(err) {
-    console.error('Error building sounds', err);
-    soundsList.innerHTML = '<div style="color:#bfeffd">No se pudieron cargar las pistas automáticamente (bloqueo CORS o falta de conexión).</div>';
-  }
-}
-
-// click handler for "Usar" from sounds list
-document.addEventListener('click', (e)=>{
-  const btnPlay = e.target.closest('[data-id-play]');
-  if(btnPlay) {
-    const id = Number(btnPlay.getAttribute('data-id-play'));
-    const s = window.SOUNDS && window.SOUNDS.find(x=>x.id===id);
-    if(s) { soundSelect.value = s.id; audioPlayer.src = s.src; audioPlayer.play().catch(()=>{}); }
-  }
-});
-
-// initialize
-init();
-
-/* Note to user:
- - Archive.org is used so tracks "se autocarguen" y sean libres/public domain. Si quieres una lista fija de URLs (nombres concretos), dime y lo reemplazo por una selección verificada.
- - Recomendación: prueba primero en Chrome/Firefox en escritorio o móvil; algunos WebViews (Instagram/TikTok) bloquean peticiones o autoplay.
- */
+/* End of script */
 </script>
 </body>
 </html>
