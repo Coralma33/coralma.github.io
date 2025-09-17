@@ -13,17 +13,9 @@
       background: #f9fafb;
       color: #1f2937;
       line-height: 1.6;
-      transition: background 0.4s ease, color 0.4s ease;
     }
-
-    h1, h2, h3 {
-      font-family: 'Playfair Display', serif;
-      margin-top: 0;
-    }
-
-    a {
-      text-decoration: none;
-    }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    section { max-width: 1000px; margin:auto; padding: 60px 20px; }
 
     /* Navbar */
     header {
@@ -36,7 +28,6 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      transition: background 0.4s ease;
     }
     header nav a {
       margin: 0 12px;
@@ -52,152 +43,50 @@
       padding: 64px 20px;
       text-align: center;
       background: linear-gradient(135deg,#ede9fe 0%, #faf5ff 50%, #fff 100%);
-      transition: background 0.4s ease;
-    }
-    #hero-coralma h2 {
-      font-size: 32px;
-      margin: 28px 0 8px;
-    }
-    #rotating-phrase {
-      font-style: italic;
-      color: #6b7280;
-      font-size: 16px;
-      min-height: 24px;
-      transition: opacity 300ms ease;
-    }
-    .ph-hide { opacity: 0; transform: translateY(6px); }
-
-    #spiral-svg {
-      transform-origin: 50% 50%;
-      animation: giro-lento 12s linear infinite;
-    }
-    @keyframes giro-lento {
-      0% { transform: rotate(0deg) scale(1); }
-      50% { transform: rotate(6deg) scale(1.02);}
-      100% { transform: rotate(0deg) scale(1);}
     }
 
-    .cta-btn {
-      display: inline-block;
-      margin: 8px;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-    .btn-main {
-      background: #8b5cf6;
-      color: #fff;
-      box-shadow: 0 6px 18px rgba(139,92,246,0.18);
-    }
-    .btn-main:hover {
-      background: #7c3aed;
-    }
-    .btn-sec {
-      border: 2px solid #8b5cf6;
-      color: #8b5cf6;
-    }
-    .btn-sec:hover {
-      background: #f5f3ff;
-    }
-
-    /* Secciones */
-    section {
-      max-width: 1000px;
-      margin: auto;
-      padding: 60px 20px;
-      transition: background 0.4s ease, color 0.4s ease;
-    }
-    section h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    section p {
-      text-align: center;
-      max-width: 700px;
-      margin: auto;
-      color: #4b5563;
-    }
-
-    /* Artículos */
-    .articles {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+    /* Vela */
+    #vela-container {
       margin-top: 40px;
     }
-    .card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-      transition: transform 0.3s ease, background 0.4s ease;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-    }
-
-    /* Suscripción */
-    form {
+    #vela-btn {
+      background: #facc15;
+      color: #000;
+      border-radius: 50%;
+      width: 160px;
+      height: 160px;
       display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-    input[type="email"] {
-      padding: 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      flex: 1;
-      min-width: 220px;
-    }
-    button {
-      background: #8b5cf6;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: 600;
+      font-size: 42px;
+      margin: auto;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
       cursor: pointer;
+      transition: background 0.3s ease;
+      overflow: hidden;
+      position: relative;
     }
-    button:hover {
-      background: #7c3aed;
-    }
-
-    /* Footer */
-    footer {
-      background: #111827;
-      color: #d1d5db;
-      text-align: center;
-      padding: 20px;
+    #vela-btn span {
+      margin-top: 10px;
       font-size: 14px;
-      transition: background 0.4s ease;
+      font-weight: 600;
     }
-    .social-icons {
-      margin-top: 14px;
-      display: flex;
-      justify-content: center;
-      gap: 22px;
+    #vela-llama {
+      position: absolute;
+      top: 10px;
+      font-size: 28px;
+      animation: parpadeo 1s infinite alternate;
     }
-    .social-icons a {
-      color: #d1d5db;
-      transition: color 0.3s ease;
+    @keyframes parpadeo {
+      from { opacity: 1; }
+      to { opacity: 0.6; }
     }
-    .social-icons a:hover {
-      color: #8b5cf6;
-    }
-
-    /* --- 🌙 DARK MODE --- */
-    @media (prefers-color-scheme: dark) {
-      body { background: #111827; color: #e5e7eb; }
-      header { background: #1f2937; }
-      header nav a { color: #e5e7eb; }
-      #hero-coralma { background: linear-gradient(135deg,#1f2937 0%, #111827 50%, #000 100%); }
-      #rotating-phrase { color: #9ca3af; }
-      section p { color: #d1d5db; }
-      .card { background: #1f2937; color: #f9fafb; }
-      input[type="email"] { background: #1f2937; color: #f9fafb; border: 1px solid #374151; }
+    #contador {
+      margin-top: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #374151;
     }
   </style>
 </head>
@@ -206,38 +95,31 @@
   <!-- Navbar -->
   <header>
     <div style="display:flex;align-items:center;gap:10px;">
-      <svg id="spiral-svg" viewBox="0 0 100 100" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
-        <g fill="none" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M50 50 m0 -18 a18 18 0 1 1 0 36 a14 14 0 1 0 0 -28 a10 10 0 1 1 0 20" />
-        </g>
-      </svg>
       <strong style="font-family:'Merriweather',serif;font-size:18px;">Coralma</strong>
     </div>
     <nav>
+      <a href="#hero-coralma">Inicio</a>
       <a href="#quienes">Quiénes somos</a>
       <a href="#articulos">Artículos</a>
-      <a href="#suscripcion">Suscripción</a>
+      <a href="#libros">Libros</a>
       <a href="#donaciones">Donaciones</a>
+      <a href="#suscripcion">Suscripción</a>
     </nav>
   </header>
 
   <!-- Hero -->
   <section id="hero-coralma">
-    <div>
-      <h2>Con corazón se inicia,<br>con alma se trasciende</h2>
-      <p id="rotating-phrase"></p>
-      <div>
-        <a href="#articulos" class="cta-btn btn-main">Explorar artículos</a>
-        <a href="#suscripcion" class="cta-btn btn-sec">Únete al viaje</a>
-      </div>
+    <h2>Con corazón se inicia,<br>con alma se trasciende</h2>
+    <p id="rotating-phrase"></p>
 
-      <!-- Vela con temporizador -->
-      <div style="margin-top:30px;">
-        <button id="vela-btn" class="cta-btn btn-main" style="background:#facc15; color:#000; border-radius:50%; width:80px; height:80px; display:flex; align-items:center; justify-content:center; font-size:28px;">
-          🕯️
-        </button>
-        <div id="contador" style="margin-top:10px; font-size:20px; font-weight:bold; color:#374151;">03:00</div>
+    <!-- Vela con temporizador -->
+    <div id="vela-container">
+      <div id="vela-btn">
+        <div id="vela-llama">🔥</div>
+        🕯️
+        <span>Ven, medita con nosotros</span>
       </div>
+      <div id="contador">03:00</div>
     </div>
   </section>
 
@@ -246,8 +128,7 @@
     <h2>Quiénes somos</h2>
     <p>
       <strong>Coralma</strong> es un espacio de conciencia y transformación interior.  
-      Aquí compartimos reflexiones, prácticas y recursos para que actúes desde el corazón y te sumerjas en el trabajo del alma.  
-      No buscamos fórmulas: ofrecemos acompañamiento, preguntas vivenciales y herramientas para que cada quien encuentre su propio camino.
+      Compartimos reflexiones, prácticas y recursos para que actúes desde el corazón y te sumerjas en el trabajo del alma.
     </p>
   </section>
 
@@ -255,29 +136,20 @@
   <section id="articulos">
     <h2>Artículos</h2>
     <div class="articles">
-      <div class="card">
-        <h3>La fuerza del silencio</h3>
-        <p>Descubre cómo la quietud interior abre puertas a la transformación personal.</p>
-      </div>
-      <div class="card">
-        <h3>Vibraciones del alma</h3>
-        <p>Cómo tu energía invisible atrae experiencias y define tu camino.</p>
-      </div>
-      <div class="card">
-        <h3>El espiral interior</h3>
-        <p>Un viaje que comienza en el corazón y expande la conciencia hacia el infinito.</p>
-      </div>
+      <div class="card"><h3>La fuerza del silencio</h3><p>Cómo la quietud abre puertas a la transformación.</p></div>
+      <div class="card"><h3>Vibraciones del alma</h3><p>Tu energía invisible atrae experiencias.</p></div>
+      <div class="card"><h3>El espiral interior</h3><p>Un viaje que comienza en el corazón.</p></div>
     </div>
   </section>
 
-  <!-- Suscripción -->
-  <section id="suscripcion">
-    <h2>Únete al viaje</h2>
-    <p>Recibe reflexiones semanales para nutrir tu práctica interior.</p>
-    <form>
-      <input type="email" placeholder="Tu correo electrónico" required>
-      <button type="submit">Suscribirme</button>
-    </form>
+  <!-- Libros -->
+  <section id="libros">
+    <h2>Libros PDF</h2>
+    <p>Explora nuestros ebooks para profundizar en tu viaje interior:</p>
+    <div style="text-align:center; margin-top:20px;">
+      <a href="assets/libros/ejemplo.pdf" target="_blank" style="display:inline-block;padding:12px 20px;background:#8b5cf6;color:#fff;border-radius:8px;margin:10px;text-decoration:none;">📘 Descargar Libro 1</a>
+      <a href="assets/libros/ejemplo2.pdf" target="_blank" style="display:inline-block;padding:12px 20px;background:#8b5cf6;color:#fff;border-radius:8px;margin:10px;text-decoration:none;">📗 Descargar Libro 2</a>
+    </div>
   </section>
 
   <!-- Donaciones -->
@@ -293,89 +165,63 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer>
-    Coralma — Transformación interior © 2025
-    <div class="social-icons">
-      <a href="https://www.tiktok.com/@effect.33" target="_blank"><i data-lucide="music-2"></i></a>
-      <a href="https://youtube.com/@effect.no33" target="_blank"><i data-lucide="youtube"></i></a>
-      <a href="https://www.instagram.com/effectno33" target="_blank"><i data-lucide="instagram"></i></a>
-    </div>
-  </footer>
+  <!-- Suscripción -->
+  <section id="suscripcion">
+    <h2>Únete al viaje</h2>
+    <form>
+      <input type="email" placeholder="Tu correo electrónico" required style="padding:10px;border:1px solid #ccc;border-radius:6px;min-width:220px;">
+      <button type="submit" style="padding:10px 20px;background:#8b5cf6;color:#fff;border:none;border-radius:6px;">Suscribirme</button>
+    </form>
+  </section>
 
-  <!-- Script: rotación de frases y temporizador -->
+  <!-- Script -->
   <script>
+    // Frases rotativas
     (function() {
       const frases = [
         "Lo que haces con el corazón, se queda en el alma.",
-        "Se hacen las cosas con el corazón y con el alma se llevan más allá.",
-        "Con el corazón pero con el alma se llega más allá.",
-        "Un espiral: acto, presencia, recuerdo.",
-        "La semilla que plantas en tu alma florece en tu vida.",
-        "El silencio habla cuando el alma escucha.",
+        "La calma es la voz del corazón.",
         "Cada vibración crea un destino.",
         "El alma reconoce lo eterno.",
-        "La calma es la voz del corazón.",
-        "Lo que das, vuelve en espiral.",
-        "El universo responde a tu frecuencia.",
-        "El amor es el idioma original.",
-        "No somos cuerpos con alma, somos almas con cuerpo.",
-        "El corazón es brújula, el alma es mapa.",
-        "La gratitud abre portales invisibles.",
-        "Donde pones tu atención, pones tu energía.",
-        "El presente es la eternidad en miniatura.",
-        "No busques fuera lo que habita dentro.",
-        "Tus heridas son puertas al despertar.",
-        "La vibración del alma nunca miente.",
-        "El corazón susurra lo que la mente calla.",
-        "En cada final hay un inicio oculto.",
-        "La fe es ver con los ojos del alma.",
-        "Tu energía es tu firma en el universo.",
-        "El amor sin miedo expande todo.",
-        "Cada encuentro es un espejo de ti.",
-        "La vida es un eco de tu vibración.",
-        "El alma danza donde la mente se rinde.",
-        "La entrega transforma el dolor en luz.",
-        "Coralma es un viaje de regreso a ti."
+        "Con el corazón se inicia, con el alma se trasciende."
       ];
       const el = document.getElementById('rotating-phrase');
       let idx = 0;
-      function mostrarFrase(i) {
-        el.classList.add('ph-hide');
-        setTimeout(() => {
-          el.textContent = frases[i];
-          el.classList.remove('ph-hide');
-        }, 320);
-      }
+      function mostrarFrase(i) { el.textContent = frases[i]; }
       mostrarFrase(idx);
-      setInterval(() => {
-        idx = (idx + 1) % frases.length;
-        mostrarFrase(idx);
-      }, 5000);
+      setInterval(() => { idx = (idx + 1) % frases.length; mostrarFrase(idx); }, 5000);
     })();
 
-    lucide.createIcons();
-
-    // --- Vela + temporizador ---
-    let tiempo = 180; // 3 minutos en segundos
+    // Vela + temporizador + sonido + efecto derretir
+    let tiempo = 180; // 3 min
     let intervalo = null;
     const btnVela = document.getElementById("vela-btn");
     const contador = document.getElementById("contador");
+
+    // sonido relajante
+    const audio = new Audio("https://cdn.pixabay.com/download/audio/2021/08/04/audio_5f6d8d8b64.mp3?filename=forest-nature-sounds-ambient-4384.mp3");
+    audio.loop = true;
 
     function actualizarContador() {
       let min = String(Math.floor(tiempo / 60)).padStart(2,"0");
       let seg = String(tiempo % 60).padStart(2,"0");
       contador.textContent = `${min}:${seg}`;
+      // efecto derretir (reduce tamaño poco a poco)
+      let scale = tiempo / 180; 
+      btnVela.style.transform = `scale(${0.6 + scale * 0.4})`;
     }
 
     btnVela.addEventListener("click", () => {
       if (intervalo) {
+        // reset
         clearInterval(intervalo);
         intervalo = null;
         tiempo = 180;
         actualizarContador();
-        btnVela.style.background = "#facc15"; // reinicia color
+        btnVela.style.background = "#facc15";
+        audio.pause(); audio.currentTime = 0;
       } else {
+        // iniciar
         intervalo = setInterval(() => {
           if (tiempo > 0) {
             tiempo--;
@@ -383,10 +229,12 @@
           } else {
             clearInterval(intervalo);
             intervalo = null;
-            btnVela.style.background = "#ef4444"; // se apaga en rojo
+            btnVela.style.background = "#ef4444"; // apagada
+            audio.pause();
           }
         }, 1000);
-        btnVela.style.background = "#fb923c"; // encendida naranja
+        btnVela.style.background = "#fb923c"; // encendida
+        audio.play();
       }
     });
 
