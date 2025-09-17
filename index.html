@@ -1,379 +1,198 @@
-<!DOCTYPE html>  <html lang="es">  
-<head>  
-<meta charset="utf-8" />  
-<meta name="viewport" content="width=device-width,initial-scale=1" />  
-<title>Coralma — Conciencia y transformación interior</title>  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">  <style>  
-  :root{  
-    --accent1:#7b61ff;  
-    --accent2:#32d6b1;  
-    --bg-dark:#071226;  
-    --glass: rgba(255,255,255,0.06);  
-  }  
-  *{box-sizing:border-box}  
-  html,body{height:100%}  
-  body{  
-    margin:0;  
-    font-family:Inter,system-ui,Segoe UI,Arial;  
-    color: #eef2ff;  
-    background: radial-gradient(circle at 10% 20%, rgba(76, 201, 175,0.06) 0%, transparent 30%),  
-                radial-gradient(circle at 90% 80%, rgba(125, 97, 255,0.08) 0%, transparent 25%),  
-                linear-gradient(120deg, #0b1220 0%, #1b2440 25%, #2a1a4a 55%, #04383a 100%);  
-    overflow-x:hidden;  
-  }  
-  
-  /* subtle aurora layers */  
-  body::before{  
-    content:"";  
-    position:fixed;left:0;top:0;right:0;bottom:0;  
-    background: linear-gradient(90deg,#2b0d52 0%, #3b2b8b 30%, #1aa7a3 60%, #0b6b8f 100%);  
-    mix-blend-mode: screen;  
-    opacity: .20;  
-    z-index:-2;  
-    background-size: 300% 300%;  
-    animation: auroraMove 22s ease-in-out infinite;  
-  }  
-  @keyframes auroraMove{  
-    0%{background-position:0% 50%}  
-    50%{background-position:100% 50%}  
-    100%{background-position:0% 50%}  
-  }  
-  
-  /* header */  
-  header{  
-    position:sticky;top:0;z-index:50;  
-    display:flex;align-items:center;justify-content:space-between;  
-    gap:12px;padding:14px 22px;  
-    background:linear-gradient(180deg, rgba(6,10,20,0.6), rgba(6,10,20,0.35));  
-    backdrop-filter: blur(6px);  
-    border-bottom: 1px solid rgba(255,255,255,0.03);  
-  }  
-  .brand{display:flex;align-items:center;gap:12px}  
-  .logo {  
-    width:44px;height:44px;border-radius:8px;  
-    background: linear-gradient(135deg,var(--accent1),var(--accent2));  
-    display:flex;align-items:center;justify-content:center;  
-    font-family: 'Playfair Display', serif;  
-    font-weight:700;color:white;font-size:18px;box-shadow: 0 6px 18px rgba(50,40,70,0.35);  
-  }  
-  nav a{  
-    color: #e6edff; text-decoration:none; margin:0 10px; font-weight:600;  
-  }  
-  nav a:hover{color:#fff9c4;text-shadow:0 0 10px rgba(255,240,190,0.12)}  
-  
-  main{max-width:1100px;margin:0 auto;padding:20px}  
-  
-  /* Hero */  
-  .hero{  
-    padding:48px 18px 36px;  
-    display:flex;flex-direction:column;align-items:center;gap:18px;  
-    text-align:center;  
-  }  
-  .hero h1{  
-    font-family:'Playfair Display', serif;  
-    font-size:36px; line-height:1.05; margin:0; color: #f3f8ff;  
-    text-shadow: 0 6px 30px rgba(40,20,80,0.3);  
-  }  
-  .phrases{  
-    height:48px; display:flex;align-items:center;justify-content:center;  
-    font-style:italic;color: #dbe7ff; font-size:18px; margin-top:6px;  
-    position:relative;  
-  }  
-  .phrase{  
-    position:absolute;opacity:0; transform:translateY(10px);  
-    transition: all 450ms cubic-bezier(.2,.9,.3,1);  
-    padding:0 12px;  
-  }  
-  .phrase.show{opacity:1; transform:translateY(0)}  
-  /* small subtitle */  
-  .hero p.lead{max-width:760px;color:#cbd9ff;margin:0;font-size:16px}  
-  
-  /* floating magician hat + wand */  
-  .magician{  
-    position: fixed; right: 18px; top: 140px; z-index:60;  
-    display:flex;flex-direction:column;align-items:center; gap:10px;  
-    pointer-events:none; /* decorative */  
-  }  
-  .hat{  
-    width:86px;height:56px;border-radius:12px 12px 30px 30px;  
-    background: linear-gradient(180deg,#2d1546,#5c2fe0);  
-    box-shadow: 0 12px 30px rgba(90,55,220,0.24);  
-    transform-origin:center;  
-    animation: floatHat 6s ease-in-out infinite;  
-    position:relative;  
-  }  
-  .hat::after{  
-    content:"";position:absolute;left:8px;top:-14px;width:68px;height:24px;border-radius:50%;  
-    background: radial-gradient(circle at 50% 30%, #ffd38c, transparent 40%);  
-    opacity:0.2;  
-  }  
-  @keyframes floatHat{  
-    0%{transform: translateY(0) rotate(-4deg)}  
-    50%{transform: translateY(8px) rotate(4deg)}  
-    100%{transform: translateY(0) rotate(-4deg)}  
-  }  
-  .wand{  
-    width:120px;height:8px;border-radius:20px;background:linear-gradient(90deg,#ffd36b,#fff1d6);  
-    box-shadow:0 8px 20px rgba(0,0,0,0.2);  
-    transform-origin:left center;  
-    animation: swayWand 4s ease-in-out infinite;  
-  }  
-  @keyframes swayWand{  
-    0%{transform: rotate(-12deg) translateX(0)}  
-    50%{transform: rotate(6deg) translateX(6px)}  
-    100%{transform: rotate(-12deg) translateX(0)}  
-  }  
-  .spark{  
-    position:absolute;right:8px;top:-8px;width:8px;height:8px;border-radius:50%;  
-    background: radial-gradient(circle,#fff7b2,#ffd36b); box-shadow:0 0 12px #ffd36b;  
-    animation: sparkPop 1.1s infinite ease-in-out;  
-    opacity:0;  
-  }  
-  @keyframes sparkPop{  
-    0%{opacity:0; transform:translateY(0) scale(.6)}  
-    40%{opacity:1; transform:translateY(-12px) scale(1.2)}  
-    100%{opacity:0; transform:translateY(-28px) scale(.4)}  
-  }  
-  
-  /* meditation area */  
-  #meditacion{  
-    margin-top:10px;padding:36px 14px;display:flex;flex-direction:column;align-items:center;gap:14px;  
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));  
-    border-radius:14px; box-shadow: 0 10px 40px rgba(15,10,40,0.28);  
-    border: 1px solid rgba(255,255,255,0.03);  
-  }  
-  .circle{  
-    width:200px;height:200px;border-radius:50%;display:flex;align-items:center;justify-content:center;  
-    background: radial-gradient(circle at 35% 30%, #fff3c3 0%, #ffb74d 40%, #f59e0b 70%);  
-    color:#1b1b1b;font-weight:700;font-size:18px;text-align:center;padding:14px;  
-    box-shadow: 0 10px 40px rgba(250, 180, 40,0.24);  
-    transition: width 1s linear, height 1s linear, transform 0.4s ease;  
-    cursor:pointer;  
-  }  
-  .circle.small{ width:80px;height:80px;font-size:12px }  
-  .timer-text{ margin-top:8px;font-size:20px;color:#eaf6ff;text-shadow:0 6px 18px rgba(50,120,200,0.16)}  
-  
-  /* articles list */  
-  #articulos{padding:36px 6px; margin-top:20px}  
-  #articulos h2{text-align:left;margin-left:6px;color:#fff;font-size:26px}  
-  .article{  
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));  
-    margin:18px 6px;padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);  
-    box-shadow: 0 8px 30px rgba(10,8,20,0.25);  
-  }  
-  .article h3{margin:0 0 8px;color:#fff}  
-  .article p{color:#e6f0ff;line-height:1.7;text-align:left}  
-  
-  /* ebooks and donations */  
-  .grid-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px}  
-  .card{background:var(--glass);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}  
-  .ebook-cover{width:100%;height:160px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white}  
-  .donate{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px}  
-  
-  /* subscription */  
-  .subscribe{margin-top:18px;padding:18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));display:flex;gap:8px;align-items:center;justify-content:center}  
-  .subscribe input{padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);min-width:220px}  
-  .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:white;padding:12px 18px;border-radius:8px;font-weight:700;cursor:pointer}  
-  
-  /* responsive */  
-  @media (max-width:720px){  
-    .hero h1{font-size:28px}  
-    .logo{width:40px;height:40px;font-size:16px}  
-    .magician{right:8px;top:110px}  
-    .circle{width:160px;height:160px}  
-  }  
-</style>  </head>  
-<body>  <header>  
-  <div class="brand">  
-    <div class="logo">C</div>  
-    <div>  
-      <div style="font-weight:700;color:#fff">Coralma</div>  
-      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px">Conciencia · Transformación · Alma</div>  
-    </div>  
-  </div>    <nav>  
-    <a href="#quienes">Quiénes somos</a>  
-    <a href="#articulos">Artículos</a>  
-    <a href="#meditacion">Meditación</a>  
-    <a href="#ebooks">Ebooks</a>  
-    <a href="#donaciones">Donaciones</a>  
-  </nav>  
-</header>  <!-- floating magician hat + wand (decorative) -->  <div class="magician" aria-hidden="true">  
-  <div class="hat"></div>  
-  <div style="position:relative;">  
-    <div class="wand"></div>  
-    <div class="spark" style="right:6px;top:-16px"></div>  
-  </div>  
-</div>  <main>  
-  <!-- HERO -->  
-  <section class="hero">  
-    <h1>Con corazón se inicia,<br>con alma se trasciende</h1>  
-    <div class="phrases" aria-live="polite">  
-      <!-- phrases inserted by JS -->  
-    </div>  
-    <p class="lead">Bienvenido a Coralma: un espacio para el cultivo interior. Encuentra guías, lecturas, meditaciones y herramientas para el camino.</p>  
-  </section>    <!-- QUIÉNES SOMOS -->    <section id="quienes" style="padding:26px 12px 6px">  
-    <h2 style="text-align:left">Quiénes somos</h2>  
-    <p style="max-width:900px;margin:6px auto 0;color:#dbeaff;line-height:1.8">  
-      <strong>Coralma</strong> nace de la experiencia de recorrer el propio interior. Somos un equipo de facilitadores, lectores y guías cuyo propósito es ofrecer  
-      prácticas, reflexiones y recursos que inviten al encuentro profundo. Nuestra misión es crear un refugio de calma: textos que despiertan la mirada, meditaciones que  
-      sostienen la práctica y una comunidad que comparte desde la honestidad. Compartimos aprendizaje práctico (ejercicios de atención, respiración y contemplación),  
-      relatos que abren preguntas y libros digitales que ordenan el camino en capítulos para leer con calma.  
-    </p>  
-  </section>    <!-- MEDITACIÓN -->    <section id="meditacion" aria-label="Meditación">  
-    <h2>Meditación guiada</h2>  
-    <p style="max-width:700px;color:#d6e7ff">Cierra los ojos un instante y deja que la respiración te guíe. Pulsa el círculo para iniciar la meditación guiada de 5 minutos.</p>  <div id="circle" class="circle" role="button" aria-pressed="false" tabindex="0" title="Iniciar meditación">  
-  ✨ Ven, medita con nosotros ✨  
-</div>  
-<div class="timer-text" id="timerText">05:00</div>  
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Coralma — Conciencia y transformación interior</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent1:#7b61ff;
+    --accent2:#32d6b1;
+    --bg-dark:#071226;
+    --glass: rgba(255,255,255,0.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,Segoe UI,Arial;
+    color: #eef2ff;
+    background: radial-gradient(circle at 10% 20%, rgba(76, 201, 175,0.06) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(125, 97, 255,0.08) 0%, transparent 25%),
+                linear-gradient(120deg, #0b1220 0%, #1b2440 25%, #2a1a4a 55%, #04383a 100%);
+    overflow-x:hidden;
+  }
 
-<div style="margin-top:12px">  
-  <button class="btn-primary" onclick="iniciarMeditacion()">Iniciar meditación (5 min)</button>  
-</div>
+  /* header */
+  header{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;padding:14px 22px;
+    background:linear-gradient(180deg, rgba(6,10,20,0.6), rgba(6,10,20,0.35));
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo {
+    width:44px;height:44px;border-radius:8px;
+    background: linear-gradient(135deg,var(--accent1),var(--accent2));
+    display:flex;align-items:center;justify-content:center;
+    font-family: 'Playfair Display', serif;
+    font-weight:700;color:white;font-size:18px;box-shadow: 0 6px 18px rgba(50,40,70,0.35);
+  }
+  nav a{
+    color: #e6edff; text-decoration:none; margin:0 10px; font-weight:600;
+  }
+  nav a:hover{color:#fff9c4;text-shadow:0 0 10px rgba(255,240,190,0.12)}
 
-  </section>    <!-- ARTÍCULOS - 10 artículos completos -->    <section id="articulos" aria-label="Artículos">  
-    <h2>Artículos</h2>  <!-- Article 1 -->  
-<article class="article">  
-  <h3>La fuerza del silencio</h3>  
-  <p>  
-    El silencio no es ausencia; es presencia pulida. Cuando nos sentamos en silencio, durante minutos apenas perceptibles, nuestra mente deja de  
-    perseguir estímulos y empieza a registrar su propio eco. Ese eco contiene patrones de miedo, de historia y de identidad que, observados sin juicio,  
-    se aflojan. En la práctica meditativa, el silencio se vuelve una herramienta de discernimiento: distingue entre la reacción automática y la  
-    respuesta consciente.  
-  </p>  
-  <p>  
-    Practicar el silencio no exige retirarse del mundo ni acumular horas. Podemos llevar pequeños intervalos conscientes a la vida cotidiana: un minuto  
-    antes de contestar un mensaje; dos respiraciones antes de hablar; una pausa para escuchar sin planear la respuesta. Estos fragmentos de quietud,  
-    repetidos con constancia, reorganizan la respiración, alivian la tensión y permiten que aflore la perspectiva. En el silencio, descubrimos que  
-    muchas cosas no requieren acción inmediata. También emerge la claridad: la intuición que no grita, la visión que prefiere el tono sereno.  
-  </p>  
-  <p>  
-    El silencio no rehúye la emoción; la acoge. Al sostener la tristeza o la rabia en silencio, se disuelven sus aristas. La energía se transforma y  
-    deja de ser obstáculo. Por eso, más que huir del ruido, aprende a habitar el silencio: en él se despliegan las respuestas que la prisa no permite  
-    ver. Escuchar ese latido interior es un acto de valentía y gentileza; el silencio pasa de ser ausencia a ser la base desde la cual se construye una  
-    vida más nutritiva.  
-  </p>  
-</article>  
+  main{max-width:1100px;margin:0 auto;padding:20px}
 
-<!-- Article 2 -->  
-<article class="article">  
-  <h3>Vibraciones del alma</h3>  
-  <p>  
-    Todo en el universo vibra: desde lo más sólido hasta lo que parece intangible. La vibración determina tono, color y resonancia. En el ámbito humano,  
-    nuestras emociones y pensamientos generan frecuencias que atraen circunstancias. Esto no es superstición: responde a la idea de que la atención y la  
-    intención orientan la energía. Cuando nos sintonizamos con estados de calma, gratitud y apertura, la vida tiende a devolver experiencias coherentes.  
-  </p>  
-  <p>  
-    Entrenar la vibración del alma es un trabajo práctico. Se trata de reconocer los estados que alimentan y los que agotan, y elegir prácticas que  
-    aumenten la sensibilidad: respiraciones profundas, movimiento consciente, lecturas que expandan, relaciones que sostengan. La vibración cambia con  
-    hábitos sencillos: dormir lo suficiente, nutrirse bien, limitar estímulos que fragmentan. También con rituales interiores: agradecer antes de comer,  
-    caminar sin prisa, dedicar un tiempo a la contemplación.  
-  </p>  
-  <p>  
-    Al elevar la vibración, la vida parece abrir atajos. No porque todo sea perfecto, sino porque la mente encuentra soluciones con menor ruido. La  
-    práctica consisten en sintonizar con un tono que respete la complejidad humana y, al mismo tiempo, conecte con lo que perdura: amor, curiosidad y  
-    presencia. Esa vibración del alma no es un objetivo vacío; es un camino cotidiano que transforma decisiones, relaciones y el sentido del tiempo.  
-  </p>  
-</article>  
+  /* Hero */
+  .hero{
+    padding:48px 18px 36px;
+    display:flex;flex-direction:column;align-items:center;gap:18px;
+    text-align:center;
+  }
+  .hero h1{
+    font-family:'Playfair Display', serif;
+    font-size:36px; line-height:1.05; margin:0; color: #f3f8ff;
+    text-shadow: 0 6px 30px rgba(40,20,80,0.3);
+  }
+  .phrases{
+    height:48px; display:flex;align-items:center;justify-content:center;
+    font-style:italic;color: #dbe7ff; font-size:18px; margin-top:6px;
+    position:relative;
+  }
+  .phrase{
+    position:absolute;opacity:0; transform:translateY(10px);
+    transition: all 450ms cubic-bezier(.2,.9,.3,1);
+    padding:0 12px;
+  }
+  .phrase.show{opacity:1; transform:translateY(0)}
+  .hero p.lead{max-width:760px;color:#cbd9ff;margin:0;font-size:16px}
 
-<!-- Article 3 -->  
-<article class="article">  
-  <h3>El espiral interior</h3>  
-  <p>  
-    Imagina tu crecimiento como un espiral: avanzar no significa llegar a una línea recta, sino subir en círculos que abarcan cada vez mayor amplitud.  
-    El espiral es un símbolo antiguo porque describe cómo las experiencias se integran y elevan. Cada giro trae aprendizajes; cada repetición ofrece  
-    nuevas capas de sentido. En la práctica espiritual, esto se traduce en la paciencia de volver sobre los mismos temas: relaciones, miedos, hábitos.  
-  </p>  
-  <p>  
-    Trabajar con el espiral implica reconocer que no existen fracasos permanentes: hay revisitas con más madurez. Cuando reaparece una dificultad, ya  
-    no es exactamente la misma; lleva las huellas del aprendizaje anterior. El espiral invita a mirar la historia con curiosidad, no con autocrítica.  
-    También ayuda a planificar la práctica: pequeños ejercicios diarios que, con el tiempo, producen transformaciones profundas.  
-  </p>  
-  <p>  
-    La belleza del espiral es su abertura: no encierra ni limita; expande. Si lo aplicamos al cuerpo, a la mente y al corazón, descubrimos que la  
-    coherencia aparece como resultado. La práctica sostenida nos permite subir por el espiral sin la ilusión de llegar a un punto final: la plenitud  
-    se revela en cada vuelta.  
-  </p>  
-</article>  
+  /* meditation area */
+  #meditacion{
+    margin-top:10px;padding:36px 14px;display:flex;flex-direction:column;align-items:center;gap:14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px; box-shadow: 0 10px 40px rgba(15,10,40,0.28);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .circle{
+    width:200px;height:200px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background: radial-gradient(circle at 35% 30%, #fff3c3 0%, #ffb74d 40%, #f59e0b 70%);
+    color:#1b1b1b;font-weight:700;font-size:18px;text-align:center;padding:14px;
+    box-shadow: 0 10px 40px rgba(250, 180, 40,0.24);
+    transition: width 1s linear, height 1s linear, transform 0.4s ease;
+    cursor:pointer;
+  }
+  .circle.small{ width:80px;height:80px;font-size:12px }
+  .timer-text{ margin-top:8px;font-size:20px;color:#eaf6ff;text-shadow:0 6px 18px rgba(50,120,200,0.16)}
 
-<!-- Article 4 -->  
-<article class="article">  
-  <h3>El despertar consciente</h3>  
-  <p>  
-    El despertar no siempre es dramático; muchas veces es una sucesión de reconocimientos sutiles: ver una emoción sin identificarse con ella, decir  
-    "no sé" y sentir alivio, reconocer patrones heredados. El despertar consciente implica recuperar presencia: dejar de vivir en piloto automático y  
-    prestar atención a la calidad del momento. Es menos una meta y más una práctica que se cultiva con curiosidad.  
-  </p>  
-  <p>  
-    Una práctica útil es el anclaje: elegir tres acciones diarias para hacer con plena presencia -lavar los platos, caminar, beber agua- y realizarlas  
-    sin multitarea. Con el tiempo, la mente aprende a estar más tiempo despierta. El despertar también clarifica prioridades: lo que antes parecía  
-    urgente pierde peso frente a lo que importa verdaderamente.  
-  </p>  
-  <p>  
-    No existe un "deber" de despertar; es una invitación. Y esa invitación responde mejor a la amabilidad que a la exigencia. Respira, observa y deja  
-    que la vida despliegue sus lecciones. El proceso es íntimo, profundo y extraordariamente compasivo consigo mismo.  
-  </p>  
-</article>  
+  /* subscription */
+  .subscribe{margin-top:18px;padding:18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));display:flex;gap:8px;align-items:center;justify-content:center}
+  .subscribe input{padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);min-width:220px}
+  .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:white;padding:12px 18px;border-radius:8px;font-weight:700;cursor:pointer}
 
-<!-- Article 5 -->  
-<article class="article">  
-  <h3>Símbolos y energía</h3>  
-  <p>  
-    Los símbolos condensan significados y activan capas de la mente que el lenguaje directo no alcanza. Un símbolo puede ser una figura, una palabra,  
-    un gesto repetido; su valor reside en la carga emocional y en la intención que le damos. En contextos espirituales, los símbolos actúan como puertas:  
-    nos conectan con arquetipos, memorias y estados de conciencia.  
-  </p>  
-  <p>  
-    Usar símbolos de forma consciente exige respeto y claridad: no funcionan por sí mismos, sino como vehículos. Por ejemplo, encender una vela antes  
-    de meditar no "tiene poder" mágico por el objeto, sino porque el ritual enfoca la mente y prepara el cuerpo. La energía aparece como efecto de la  
-    atención sostenida, y los símbolos nos ayudan a orientarla.  
-  </p>  
-  <p>  
-    Al elegir un símbolo personal (una imagen, una palabra, un amuleto), pregúntate qué te evoca; mantén su uso sencillo y honesto. Con el tiempo,  
-    el símbolo puede convertirse en un ancla que recoloca la atención cuando más se necesita.  
-  </p>  
-</article>  
+  @media (max-width:720px){
+    .hero h1{font-size:28px}
+    .logo{width:40px;height:40px;font-size:16px}
+    .circle{width:160px;height:160px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">C</div>
+    <div>
+      <div style="font-weight:700;color:#fff">Coralma</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px">Conciencia · Transformación · Alma</div>
+    </div>
+  </div>
+  <nav>
+    <a href="#quienes">Quiénes somos</a>
+    <a href="#articulos">Artículos</a>
+    <a href="#meditacion">Meditación</a>
+    <a href="#ebooks">Ebooks</a>
+    <a href="#donaciones">Donaciones</a>
+  </nav>
+</header>
 
-<!-- Article 6 -->  
-<article class="article">  
-  <h3>La ciencia del espíritu</h3>  
-  <p>  
-    La frontera entre ciencia y espiritualidad se vuelve fértil cuando dejamos de verlas como enemigas. Investigación reciente en neurociencia y  
-    psicología muestra que prácticas de atención afectan redes cerebrales, reducen la reactividad emocional y mejoran la capacidad para recuperar la calma.  
-    Esto no "prueba" lo trascendente, pero sí confirma que entrenar la mente modifica la biología.  
-  </p>  
-  <p>  
-    La ciencia aporta métodos y medidas; la espiritualidad aporta sentido y práctica. Juntas, permiten construir protocolos eficaces para el bienestar:  
-    respiraciones específicas para activar el nervio vago, prácticas de compasión que reducen estrés, ejercicios somáticos que regulan el sistema nervioso.  
-  </p>  
-  <p>  
-    La invitación es integrar: usar evidencia práctica sin perder la profundidad de las experiencias subjetivas. Así la vida cotidiana se beneficia de  
-    herramientas comprobadas y el sentido se sostiene en la experiencia vivida.  
-  </p>  
-</article>  
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Con corazón se inicia,<br>con alma se trasciende</h1>
+    <div class="phrases" aria-live="polite"></div>
+    <p class="lead">Bienvenido a Coralma: un espacio para el cultivo interior. Encuentra guías, lecturas, meditaciones y herramientas para el camino.</p>
+  </section>
 
-<!-- Article 7 -->  
-<article class="article">  
-  <h3>Meditación profunda</h3>  
-  <p>  
-    La meditación profunda surge cuando la práctica prolongada permite que la mente reduzca su necesidad de narración constante. Ese estado no es  
-    evasión, sino claridad: la atención permanece despierta sin aferrarse a pensamientos. Llegar ahí exige disciplina amable, pero también curiosidad.  
-    La técnica es menos importante que la regularidad.  
-  </p>  
-  <p>  
-    Comenzar con prácticas breves e ir sosteniendo tiempo ayuda a crear la cultura interior que permite la profundidad. La respiración consciente,  
-    la atención en el cuerpo y las meditaciones guiadas son rutas complementarias. Con paciencia, el silencio se vuelve más fácil y menos raro, y la  
-    experiencia interior gana estabilidad.  
-  </p>  
-  <p>  
-    En esa estabilidad aparecen insights y transformaciones que no surgen con esfuerzo intelectual: la comprensión espontánea, la resolución de viejos  
-    nudos afectivos y la sensación de pertenecer a algo mayor que el yo aislado.  
-  </p>  
-</article>  
+  <!-- MEDITACIÓN -->
+  <section id="meditacion" aria-label="Meditación">
+    <h2>Meditación guiada</h2>
+    <p style="max-width:700px;color:#d6e7ff">Cierra los ojos un instante y deja que la respiración te guíe. Pulsa el círculo para iniciar la meditación guiada de 5 minutos.</p>
+    <div id="circle" class="circle" role="button" aria-pressed="false" tabindex="0" title="Iniciar meditación">✨ Ven, medita con nosotros ✨</div>
+    <div class="timer-text" id="timerText">05:00</div>
+    <div style="margin-top:12px">
+      <button class="btn-primary" onclick="iniciarMeditacion()">Iniciar meditación (5 min)</button>
+    </div>
+    <audio id="bellSound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
+  </section>
 
-<!-- Article 8 -->  
-<article class="article">  
-  <h3>Puentes entre mundos</h3>  
-  <p>  
-    Habitamos varios "mundos" simultáneamente: el externo (trabajo, tareas), el interno (emoción, memoria) y el
+  <!-- DONACIONES -->
+  <section id="donaciones" style="margin-top:40px;text-align:center">
+    <h2>Apoya nuestro camino</h2>
+    <p style="color:#dbeaff;max-width:600px;margin:0 auto 16px">Si Coralma te aporta valor, puedes apoyar nuestro proyecto con una donación.</p>
+    <form action="https://www.paypal.com/donate" method="post" target="_blank">
+      <input type="hidden" name="hosted_button_id" value="TU_ID_DE_PAYPAL" />
+      <button class="btn-primary">Donar con PayPal</button>
+    </form>
+  </section>
+</main>
 
-Donde están estos artículos deje la HP pereza y corrija lo que le dije, quiero que la puta vela me siga y eso no es una vela, que parezca que tiene vida propia, deje los artículos como están no le pedí que dijera que 400 palabras, haga las cosas bien.
+<script>
+  // frases rotativas
+  const frases = [
+    "La calma es la fuerza más alta.",
+    "Respira, suelta y vuelve a ti.",
+    "Lo esencial se escucha en silencio.",
+    "Cada día es un nuevo inicio.",
+    "Tu alma ya conoce el camino."
+  ];
+  const phrasesContainer = document.querySelector('.phrases');
+  let fraseIndex = 0;
 
+  function mostrarFrase(){
+    phrasesContainer.innerHTML = "";
+    const span = document.createElement("span");
+    span.className = "phrase show";
+    span.textContent = frases[fraseIndex];
+    phrasesContainer.appendChild(span);
+    fraseIndex = (fraseIndex + 1) % frases.length;
+  }
+  setInterval(mostrarFrase, 4000);
+  mostrarFrase();
+
+  // temporizador meditación
+  let timer;
+  function iniciarMeditacion(){
+    clearInterval(timer);
+    let time = 5 * 60; // 5 minutos
+    const timerText = document.getElementById("timerText");
+    const bell = document.getElementById("bellSound");
+    bell.play(); // sonido al iniciar
+    timer = setInterval(()=>{
+      const minutes = String(Math.floor(time/60)).padStart(2,'0');
+      const seconds = String(time%60).padStart(2,'0');
+      timerText.textContent = `${minutes}:${seconds}`;
+      if(time<=0){
+        clearInterval(timer);
+        bell.play(); // sonido al terminar
+      }
+      time--;
+    },1000);
+  }
+</script>
+</body>
+</html>
