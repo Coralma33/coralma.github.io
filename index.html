@@ -4,177 +4,228 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coralma</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      color: #fff;
-      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
-      overflow-x: hidden;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4c1d95 60%, #0f766e 100%);
+      background-attachment: fixed;
+      color: #f3f4f6;
+      line-height: 1.6;
     }
 
-    /* Aurora boreal */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(120deg, #4facfe, #00f2fe, #43e97b, #38f9d7, #667eea, #764ba2);
-      background-size: 600% 600%;
-      animation: aurora 20s ease infinite;
-      mix-blend-mode: screen;
-      opacity: 0.35;
-      z-index: -2;
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+      margin-top: 0;
+      color: #e0e7ff;
     }
-    @keyframes aurora {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+
+    a { text-decoration: none; }
 
     /* Navbar */
     header {
-      background: rgba(0,0,0,0.6);
-      padding: 16px 24px;
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 14px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
-      backdrop-filter: blur(6px);
-    }
-    header strong {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      color: #fff;
-      text-shadow: 0 0 8px #7dd3fc;
+      z-index: 50;
     }
     header nav a {
       margin: 0 12px;
       font-weight: 600;
-      color: #fff;
-      text-shadow: 0 0 6px #6366f1;
-      text-decoration: none;
+      color: #e0e7ff;
+    }
+    header nav a:hover {
+      color: #a78bfa;
     }
 
-    /* Sección meditación */
-    #vela-section {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    /* Hero */
+    #hero-coralma {
+      padding: 64px 20px;
       text-align: center;
     }
+    #hero-coralma h2 {
+      font-size: 32px;
+      margin: 28px 0 8px;
+    }
+    #rotating-phrase {
+      font-style: italic;
+      color: #d1d5db;
+      font-size: 16px;
+      min-height: 24px;
+    }
 
-    .circle {
-      width: 200px;
-      height: 200px;
+    /* Meditación */
+    #meditacion {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .circle-timer {
+      width: 180px;
+      height: 180px;
       border-radius: 50%;
-      background: radial-gradient(circle, #fde68a, #f59e0b);
+      background: radial-gradient(circle at center, #fde68a, #fbbf24);
       display: flex;
-      align-items: center;
       justify-content: center;
-      box-shadow: 0 0 40px rgba(255, 200, 0, 0.6);
-      transition: width 1s linear, height 1s linear;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #1f2937;
+      margin: 20px auto;
+      box-shadow: 0 0 20px rgba(251,191,36,0.6);
+      transition: transform 1s linear;
+    }
+    .med-btn {
+      background: #a78bfa;
+      color: #fff;
+      padding: 14px 22px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
       cursor: pointer;
     }
-
-    .circle-text {
-      font-weight: bold;
-      text-shadow: 0 0 8px #fff;
-      color: #000;
-    }
-
-    #timer {
-      margin-top: 12px;
-      font-size: 22px;
-      font-weight: bold;
-      text-shadow: 0 0 10px #7dd3fc;
+    .med-btn:hover {
+      background: #7c3aed;
     }
 
     /* Donaciones */
     #donaciones {
-      padding: 80px 20px;
       text-align: center;
-      background: rgba(0,0,0,0.5);
-      border-top: 2px solid rgba(255,255,255,0.2);
-    }
-    #donaciones h2 {
-      font-size: 28px;
-      margin-bottom: 12px;
-      text-shadow: 0 0 12px #fff;
+      padding: 60px 20px;
     }
     #donaciones p {
       font-size: 18px;
+      margin-bottom: 20px;
       font-style: italic;
-      text-shadow: 0 0 8px #7dd3fc;
     }
+    .donate-btn {
+      background: #34d399;
+      color: #fff;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .donate-btn:hover {
+      background: #059669;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(17,24,39,0.9);
+      color: #d1d5db;
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+    }
+    .social-icons {
+      margin-top: 14px;
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+    }
+    .social-icons a { color: #d1d5db; }
+    .social-icons a:hover { color: #a78bfa; }
   </style>
 </head>
 <body>
+
+  <!-- Navbar -->
   <header>
-    <strong>Coralma</strong>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <strong style="font-family:'Merriweather',serif;font-size:18px;">Coralma</strong>
+    </div>
     <nav>
-      <a href="#vela-section">Meditación</a>
+      <a href="#quienes">Quiénes somos</a>
       <a href="#articulos">Artículos</a>
-      <a href="#ebooks">Ebooks</a>
+      <a href="#meditacion">Meditación</a>
       <a href="#donaciones">Donaciones</a>
     </nav>
   </header>
 
-  <section id="vela-section">
-    <div class="circle" id="velaBtn">
-      <span class="circle-text">✨ Ven, medita con nosotros ✨</span>
+  <!-- Hero -->
+  <section id="hero-coralma">
+    <div>
+      <h2>Con corazón se inicia,<br>con alma se trasciende</h2>
+      <p id="rotating-phrase"></p>
     </div>
-    <div id="timer"></div>
   </section>
 
+  <!-- Quiénes somos -->
+  <section id="quienes">
+    <h2>Quiénes somos</h2>
+    <p>
+      <strong>Coralma</strong> es un espacio de conciencia y transformación interior.
+    </p>
+  </section>
+
+  <!-- Artículos -->
+  <section id="articulos">
+    <h2>Artículos</h2>
+    <div class="articles">
+      <div class="card"><h3>La fuerza del silencio</h3></div>
+      <div class="card"><h3>Vibraciones del alma</h3></div>
+      <div class="card"><h3>El espiral interior</h3></div>
+    </div>
+  </section>
+
+  <!-- Meditación -->
+  <section id="meditacion">
+    <h2>Meditación</h2>
+    <p>Cierra los ojos…</p>
+    <div id="circle" class="circle-timer">5:00</div>
+    <button class="med-btn" onclick="iniciarMeditacion()">Ven, medita con nosotros</button>
+    <audio id="audioMeditacion" src="assets/audio/meditacion.mp3"></audio>
+  </section>
+
+  <!-- Donaciones -->
   <section id="donaciones">
     <h2>Donaciones</h2>
-    <p>✨ Todo lo que das regresa a ti multiplicado ✨</p>
+    <p>"Todo lo que das regresa a ti multiplicado."</p>
+    <a href="https://www.paypal.com/donate" target="_blank">
+      <button class="donate-btn">Donar con PayPal</button>
+    </a>
   </section>
 
-  <!-- Sonido relajante -->
-  <audio id="natureSound" loop>
-    <source src="https://cdn.pixabay.com/download/audio/2023/05/30/audio_6f6b1c63a4.mp3?filename=forest-river-birds-nature-ambient-146184.mp3" type="audio/mp3">
-  </audio>
+  <!-- Footer -->
+  <footer>
+    Coralma — Transformación interior © 2025
+    <div class="social-icons">
+      <a href="https://www.tiktok.com/@effect.33" target="_blank"><i data-lucide="music-2"></i></a>
+      <a href="https://youtube.com/@effect.no33" target="_blank"><i data-lucide="youtube"></i></a>
+      <a href="https://www.instagram.com/effectno33" target="_blank"><i data-lucide="instagram"></i></a>
+    </div>
+  </footer>
 
+  <!-- Script -->
   <script>
-    const vela = document.getElementById("velaBtn");
-    const timerEl = document.getElementById("timer");
-    const sound = document.getElementById("natureSound");
-
-    vela.addEventListener("click", () => {
-      let time = 180; // 3 min
-      timerEl.textContent = formatTime(time);
-      sound.play();
-
-      const countdown = setInterval(() => {
-        time--;
-        timerEl.textContent = formatTime(time);
-
-        // El círculo se encoge poco a poco
-        let size = 200 * (time/180);
-        vela.style.width = size + "px";
-        vela.style.height = size + "px";
-
-        if (time <= 0) {
-          clearInterval(countdown);
-          timerEl.textContent = "✨ Meditación finalizada ✨";
-          sound.pause();
-          sound.currentTime = 0;
-          vela.style.width = "80px";
-          vela.style.height = "80px";
+    function iniciarMeditacion() {
+      const circle = document.getElementById('circle');
+      const audio = document.getElementById('audioMeditacion');
+      let tiempo = 300; // 5 min en segundos
+      audio.play();
+      const intervalo = setInterval(() => {
+        tiempo--;
+        let min = Math.floor(tiempo / 60);
+        let seg = tiempo % 60;
+        circle.textContent = `${min}:${seg < 10 ? '0'+seg : seg}`;
+        circle.style.transform = `scale(${tiempo/300})`;
+        if (tiempo <= 0) {
+          clearInterval(intervalo);
+          audio.pause();
+          circle.textContent = "✨";
         }
       }, 1000);
-    });
-
-    function formatTime(seconds) {
-      const min = Math.floor(seconds / 60);
-      const sec = seconds % 60;
-      return `${min}:${sec < 10 ? "0" : ""}${sec}`;
     }
+    lucide.createIcons();
   </script>
 </body>
 </html>
