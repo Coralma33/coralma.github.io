@@ -6,20 +6,25 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
-      background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #0b0c10, #1f2833, #0b0c10);
       color: #fff;
       text-align: center;
       overflow-x: hidden;
     }
     header {
       padding: 20px;
-      font-size: 1.8em;
-      font-weight: bold;
-      background: rgba(0,0,0,0.5);
+      font-size: 2em;
+      font-weight: 700;
+      background: rgba(0,0,0,0.7);
+      letter-spacing: 2px;
     }
     section {
-      padding: 40px 20px;
+      padding: 60px 20px;
+    }
+    h2 {
+      font-size: 1.8em;
+      margin-bottom: 20px;
     }
     .articles, .sounds {
       display: grid;
@@ -28,7 +33,7 @@
       margin-top: 20px;
     }
     .card {
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
       padding: 20px;
       border-radius: 16px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
@@ -37,7 +42,7 @@
     .card:hover {
       transform: translateY(-6px);
     }
-    button {
+    button, .btn {
       background: linear-gradient(90deg, #56ccf2, #2f80ed);
       border: none;
       color: white;
@@ -46,8 +51,10 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.3s;
+      text-decoration: none;
+      display: inline-block;
     }
-    button:hover {
+    button:hover, .btn:hover {
       background: linear-gradient(90deg, #2f80ed, #56ccf2);
     }
     .vela {
@@ -79,7 +86,7 @@
       opacity: 1;
     }
     .astronauta {
-      width: 150px;
+      width: 200px;
       margin: 40px auto;
     }
     form input {
@@ -89,13 +96,37 @@
       margin: 10px;
       width: 250px;
     }
-    form button {
-      margin-top: 0;
+    .socials {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .socials img {
+      width: 40px;
+      height: 40px;
+      filter: invert(1);
+      transition: transform 0.3s;
+    }
+    .socials img:hover {
+      transform: scale(1.2);
+    }
+    .donaciones {
+      margin-top: 40px;
+    }
+    .estrellas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      opacity: 0.4;
     }
   </style>
 </head>
 <body>
-  <header>🌌 Coralma</header>  <section id="articulos">
+  <div class="estrellas"></div>
+  <header>Coralma</header>  <section id="articulos">
     <h2>Artículos</h2>
     <div class="articles">
       <div class="card">Artículo 1<button>Leer completo</button></div>
@@ -122,14 +153,24 @@
       <button type="submit">Recibir frase mensual</button>
     </form>
     <p id="frase"></p>
+  </section>  <section class="donaciones">
+    <h2>Donaciones</h2>
+    <p>Apoya nuestro proyecto con una donación:</p>
+    <a class="btn" href="https://www.paypal.com/donate" target="_blank">Donar con PayPal</a>
   </section>  <section>
     <div class="astronauta">
-      <!-- Astronauta SVG -->
-      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="#fff">
+      <!-- Astronauta con casco SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="#fff">
         <circle cx="32" cy="32" r="30" stroke="#56ccf2" stroke-width="4" fill="none"/>
-        <circle cx="32" cy="28" r="12" fill="#56ccf2"/>
-        <rect x="22" y="42" width="20" height="10" rx="3" fill="#2f80ed"/>
+        <circle cx="32" cy="28" r="14" fill="#2f80ed"/>
+        <rect x="22" y="42" width="20" height="10" rx="3" fill="#56ccf2"/>
+        <circle cx="32" cy="28" r="8" fill="#0b0c10"/>
       </svg>
+    </div>
+    <div class="socials">
+      <a href="https://www.instagram.com/effectno33?igsh=MjAycWE4dTFsbXpw" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"></a>
+      <a href="https://www.tiktok.com/@effect.33?_t=ZS-8znP36atx8n&_r=1" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046125.png" alt="TikTok"></a>
+      <a href="https://youtube.com/@effect.no33?si=5A83WFm9vvf_DBRv" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"></a>
     </div>
   </section>  <script>
     const btnMeditacion = document.getElementById('btnMeditacion');
@@ -141,7 +182,7 @@
       setTimeout(() => {
         flama.classList.remove('encendida');
         btnMeditacion.disabled = false;
-      }, 10000); // 10s demo, cambia a duración real
+      }, 10000);
     });
 
     const frases = [
