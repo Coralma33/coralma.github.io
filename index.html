@@ -217,6 +217,7 @@
       <a href="#quienes">Quiénes somos</a>
       <a href="#articulos">Artículos</a>
       <a href="#suscripcion">Suscripción</a>
+      <a href="#donaciones">Donaciones</a>
     </nav>
   </header>
 
@@ -228,6 +229,14 @@
       <div>
         <a href="#articulos" class="cta-btn btn-main">Explorar artículos</a>
         <a href="#suscripcion" class="cta-btn btn-sec">Únete al viaje</a>
+      </div>
+
+      <!-- Vela con temporizador -->
+      <div style="margin-top:30px;">
+        <button id="vela-btn" class="cta-btn btn-main" style="background:#facc15; color:#000; border-radius:50%; width:80px; height:80px; display:flex; align-items:center; justify-content:center; font-size:28px;">
+          🕯️
+        </button>
+        <div id="contador" style="margin-top:10px; font-size:20px; font-weight:bold; color:#374151;">03:00</div>
       </div>
     </div>
   </section>
@@ -271,6 +280,19 @@
     </form>
   </section>
 
+  <!-- Donaciones -->
+  <section id="donaciones">
+    <h2>Apoya a Coralma</h2>
+    <p>Tu aporte ayuda a mantener vivo este espacio de conciencia y transformación.</p>
+    <div style="text-align:center; margin-top:20px;">
+      <a href="https://www.paypal.com/donate" target="_blank">
+        <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" 
+             alt="Donar con PayPal" 
+             style="max-width:180px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+      </a>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer>
     Coralma — Transformación interior © 2025
@@ -281,7 +303,7 @@
     </div>
   </footer>
 
-  <!-- Script: rotación de frases -->
+  <!-- Script: rotación de frases y temporizador -->
   <script>
     (function() {
       const frases = [
@@ -331,8 +353,45 @@
         mostrarFrase(idx);
       }, 5000);
     })();
+
     lucide.createIcons();
+
+    // --- Vela + temporizador ---
+    let tiempo = 180; // 3 minutos en segundos
+    let intervalo = null;
+    const btnVela = document.getElementById("vela-btn");
+    const contador = document.getElementById("contador");
+
+    function actualizarContador() {
+      let min = String(Math.floor(tiempo / 60)).padStart(2,"0");
+      let seg = String(tiempo % 60).padStart(2,"0");
+      contador.textContent = `${min}:${seg}`;
+    }
+
+    btnVela.addEventListener("click", () => {
+      if (intervalo) {
+        clearInterval(intervalo);
+        intervalo = null;
+        tiempo = 180;
+        actualizarContador();
+        btnVela.style.background = "#facc15"; // reinicia color
+      } else {
+        intervalo = setInterval(() => {
+          if (tiempo > 0) {
+            tiempo--;
+            actualizarContador();
+          } else {
+            clearInterval(intervalo);
+            intervalo = null;
+            btnVela.style.background = "#ef4444"; // se apaga en rojo
+          }
+        }, 1000);
+        btnVela.style.background = "#fb923c"; // encendida naranja
+      }
+    });
+
+    actualizarContador();
   </script>
 
 </body>
-  </html>
+</html>
