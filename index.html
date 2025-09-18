@@ -1,252 +1,818 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meditación & Conocimiento</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #f0f0f0;
-    }
-    header {
-      background: #1e1e1e;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    main {
-      display: flex;
-      max-width: 1200px;
-      margin: auto;
-    }
-    section {
-      flex: 3;
-      padding: 20px;
-    }
-    aside {
-      flex: 1;
-      padding: 20px;
-      background: #1a1a1a;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .card {
-      background: #222;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    }
-    .article {
-      border-bottom: 1px solid #333;
-      padding: 10px 0;
-    }
-    .article h3 {
-      margin: 0;
-      font-size: 18px;
-      color: #66c2ff;
-    }
-    .article p {
-      margin: 5px 0;
-      font-size: 14px;
-      color: #ccc;
-    }
-    .article a {
-      color: #999;
-      font-size: 12px;
-    }
-    #music {
-      text-align: center;
-    }
-    #youtube .video {
-      margin: 10px 0;
-    }
-    #frases {
-      background: #1e1e1e;
-      padding: 20px;
-      text-align: center;
-      font-style: italic;
-    }
-    #contacto {
-      padding: 20px;
-      background: #1a1a1a;
-      text-align: center;
-    }
-    .btn-primary {
-      display: inline-block;
-      padding: 10px 15px;
-      background: #66c2ff;
-      color: #000;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .btn-primary:hover {
-      background: #3399ff;
-    }
-    .float-btn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: #66c2ff;
-      color: #000;
-      border-radius: 50%;
-      width: 70px;
-      height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 0 10px #000;
-      z-index: 1000;
-    }
-    .float-btn.finished {
-      background: #ff4444;
-      color: #fff;
-    }
-    .social-links a {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #cfeef7;
-      text-decoration: none;
-      margin-bottom: 10px;
-    }
-    .social-links a img {
-      width: 20px;
-      height: 20px;
-      filter: brightness(0) invert(1);
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CorAlma — Encuentra tu calma</title>
+<meta name="description" content="Meditaciones, sonidos y artículos dinámicos. Sonidos con fallback entre servidores." />
+<style>
+:root{
+  --bg1:#020414; --bg2:#041428;
+  --accent1:#6ec6d9; --accent2:#8a6cff;
+  --glass: rgba(255,255,255,0.04);
+  --muted:#9fd8ea; --text:#e6f9ff;
+  --finished:#ff6b6b;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; -webkit-font-smoothing:antialiased}
+body{
+  color:var(--text);
+  background:
+    radial-gradient(circle at 10% 10%, rgba(138,108,255,0.06), transparent 6%),
+    radial-gradient(circle at 90% 70%, rgba(110,198,217,0.04), transparent 10%),
+    linear-gradient(180deg,var(--bg1), var(--bg2));
+  min-height:100vh;
+}
+.container{max-width:1180px;margin:24px auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
+nav{display:flex;gap:10px;align-items:center}
+nav a{color:#cfeffb;text-decoration:none;padding:8px 10px;border-radius:9px}
+nav a:hover{background:var(--glass)}
+
+/* hero */
+.hero{margin-top:14px;border-radius:14px;padding:20px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));display:flex;gap:20px;align-items:center;position:relative;overflow:hidden}
+.hero-left{flex:1}
+.cta .btn-primary{margin-top:12px}
+
+/* layout */
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:22px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:12px}
+.med-card{padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);box-shadow:0 10px 40px rgba(15,30,50,0.45)}
+.center{display:flex;flex-direction:column;align-items:center;gap:12px}
+.selector-row{display:flex;gap:10px;align-items:center;width:100%;justify-content:center;flex-wrap:wrap}
+select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
+.btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+
+/* timer / circle */
+.med-circle{width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:transform .12s,border-color .2s}
+.med-circle:hover{transform:scale(1.03)}
+.time-display{font-weight:700}
+
+/* articles */
+.articles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px;max-height:480px;overflow:auto;padding-right:6px}
+.article-card{padding:12px;border-radius:10px;background:rgba(255,255,255,0.01);text-align:left}
+.article-card h3{margin:0 0 6px 0;font-size:16px}
+.article-card p{margin:0;color:#cfeef7;font-size:14px}
+.article-card .source{font-size:12px;color:#9fd8ea;margin-top:6px}
+.read-btn{margin-top:8px;padding:6px 8px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#dff8ff;cursor:pointer}
+
+/* youtube/recommendations */
+.youtube-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.youtube-thumb{background:#0b1620;border-radius:8px;overflow:hidden;cursor:pointer;position:relative;padding-bottom:6px}
+.youtube-thumb img{width:100%;display:block;height:88px;object-fit:cover}
+.youtube-thumb .yt-title{font-size:12px;padding:6px;color:#eaf9ff}
+.youtube-controls{display:flex;gap:6px;justify-content:center;padding-top:6px}
+
+/* yt player container */
+#ytPlayerContainer{margin-top:12px;border-radius:10px;overflow:hidden;background:rgba(0,0,0,0.35);padding:8px;display:none}
+#ytPlayer{width:100%;height:180px;border:0;border-radius:8px}
+
+/* floating draggable timer */
+.floating-btn{position:fixed;right:20px;bottom:20px;width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;cursor:move;z-index:2000;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:background .25s}
+.floating-btn.finished{background:var(--finished); color:#fff;}
+
+/* mini in-page player */
+.mini-player{
+  position:fixed; right:160px; bottom:100px; width:320px; height:190px;
+  background:#021018; border-radius:10px; z-index:2500; box-shadow:0 12px 40px rgba(0,0,0,0.6); display:none; overflow:hidden;
+  color:var(--text);
+}
+.mini-player.small{width:240px;height:120px}
+.mini-player .mp-header{display:flex;align-items:center;justify-content:space-between;padding:8px;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(0,0,0,0.06))}
+.mini-player .mp-title{font-size:13px;flex:1;padding-left:6px}
+.mini-player .mp-controls{display:flex;gap:6px}
+.mini-player .mp-body{padding:6px}
+
+/* social bar (colored icons) */
+.social-bar{
+  position:fixed;
+  top:50%;
+  right:12px;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  z-index:3000;
+}
+.social-bar a{
+  width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:transparent;
+}
+.social-bar img{width:34px;height:34px;display:block;}
+
+/* modal */
+.modal-back{position:fixed;inset:0;background:rgba(0,6,12,0.65);display:none;align-items:center;justify-content:center;padding:18px;z-index:4000}
+.modal-back.on{display:flex}
+.modal{background:linear-gradient(180deg,#031425,#041a2a);border-radius:12px;padding:18px;max-width:920px;width:100%;max-height:90vh;overflow:auto}
+.modal h2{margin-top:0}
+.modal .refs{margin-top:12px;color:#bfeffd}
+
+/* small helpers */
+.notice{font-size:13px;color:#ffd7a8;background:rgba(0,0,0,0.15);padding:8px;border-radius:8px;margin-top:8px}
+@media(max-width:980px){.grid{grid-template-columns:1fr}.articles-grid{grid-template-columns:1fr}.mini-player{right:12px;left:12px;width:auto}}
+</style>
 </head>
 <body>
-
-<header>Meditación & Conocimiento</header>
-
-<main>
-  <section>
-    <!-- ARTÍCULOS -->
-    <h2>Artículos recientes</h2>
-    <div id="articles-container"></div>
-
-    <!-- MÚSICA -->
-    <div id="music" class="card">
-      <h2>Música de Naturaleza</h2>
-      <audio id="naturePlayer" controls autoplay></audio>
-    </div>
-
-    <!-- YOUTUBE -->
-    <div id="youtube" class="card">
-      <h2>Recomendaciones de YouTube</h2>
-      <div class="video">
-        <iframe width="100%" height="200" src="https://www.youtube.com/embed/ScMzIvxBSi4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">CA</div>
+        <div>
+          <h1>CorAlma</h1>
+          <div style="font-size:12px;color:#bfeffd">Encuentra tu calma en el universo interior</div>
+        </div>
       </div>
-      <div class="video">
-        <iframe width="100%" height="200" src="https://www.youtube.com/embed/5qap5aO4i9A" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <nav>
+        <a href="#">Inicio</a>
+        <a href="#medit-block">Meditación</a>
+        <a href="#art">Artículos</a>
+        <a href="#contact">Contacto</a>
+      </nav>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-left">
+        <h2 id="hero-title">Calma y presencia — prácticas basadas en ciencia y tradición</h2>
+        <p>Sonidos de naturaleza, meditaciones y artículos con referencias. Elige un sonido y duración, inicia y el temporizador se sincroniza con el botón flotante.</p>
+        <div class="cta"><button class="btn-primary" onclick="document.getElementById('medit-block').scrollIntoView({behavior:'smooth'})">Iniciar Meditación</button></div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <main>
+        <!-- Meditación -->
+        <section id="medit-block" class="card med-card" aria-labelledby="medit-title">
+          <h3 id="medit-title">Meditación interactiva</h3>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div class="selector-row">
+              <label for="soundSelect" style="color:#bfeffd">Sonido</label>
+              <select id="soundSelect" aria-label="Selecciona sonido">
+                <!-- sample mp3s -->
+                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">Lluvia suave</option>
+                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">Bosque</option>
+                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">Río</option>
+              </select>
+            </div>
+
+            <div class="selector-row">
+              <div>
+                <button class="btn-primary" onclick="setTimer(300)">5 min</button>
+                <button class="btn-primary" onclick="setTimer(600)">10 min</button>
+                <button class="btn-primary" onclick="setTimer(900)">15 min</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px" class="center">
+            <div id="medCircle" class="med-circle" role="button" tabindex="0">Click para<br>meditar</div>
+            <div class="time-display" style="margin-top:10px">Tiempo: <span id="timeDisplay">00:00</span></div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+            <button id="startBtn" class="btn-primary">Iniciar</button>
+            <button id="stopBtn" class="btn-primary" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">Detener</button>
+            <label style="margin-left:8px;font-size:13px"><input id="audioOnlyToggle" type="checkbox"> Solo audio (ocultar video)</label>
+          </div>
+
+          <div id="audioNotice" class="notice" style="display:none"></div>
+          <audio id="natureAudio" preload="none" controls style="display:none"></audio>
+        </section>
+
+        <!-- Artículos -->
+        <section class="card" style="margin-top:16px" id="art">
+          <h3 style="margin-top:0">Artículos</h3>
+          <div class="articles-grid" id="articlesGrid" role="list"></div>
+        </section>
+
+        <!-- YouTube buscador y reproductor -->
+        <section class="card" style="margin-top:16px">
+          <h3>Recomendaciones / Buscador (YouTube)</h3>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="ytKeyword" type="text" placeholder="Palabra clave (ej. forest, rain)..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dff8ff">
+            <button class="btn-primary" onclick="doSearch()">Buscar</button>
+            <button class="btn-primary" onclick="loadDailyRecs()">Rec. del día</button>
+          </div>
+
+          <div class="youtube-grid" id="youtubeGrid"></div>
+
+          <div id="ytPlayerContainer">
+            <iframe id="ytPlayer" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+              <button class="btn-primary" onclick="stopYT()">Detener</button>
+              <span id="ytNow" style="margin-left:8px;font-size:13px;color:#bfeffd"></span>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside>
+        <div class="side-block">
+          <div class="card">
+            <h4 style="margin-top:0">Música del día</h4>
+            <div id="dailyList" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
+
+          <div class="card" id="reg">
+            <h4 style="margin-top:0">Registro / Frase mensual</h4>
+            <form id="subForm">
+              <input id="emailInput" type="email" placeholder="tu@correo.com" required style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dff8ff">
+              <div style="margin-top:10px"><button class="btn-primary" type="submit">Suscribirme</button></div>
+            </form>
+            <div id="subInfo" style="margin-top:12px;color:#bfeffd"></div>
+          </div>
+
+          <div class="card" id="don">
+            <h4 style="margin-top:0">Donaciones</h4>
+            <p style="margin:0 0 10px 0;color:#cfeef7">Si valoras este proyecto, apóyalo.</p>
+            <!-- PayPal integrado -->
+            <form action="https://www.paypal.com/donate" method="post" target="_blank" style="display:inline-block">
+              <input type="hidden" name="hosted_button_id" value="GW4XCFHYRTJQQ" />
+              <button class="btn-primary" type="submit">Donar con PayPal</button>
+            </form>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer id="contact" style="margin-top:20px">
+      <div style="color:#9fd8ea">Contacto: <a href="mailto:almacoralma@gmail.com">almacoralma@gmail.com</a></div>
+    </footer>
+  </div>
+
+  <!-- floating synchronized timer -->
+  <div id="floatingBtn" class="floating-btn" title="Arrástrame">
+    <div id="floatingLabel">Meditación</div>
+    <div id="floatingTime" style="font-size:13px;margin-top:6px">00:00</div>
+  </div>
+
+  <!-- mini in-page player (draggable/resizable/closeable) -->
+  <div id="miniPlayer" class="mini-player" role="dialog" aria-hidden="true">
+    <div class="mp-header" id="miniHeader">
+      <div class="mp-title" id="miniTitle">Reproductor</div>
+      <div class="mp-controls">
+        <button class="btn-primary" id="miniPlay">▶</button>
+        <button class="btn-primary" id="miniPause">⏸</button>
+        <button class="btn-primary" id="miniStop">⏹</button>
+        <button class="btn-primary" id="miniToggleSize">⇱</button>
+        <button class="btn-primary" id="miniClose">✕</button>
       </div>
     </div>
-
-    <!-- FRASES -->
-    <div id="frases" class="card">
-      <p id="frase"></p>
+    <div class="mp-body" id="miniBody">
+      <div id="yt-player"></div>
+      <div style="margin-top:8px;font-size:13px;color:#bfeffd"><a id="miniOpen" href="#" target="_blank" style="color:#bfeffd">Abrir en YouTube</a></div>
     </div>
+  </div>
 
-    <!-- CONTACTO -->
-    <div id="contacto" class="card">
-      <h2>Contacto</h2>
-      <p>Email: contacto@tusitio.com</p>
-    </div>
-  </section>
+  <!-- social bar with colored icons -->
+  <div class="social-bar" aria-hidden="false">
+    <a href="https://www.instagram.com/effectno33?igsh=MjAycWE4dTFsbXpw" target="_blank" title="Instagram" rel="noopener">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+    </a>
+    <a href="https://www.tiktok.com/@effect.33?_t=ZS-8zp1etEPK4L&_r=1" target="_blank" title="TikTok" rel="noopener">
+      <img src="https://cdn-icons-png.flaticon.com/512/3046/3046122.png" alt="TikTok">
+    </a>
+    <a href="https://youtube.com/@effect.no33?si=3NhJg_TLLsG51Z8i" target="_blank" title="YouTube" rel="noopener">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
+    </a>
+  </div>
 
-  <aside>
-    <!-- DONACIONES -->
-    <div class="card" id="don">
-      <h4 style="margin-top:0">Donaciones</h4>
-      <p style="margin:0 0 10px 0;color:#cfeef7">Si valoras este proyecto, apóyalo.</p>
-      <a class="btn-primary" href="https://www.paypal.com/donate/?hosted_button_id=GW4XCFHYRTJQQ" target="_blank" rel="noopener">Donar con PayPal</a>
-    </div>
-
-    <!-- REDES SOCIALES -->
-    <div class="card" id="social">
-      <h4 style="margin-top:0">Síguenos</h4>
-      <div class="social-links">
-        <a href="https://facebook.com" target="_blank">
-          <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"> Facebook
-        </a>
-        <a href="https://instagram.com" target="_blank">
-          <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"> Instagram
-        </a>
-        <a href="https://youtube.com" target="_blank">
-          <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"> YouTube
-        </a>
-        <a href="https://tiktok.com" target="_blank">
-          <img src="https://cdn-icons-png.flaticon.com/512/3046/3046125.png" alt="TikTok"> TikTok
-        </a>
+  <!-- modal for articles -->
+  <div id="modalBack" class="modal-back" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody" style="color:#dffcff;line-height:1.6"></div>
+      <div id="modalRefs" class="refs"></div>
+      <div style="text-align:right;margin-top:12px">
+        <button id="closeModal" class="btn-primary" style="background:transparent;color:#bfeffd;border:1px solid rgba(255,255,255,0.06)">Cerrar</button>
       </div>
     </div>
-  </aside>
-</main>
-
-<!-- BOTÓN FLOTANTE -->
-<div id="meditationBtn" class="float-btn">15:00</div>
+  </div>
 
 <script>
-  // -------- ARTÍCULOS --------
-  const articles = [
-    {title:"El poder de la meditación", summary:"Cómo la meditación transforma tu mente.", url:"https://ejemplo.com/articulo1"},
-    {title:"Conexión con la naturaleza", summary:"Los beneficios de escuchar sonidos naturales.", url:"https://ejemplo.com/articulo2"},
-    {title:"Ciencia y espiritualidad", summary:"El puente oculto entre ciencia moderna y tradición.", url:"https://ejemplo.com/articulo3"}
-  ];
-  const container = document.getElementById("articles-container");
-  function loadArticles() {
-    container.innerHTML = "";
-    articles.forEach(a=>{
-      const div=document.createElement("div");
-      div.className="article";
-      div.innerHTML=`<h3>${a.title}</h3><p>${a.summary}</p><a href="${a.url}" target="_blank">Leer más</a>`;
-      container.appendChild(div);
-    });
+/* ----------------- Helpers ----------------- */
+const $ = id => document.getElementById(id);
+
+/* ---------- Timer & sync (page + floating) ---------- */
+let timerSec = 300;            // default seconds
+let timerInterval = null;
+let isDragging = false;
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function updateDisplays(){
+  const m = Math.floor(timerSec/60), s = timerSec%60;
+  const text = `${pad(m)}:${pad(s)}`;
+  const td = $('timeDisplay');
+  if(td) td.textContent = text;
+  $('floatingTime').textContent = text;
+  // change color when finished
+  if(timerSec <= 0){
+    $('floatingBtn').classList.add('finished');
+    $('medCircle').style.border = '4px solid rgba(255,107,107,0.85)';
+  } else {
+    $('floatingBtn').classList.remove('finished');
+    $('medCircle').style.border = '0';
   }
-  loadArticles();
+}
 
-  // -------- FRASES --------
-  const frases = [
-    "Domina tu mente o ella te dominará.",
-    "La calma es poder en movimiento.",
-    "Cada respiración es un regreso a ti mismo."
-  ];
-  document.getElementById("frase").innerText = frases[Math.floor(Math.random()*frases.length)];
+function setTimer(sec){
+  timerSec = sec;
+  updateDisplays();
+}
 
-  // -------- MÚSICA --------
-  const musicList = [
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
-  ];
-  const music = document.getElementById("naturePlayer");
-  const day = new Date().getDate();
-  music.src = musicList[day % musicList.length];
-
-  // -------- TEMPORIZADOR --------
-  let duration = 15 * 60;
-  const btn = document.getElementById("meditationBtn");
-  function updateTimer() {
-    let min = Math.floor(duration/60);
-    let sec = duration%60;
-    btn.textContent = `${min}:${sec<10?'0':''}${sec}`;
-    if(duration<=0){
-      btn.classList.add("finished");
-      clearInterval(timer);
+function startTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    if(timerSec > 0){
+      timerSec--;
+      updateDisplays();
+    } else {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      updateDisplays();
+      // play bell if you want
     }
-    duration--;
-  }
-  let timer = setInterval(updateTimer, 1000);
-</script>
+  }, 1000);
+}
 
+function stopTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+  updateDisplays();
+}
+
+/* UI bindings */
+$('startBtn').addEventListener('click', ()=> {
+  const audio = $('natureAudio');
+  const sel = $('soundSelect').value;
+  if(sel){
+    audio.src = sel;
+    audio.play().catch(()=>{});
+    $('audioNotice').style.display='block';
+    $('audioNotice').innerText='Reproduciendo sonido: '+(document.querySelector('#soundSelect option:checked').text || '');
+  }
+  startTimer();
+  // show mini-player with first daily rec for ambience (optional)
+  const recs = dailyRotation(YT_POOL,1);
+  if(recs && recs[0]) showMiniPlayer(recs[0].videoId, recs[0].title);
+});
+$('stopBtn').addEventListener('click', ()=> {
+  $('natureAudio').pause();
+  stopTimer();
+  $('audioNotice').style.display='none';
+});
+$('medCircle').addEventListener('click', ()=> {
+  const audio = $('natureAudio');
+  const sel = $('soundSelect').value;
+  if(sel){
+    audio.src = sel;
+    audio.play().catch(()=>{});
+    $('audioNotice').style.display='block';
+    $('audioNotice').innerText='Reproduciendo sonido: '+(document.querySelector('#soundSelect option:checked').text || '');
+  }
+  startTimer();
+});
+
+/* Sync floating: clicking floating starts/stops same timer */
+$('floatingBtn').addEventListener('click', (e)=>{
+  if(isDragging) return;
+  if(timerInterval) stopTimer();
+  else {
+    const audio = $('natureAudio');
+    const sel = $('soundSelect').value;
+    if(sel){
+      audio.src = sel;
+      audio.play().catch(()=>{});
+      $('audioNotice').style.display='block';
+    }
+    startTimer();
+  }
+});
+
+/* ---------- Drag for floating ---------- */
+const floating = $('floatingBtn');
+floating.addEventListener('mousedown', e => {
+  isDragging = true;
+  offsetX = e.clientX - floating.offsetLeft;
+  offsetY = e.clientY - floating.offsetTop;
+  e.preventDefault();
+});
+document.addEventListener('mousemove', e => {
+  if(!isDragging) return;
+  floating.style.left = (e.clientX - offsetX) + 'px';
+  floating.style.top = (e.clientY - offsetY) + 'px';
+});
+document.addEventListener('mouseup', () => { isDragging=false; });
+/* touch */
+floating.addEventListener('touchstart', e => {
+  isDragging = true;
+  const t = e.touches[0];
+  offsetX = t.clientX - floating.offsetLeft;
+  offsetY = t.clientY - floating.offsetTop;
+});
+document.addEventListener('touchmove', e => {
+  if(!isDragging) return;
+  const t = e.touches[0];
+  floating.style.left = (t.clientX - offsetX) + 'px';
+  floating.style.top = (t.clientY - offsetY) + 'px';
+});
+document.addEventListener('touchend', ()=> isDragging=false);
+
+/* ---------- Articles (rotate every 3 days) ---------- */
+const ARTICLES_KEY = 'coralma_articles_v3';
+const ARTICLES_DATE_KEY = 'coralma_articles_date_v3';
+const ROTATE_MS = 3 * 24 * 60 * 60 * 1000;
+const MAX_ARTICLES = 30;
+
+async function fetchWikipediaTopics(topics = ['Meditation','Mindfulness','Neuroscience','Gratitude','Relaxation']) {
+  const results = [];
+  for(const t of topics){
+    try{
+      const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t)}`;
+      const r = await fetch(url);
+      if(!r.ok) continue;
+      const json = await r.json();
+      results.push({
+        source: 'Wikipedia',
+        title: json.title || t,
+        extract: json.extract || '',
+        url: (json.content_urls && json.content_urls.desktop && json.content_urls.desktop.page) || `https://en.wikipedia.org/wiki/${encodeURIComponent(t)}`
+      });
+    }catch(e){}
+  }
+  return results;
+}
+
+async function fetchRedditPosts(subs=['Meditation','Philosophy']){
+  const results = [];
+  for(const s of subs){
+    try{
+      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://www.reddit.com/r/'+s+'/hot.json?limit=6')}`;
+      const r = await fetch(url);
+      if(!r.ok) continue;
+      const json = await r.json();
+      if(json && json.data && Array.isArray(json.data.children)){
+        json.data.children.forEach(ch=>{
+          const d = ch.data;
+          results.push({
+            source: `r/${s}`,
+            title: d.title || 'Reddit post',
+            extract: (d.selftext && d.selftext.substring(0,300)) || '',
+            url: `https://reddit.com${d.permalink}`
+          });
+        });
+      }
+    }catch(e){}
+  }
+  return results;
+}
+
+async function fetchArxiv(query='mindfulness OR meditation', max=12){
+  try{
+    const api = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&start=0&max_results=${max}`;
+    const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`;
+    const r = await fetch(proxy);
+    if(!r.ok) return [];
+    const text = await r.text();
+    const doc = new DOMParser().parseFromString(text,'application/xml');
+    const entries = Array.from(doc.querySelectorAll('entry'));
+    return entries.map(e=>{
+      return {
+        source: 'arXiv',
+        title: (e.querySelector('title') && e.querySelector('title').textContent.trim()) || 'arXiv article',
+        extract: (e.querySelector('summary') && e.querySelector('summary').textContent.trim().replace(/\s+/g,' ').substring(0,300)) || '',
+        url: (e.querySelector('id') && e.querySelector('id').textContent) || ''
+      };
+    });
+  }catch(e){ return []; }
+}
+
+async function loadArticles(){
+  try{
+    const last = localStorage.getItem(ARTICLES_DATE_KEY);
+    const now = Date.now();
+    if(!last || (now - Number(last)) > ROTATE_MS || !localStorage.getItem(ARTICLES_KEY)){
+      const [wiki, reddit, arxiv] = await Promise.all([fetchWikipediaTopics(), fetchRedditPosts(), fetchArxiv()]);
+      const combined = [...wiki, ...reddit, ...arxiv];
+      const items = combined.length ? combined.slice(0,MAX_ARTICLES) : Array.from({length:MAX_ARTICLES}).map((_,i)=>({
+        source: 'Local',
+        title: `Artículo de ejemplo ${i+1}`,
+        extract: `Este es un resumen de ejemplo para el artículo ${i+1}.`,
+        url: '#'
+      }));
+      localStorage.setItem(ARTICLES_KEY, JSON.stringify(items));
+      localStorage.setItem(ARTICLES_DATE_KEY, String(now));
+      renderArticles(items);
+    } else {
+      const saved = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]');
+      renderArticles(saved);
+    }
+  }catch(e){
+    const items = Array.from({length:10}).map((_,i)=>({source:'Local',title:`Artículo ${i+1}`,extract:`Resumen ${i+1}`,url:'#'}));
+    renderArticles(items);
+  }
+}
+
+function renderArticles(items){
+  const grid = $('articlesGrid');
+  grid.innerHTML = '';
+  items.forEach((a, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'article-card';
+    const title = a.title || 'Sin título';
+    const extract = (a.extract || '').replace(/\n/g,' ').trim();
+    const shortTitle = title.length > 60 ? title.slice(0,57)+'...' : title;
+    const shortExtract = extract.length > 220 ? extract.slice(0,217)+'...' : extract;
+    const source = a.source || 'Fuente';
+    const url = a.url || '#';
+    card.innerHTML = `
+      <h3>${shortTitle}</h3>
+      <p>${shortExtract}</p>
+      <div class="source">Fuente: ${source}</div>
+      <div style="margin-top:8px"><button class="read-btn" data-idx="${idx}">Leer más</button></div>
+    `;
+    card.querySelector('.read-btn').addEventListener('click', ()=>{
+      openArticleModal(a);
+    });
+    grid.appendChild(card);
+  });
+}
+
+/* ---------- Article modal ---------- */
+const modalBack = $('modalBack');
+const modalTitle = $('modalTitle');
+const modalBody = $('modalBody');
+const modalRefs = $('modalRefs');
+$('closeModal').addEventListener('click', ()=> modalBack.classList.remove('on'));
+
+function openArticleModal(a){
+  modalTitle.textContent = a.title || 'Artículo';
+  modalBody.textContent = a.extract || 'No hay resumen disponible.';
+  modalRefs.innerHTML = `<div style="margin-top:8px"><a href="${a.url}" target="_blank" style="color:#bfeffd">Abrir fuente en nueva pestaña</a></div>`;
+  modalBack.classList.add('on');
+}
+
+/* ---------- YouTube recommendations (rotate daily) ---------- */
+const YT_POOL = [
+  {title:'Relaxing Forest Sounds', videoId:'2OEL4P1Rz04'},
+  {title:'Ocean Waves for Meditation', videoId:'VudJ_3R8F7A'},
+  {title:'Rain Sounds Nature', videoId:'qMiwb7cR3pE'},
+  {title:'Mountain Stream', videoId:'5qap5aO4i9A'},
+  {title:'Jungle Ambience', videoId:'OdIJ2x3nxzQ'},
+  {title:'Calm Night Crickets', videoId:'1ZYbU82GVz4'},
+  {title:'Deep Ocean Waves', videoId:'ABdFQvT2gBI'},
+  {title:'Waterfall Relaxation', videoId:'W0s0cKZqjSE'}
+];
+
+function dailyRotation(pool, count=4){
+  const day = new Date().toISOString().slice(0,10).replace(/-/g,''); // YYYYMMDD
+  const seed = Array.from(day).reduce((s,ch)=>s + Number(ch||0),0);
+  const offset = seed % pool.length;
+  const arr = [];
+  for(let i=0;i<count;i++){
+    arr.push(pool[(offset + i) % pool.length]);
+  }
+  return arr;
+}
+
+function renderYTGrid(items){
+  const grid = $('youtubeGrid');
+  grid.innerHTML = '';
+  items.forEach(it=>{
+    const thumb = document.createElement('div');
+    thumb.className = 'youtube-thumb';
+    const img = document.createElement('img');
+    img.src = `https://i.ytimg.com/vi/${it.videoId}/hqdefault.jpg`;
+    img.alt = it.title;
+    const title = document.createElement('div');
+    title.className = 'yt-title';
+    title.textContent = it.title;
+    const controls = document.createElement('div');
+    controls.className = 'youtube-controls';
+    const playBtn = document.createElement('button');
+    playBtn.className='btn-primary';
+    playBtn.textContent = '▶️';
+    playBtn.addEventListener('click', ()=> playYT(it.videoId, it.title));
+    const openBtn = document.createElement('button');
+    openBtn.className='btn-primary';
+    openBtn.textContent = 'Abrir';
+    openBtn.addEventListener('click', ()=> window.open(`https://www.youtube.com/watch?v=${it.videoId}`,'_blank'));
+    controls.appendChild(playBtn);
+    controls.appendChild(openBtn);
+
+    thumb.appendChild(img);
+    thumb.appendChild(title);
+    thumb.appendChild(controls);
+    grid.appendChild(thumb);
+  });
+}
+
+function loadDailyRecs(){
+  const items = dailyRotation(YT_POOL, 6);
+  renderYTGrid(items);
+  const dl = $('dailyList'); dl.innerHTML = '';
+  items.forEach(it=>{
+    const div = document.createElement('div');
+    div.style.display='flex'; div.style.gap='8px'; div.style.alignItems='center';
+    const img = document.createElement('img'); img.src=`https://i.ytimg.com/vi/${it.videoId}/default.jpg`; img.style.width='56px'; img.style.height='40px'; img.style.objectFit='cover'; img.style.borderRadius='6px';
+    const title = document.createElement('div'); title.style.fontSize='13px'; title.textContent=it.title;
+    const play = document.createElement('button'); play.className='btn-primary'; play.textContent='▶️'; play.addEventListener('click', ()=> playYT(it.videoId, it.title));
+    div.appendChild(img); div.appendChild(title); div.appendChild(play);
+    dl.appendChild(div);
+  });
+}
+
+/* ---------- YouTube mini-player (IFrame API) ---------- */
+/* Load IFrame API */
+let YT_API_loaded = false;
+let ytPlayerInstance = null;
+let currentYTId = null;
+function loadYouTubeAPI(){
+  if(window.YT && window.YT.Player){ YT_API_loaded = true; return; }
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+  window.onYouTubeIframeAPIReady = () => { YT_API_loaded = true; };
+}
+loadYouTubeAPI();
+
+function showMiniPlayer(videoId, title){
+  currentYTId = videoId;
+  const m = $('miniPlayer');
+  $('miniTitle').textContent = title || 'YouTube';
+  $('miniOpen').href = `https://www.youtube.com/watch?v=${videoId}`;
+  m.style.display = 'block'; m.setAttribute('aria-hidden','false');
+  // create or update player
+  if(YT_API_loaded){
+    // if player exists, loadVideoById
+    if(ytPlayerInstance && typeof ytPlayerInstance.loadVideoById === 'function'){
+      ytPlayerInstance.loadVideoById(videoId);
+    } else {
+      // create new player inside div 'yt-player'
+      ytPlayerInstance = new YT.Player('yt-player', {
+        height: '160',
+        width: '300',
+        videoId: videoId,
+        playerVars: { autoplay: 1, controls: 1, modestbranding: 1, rel: 0 },
+        events: { onReady: (e)=> e.target.playVideo(), onStateChange: onPlayerStateChange }
+      });
+    }
+  } else {
+    // fallback: use plain embed
+    const body = $('miniBody');
+    body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML = `<iframe width="100%" height="140" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`);
+  }
+  // update audioOnly hide logic
+  applyAudioOnly();
+}
+
+function onPlayerStateChange(event){
+  // optional: update UI if needed
+}
+
+function playYT(videoId, title){
+  showMiniPlayer(videoId, title);
+}
+
+function stopYT(){
+  if(ytPlayerInstance && ytPlayerInstance.stopVideo) ytPlayerInstance.stopVideo();
+  const m = $('miniPlayer');
+  m.style.display = 'none';
+  m.setAttribute('aria-hidden','true');
+  // clear iframe if fallback
+  const body = $('miniBody');
+  const container = body.querySelector('#yt-player');
+  if(container && container.tagName === 'IFRAME') container.src='';
+}
+
+/* mini-player controls */
+$('miniPlay').addEventListener('click', ()=> { if(ytPlayerInstance && ytPlayerInstance.playVideo) ytPlayerInstance.playVideo(); });
+$('miniPause').addEventListener('click', ()=> { if(ytPlayerInstance && ytPlayerInstance.pauseVideo) ytPlayerInstance.pauseVideo(); });
+$('miniStop').addEventListener('click', ()=> { if(ytPlayerInstance && ytPlayerInstance.stopVideo) ytPlayerInstance.stopVideo(); stopYT(); });
+$('miniClose').addEventListener('click', ()=> stopYT());
+$('miniToggleSize').addEventListener('click', ()=>{
+  const m = $('miniPlayer');
+  m.classList.toggle('small');
+});
+
+/* draggable mini-player */
+(function(){
+  const mp = $('miniPlayer');
+  const hdr = $('miniHeader');
+  let dragging=false, ox=0, oy=0;
+  hdr.addEventListener('mousedown', e=>{
+    dragging=true;
+    ox = e.clientX - mp.offsetLeft;
+    oy = e.clientY - mp.offsetTop;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e=>{
+    if(!dragging) return;
+    mp.style.left = (e.clientX - ox) + 'px';
+    mp.style.top = (e.clientY - oy) + 'px';
+    mp.style.right = 'auto';
+    mp.style.bottom = 'auto';
+  });
+  document.addEventListener('mouseup', ()=> dragging=false);
+  // touch
+  hdr.addEventListener('touchstart', e=>{
+    dragging=true;
+    const t = e.touches[0];
+    ox = t.clientX - mp.offsetLeft;
+    oy = t.clientY - mp.offsetTop;
+  });
+  document.addEventListener('touchmove', e=>{
+    if(!dragging) return;
+    const t = e.touches[0];
+    mp.style.left = (t.clientX - ox) + 'px';
+    mp.style.top = (t.clientY - oy) + 'px';
+    mp.style.right = 'auto';
+    mp.style.bottom = 'auto';
+  });
+  document.addEventListener('touchend', ()=> dragging=false);
+})();
+
+/* audioOnly toggle */
+$('audioOnlyToggle').addEventListener('change', applyAudioOnly);
+function applyAudioOnly(){
+  const audioOnly = $('audioOnlyToggle').checked;
+  const mp = $('miniPlayer');
+  if(!mp || mp.style.display==='none') return;
+  if(YT_API_loaded && ytPlayerInstance && ytPlayerInstance.getIframe){
+    const iframe = ytPlayerInstance.getIframe();
+    if(audioOnly){
+      iframe.style.width='1px'; iframe.style.height='1px'; iframe.style.opacity='0'; iframe.style.pointerEvents='none';
+    } else {
+      iframe.style.width='100%'; iframe.style.height='160px'; iframe.style.opacity='1'; iframe.style.pointerEvents='auto';
+    }
+  } else {
+    // fallback: hide iframe visually
+    const body = $('miniBody');
+    const ifr = body.querySelector('iframe');
+    if(ifr){
+      if(audioOnly){ ifr.style.width='1px'; ifr.style.height='1px'; ifr.style.opacity='0'; }
+      else { ifr.style.width='100%'; ifr.style.height='140px'; ifr.style.opacity='1'; }
+    }
+  }
+}
+
+/* ---------- Search (simple client-side filter of pool) ---------- */
+function doSearch(){
+  const k = $('ytKeyword').value.trim().toLowerCase();
+  if(!k){ loadDailyRecs(); return; }
+  const results = YT_POOL.filter(p => p.title.toLowerCase().includes(k));
+  if(results.length) renderYTGrid(results);
+  else renderYTGrid(dailyRotation(YT_POOL,6));
+}
+
+/* ---------- Subscription form ---------- */
+$('subForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  $('subInfo').textContent = '¡Gracias! Te hemos suscrito (demo)';
+  $('emailInput').value = '';
+});
+
+/* ---------- Music rotation daily ---------- */
+const MUSIC_DAILY = [
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+];
+
+function loadDailyMusic(){
+  const idx = Math.floor(Date.now()/(1000*60*60*24)) % MUSIC_DAILY.length;
+  const audio = $('natureAudio');
+  audio.src = MUSIC_DAILY[idx];
+  // show in sidebar list
+  const dl = $('dailyList'); if(dl){ dl.innerHTML=''; const div=document.createElement('div'); div.style.display='flex'; div.style.gap='8px'; div.style.alignItems='center'; const img=document.createElement('img'); img.src='https://i.ytimg.com/vi/2OEL4P1Rz04/default.jpg'; img.style.width='56px'; img.style.height='40px'; img.style.borderRadius='6px'; const t=document.createElement('div'); t.textContent='Música del día'; const btn=document.createElement('button'); btn.className='btn-primary'; btn.textContent='▶'; btn.onclick=()=>{ audio.play(); }; div.appendChild(img); div.appendChild(t); div.appendChild(btn); dl.appendChild(div); }
+}
+
+/* ---------- Init ---------- */
+function init(){
+  updateDisplays();
+  loadArticles();
+  loadDailyRecs();
+  renderYTGrid(dailyRotation(YT_POOL,6));
+  loadDailyMusic();
+}
+init();
+
+/* ---------- Expose function used elsewhere ---------- */
+function loadDailyRecs(){ // redefined to avoid hoisting missing in older browsers
+  const items = dailyRotation(YT_POOL, 6);
+  renderYTGrid(items);
+  const dl = $('dailyList'); dl.innerHTML = '';
+  items.forEach(it=>{
+    const div = document.createElement('div');
+    div.style.display='flex'; div.style.gap='8px'; div.style.alignItems='center';
+    const img = document.createElement('img'); img.src=`https://i.ytimg.com/vi/${it.videoId}/default.jpg`; img.style.width='56px'; img.style.height='40px'; img.style.objectFit='cover'; img.style.borderRadius='6px';
+    const title = document.createElement('div'); title.style.fontSize='13px'; title.textContent=it.title;
+    const play = document.createElement('button'); play.className='btn-primary'; play.textContent='▶️'; play.addEventListener('click', ()=> playYT(it.videoId, it.title));
+    div.appendChild(img); div.appendChild(title); div.appendChild(play);
+    dl.appendChild(div);
+  });
+}
+</script>
 </body>
 </html>
