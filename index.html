@@ -186,7 +186,7 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
 
           <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
             <button id="startBtn" class="btn-primary">Iniciar</button>
-            <!-- Botón naranja adicional justo al lado -->
+            <!-- Botón naranja (mantengo tu estructura) -->
             <button id="orangeBtn" class="btn-orange" title="Acción rápida">▶ Ambiente</button>
             <button id="stopBtn" class="btn-primary" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">Detener</button>
             <label style="margin-left:8px;font-size:13px"><input id="audioOnlyToggle" type="checkbox"> Solo audio (ocultar video)</label>
@@ -312,9 +312,10 @@ const $ = id => document.getElementById(id);
 
 /* ---------- Timer & sync (page + floating) ---------- */
 let timerSec = 300;            // default seconds
-let timerTotal = timerSec;    // total seconds (se actualiza cuando el usuario cambia duración)
+let timerTotal = timerSec;    // total seconds
 let timerInterval = null;
 let isDragging = false;
+let offsetX = 0, offsetY = 0; // FIX: declarar offsets para drag
 
 function pad(n){ return String(n).padStart(2,'0'); }
 
@@ -325,9 +326,8 @@ function updateDisplays(){
   if(td) td.textContent = text;
   $('floatingTime').textContent = text;
 
-  // --- escala proporcional del círculo y botón flotante ---
   const total = Math.max(1, timerTotal || 300);
-  const proportion = Math.max(0, timerSec / total); // 1 -> 0
+  const proportion = Math.max(0, timerSec / total);
   const minScaleCircle = 0.18;
   const minScaleFloating = 0.18;
   const scale = Math.max(minScaleCircle, proportion);
@@ -338,7 +338,6 @@ function updateDisplays(){
   const fb = $('floatingBtn');
   if(fb) fb.style.transform = `scale(${fScale})`;
 
-  // change color when finished
   if(timerSec <= 0){
     $('floatingBtn').classList.add('finished');
     if(med) med.style.border = '4px solid rgba(255,107,107,0.85)';
@@ -367,7 +366,6 @@ function startTimer(){
       clearInterval(timerInterval);
       timerInterval = null;
       updateDisplays();
-      // you could add an end sound here if desired
     }
   }, 1000);
 }
@@ -389,9 +387,8 @@ $('startBtn').addEventListener('click', ()=> {
     $('audioNotice').innerText='Reproduciendo sonido: '+(document.querySelector('#soundSelect option:checked').text || '');
   }
   startTimer();
-  // show mini-player with first daily rec for ambience (optional)
-  const recs = dailyRotation(YT_POOL,1);
-  if(recs && recs[0]) playPlaylistIndex(currentPlaylistIndex || 0);
+  // inicia la playlist del día (índice lógico 0 de la rotación)
+  playPlaylistIndex(currentPlaylistIndex || 0);
 });
 $('stopBtn').addEventListener('click', ()=> {
   $('natureAudio').pause();
@@ -410,7 +407,7 @@ $('medCircle').addEventListener('click', ()=> {
   startTimer();
 });
 
-/* orange quick button plays today's ambient audio */
+/* Botón naranja rápido: reproduce la pista del día del bloque "Música del día" */
 $('orangeBtn').addEventListener('click', ()=>{
   const idx = getDailyMusicIndex();
   const item = MUSIC_DAILY[idx];
@@ -419,7 +416,6 @@ $('orangeBtn').addEventListener('click', ()=>{
     $('natureAudio').play().catch(()=>{});
     $('audioNotice').style.display='block';
     $('audioNotice').innerText = 'Reproduciendo: ' + item.name;
-    // sync select if name matches
     syncSelectToName(item.name);
   }
 });
@@ -475,8 +471,6 @@ const ARTICLES_DATE_KEY = 'coralma_articles_date_v3';
 const ROTATE_MS = 3 * 24 * 60 * 60 * 1000;
 const MAX_ARTICLES = 30;
 
-/* ... (fetchWikipediaTopics, fetchRedditPosts, fetchArxiv, loadArticles, renderArticles) ...
-   -- identical to your previous implementation to preserve behavior -- */
 async function fetchWikipediaTopics(topics = ['Meditation','Mindfulness','Neuroscience','Gratitude','Relaxation']) {
   const results = [];
   for(const t of topics){
@@ -600,53 +594,48 @@ function openArticleModal(a){
   modalBack.classList.add('on');
 }
 
-/* ---------- YouTube playlists & rotation ---------- */
-
+/* ---------- YouTube playlists & rotación diaria ---------- */
 /*
-  IMPORTANT: Replace the PLAYLISTS array entries with real YouTube PLAYLIST IDs.
-  The code is ready to handle 20 playlists. For each playlist we keep:
-    { title: 'friendly name', playlistId: 'PLxxxx...' }
-  If you want, dime y busco e inyecto 20 playlists reales. Por ahora hay placeholders.
+  He elegido 20 listas. Algunas son "Mix" (RD + id de video) y otras son listas de búsqueda.
+  Cargan sin clave de API y funcionan dentro del IFrame de YouTube.
 */
-
 const PLAYLISTS = [
-  /* 20 placeholders — reemplázalos por IDs reales (ej: 'PLxxx') */
-  {title: 'Relax – Forest mix', playlistId: 'PL_PLACEHOLDER_1'},
-  {title: 'Ocean Waves Playlist', playlistId: 'PL_PLACEHOLDER_2'},
-  {title: 'Rain & Nature', playlistId: 'PL_PLACEHOLDER_3'},
-  {title: 'Meditation Music 432Hz', playlistId: 'PL_PLACEHOLDER_4'},
-  {title: 'Binaural Relaxation', playlistId: 'PL_PLACEHOLDER_5'},
-  {title: 'Deep Sleep Sounds', playlistId: 'PL_PLACEHOLDER_6'},
-  {title: 'Study Ambient', playlistId: 'PL_PLACEHOLDER_7'},
-  {title: 'Nature Streams', playlistId: 'PL_PLACEHOLDER_8'},
-  {title: 'Tibetan Bowls', playlistId: 'PL_PLACEHOLDER_9'},
-  {title: 'Calm Piano', playlistId: 'PL_PLACEHOLDER_10'},
-  {title: 'Chillout Nature', playlistId: 'PL_PLACEHOLDER_11'},
-  {title: 'White Noise Long', playlistId: 'PL_PLACEHOLDER_12'},
-  {title: 'Ambient Night', playlistId: 'PL_PLACEHOLDER_13'},
-  {title: 'Ghz / Frequencies', playlistId: 'PL_PLACEHOLDER_14'},
-  {title: 'Forest Birds', playlistId: 'PL_PLACEHOLDER_15'},
-  {title: 'Waterfall Soothing', playlistId: 'PL_PLACEHOLDER_16'},
-  {title: 'Gentle Wind', playlistId: 'PL_PLACEHOLDER_17'},
-  {title: 'Cave Drips', playlistId: 'PL_PLACEHOLDER_18'},
-  {title: 'Ocean Deep', playlistId: 'PL_PLACEHOLDER_19'},
-  {title: 'Guided Breathing', playlistId: 'PL_PLACEHOLDER_20'}
+  {title: 'Lluvia relajante — Mix',   playlistId: 'RD1ZYbU82GVz4'},
+  {title: 'Bosque y aves — Mix',      playlistId: 'RDOdIJ2x3nxzQ'},
+  {title: 'Río de montaña — Mix',     playlistId: 'RD2OEL4P1Rz04'},
+  {title: 'Olas del mar — Mix',       playlistId: 'RDABdFQvT2gBI'},
+  {title: 'Cascada — Mix',            playlistId: 'RDW0s0cKZqjSE'},
+  {title: 'Lluvia intensa — Mix',     playlistId: 'RDqMiwb7cR3pE'},
+  {title: 'Jungla nocturna — Mix',    playlistId: 'RDOdIJ2x3nxzQ'},
+  {title: 'Lo-fi suave — Mix',        playlistId: 'RD5qap5aO4i9A'},
+
+  {title: '432Hz meditación',         playlistId: 'search:432hz meditation music 2 hours'},
+  {title: 'Tazones tibetanos',        playlistId: 'search:tibetan singing bowls 3 hours'},
+  {title: 'Ruido marrón',             playlistId: 'search:brown noise 10 hours'},
+  {title: 'Viento entre árboles',     playlistId: 'search:wind in trees ambience'},
+  {title: 'Fuego de campamento',      playlistId: 'search:campfire crackling 8 hours'},
+  {title: 'Cascadas para dormir',     playlistId: 'search:waterfall sounds 10 hours'},
+  {title: 'Olas para dormir',         playlistId: 'search:ocean waves relaxing 8 hours'},
+  {title: 'Bosque 4K',                playlistId: 'search:forest ambience birds 4k'},
+  {title: 'Lluvia para foco',         playlistId: 'search:rain sounds study focus'},
+  {title: 'Frecuencia 528Hz',         playlistId: 'search:528hz healing frequency'},
+  {title: 'Theta meditation',         playlistId: 'search:theta waves meditation 1 hour'},
+  {title: 'Respiración guiada',       playlistId: 'search:guided breathing box breathing'}
 ];
 
-/* small pool of single videos used to show thumbnails in sidebar / grid;
-   kept small so UI is responsive; this pool is independent from playlists */
+/* pool de videos para mini-grid (thumbnails) */
 const YT_POOL = [
   {title:'Relaxing Forest Sounds', videoId:'2OEL4P1Rz04'},
   {title:'Ocean Waves for Meditation', videoId:'VudJ_3R8F7A'},
   {title:'Rain Sounds Nature', videoId:'qMiwb7cR3pE'},
-  {title:'Mountain Stream', videoId:'5qap5aO4i9A'},
+  {title:'lofi hip hop radio', videoId:'5qap5aO4i9A'},
   {title:'Jungle Ambience', videoId:'OdIJ2x3nxzQ'},
-  {title:'Calm Night Crickets', videoId:'1ZYbU82GVz4'},
+  {title:'Deep Rain', videoId:'1ZYbU82GVz4'},
   {title:'Deep Ocean Waves', videoId:'ABdFQvT2gBI'},
   {title:'Waterfall Relaxation', videoId:'W0s0cKZqjSE'}
 ];
 
-/* dailyRotation generalized: keeps the same 6 recommendation count (no te quité el 6) */
+/* rotación diaria genérica */
 function dailyRotation(pool, count=6){
   const day = new Date().toISOString().slice(0,10).replace(/-/g,''); // YYYYMMDD
   let seed = 0;
@@ -709,10 +698,8 @@ function loadDailyMusic(){
   const idx = getDailyMusicIndex();
   const item = MUSIC_DAILY[idx];
   const audio = $('natureAudio');
-  // we don't autoplay on load per browser policies; we set source
   audio.src = item.url;
 
-  // render lista lateral con las 5 canciones (la de hoy marcada)
   const dl = $('dailyList');
   if(dl){
     dl.innerHTML = '';
@@ -739,8 +726,6 @@ function loadDailyMusic(){
       dl.appendChild(div);
     });
   }
-
-  // sincronizar el select si el nombre de la canción del día coincide con alguna opción
   syncSelectToName(item.name);
 }
 
@@ -754,12 +739,12 @@ function syncSelectToName(name){
   });
 }
 
-/* ---------- YouTube IFrame API player for playlists ---------- */
+/* ---------- YouTube IFrame API player para playlists (con soporte RD/search) ---------- */
 let YT_API_loaded = false;
-let playlistPlayer = null;       // YT.Player instance for playlist playback
-let currentPlaylistIndex = 0;    // index into PLAYLISTS
-let currentPlaylistItemIndex = 0; // item index inside current playlist (tracked via state)
+let playlistPlayer = null;       // YT.Player instance
+let currentPlaylistIndex = 0;    // índice lógico dentro de la rotación del día
 let isUsingPlaylistPlayer = false;
+let PLAY_ORDER = [];             // orden rotado por día (array de índices reales)
 
 function loadYouTubeAPI(){
   if(window.YT && window.YT.Player){ YT_API_loaded = true; return; }
@@ -770,153 +755,120 @@ function loadYouTubeAPI(){
 }
 loadYouTubeAPI();
 
-/* create or update the playlist player (uses playlist parameter) */
-function playPlaylistIndex(index){
-  if(!PLAYLISTS || PLAYLISTS.length === 0) return;
-  currentPlaylistIndex = index % PLAYLISTS.length;
-  const pl = PLAYLISTS[currentPlaylistIndex];
-  const playlistId = pl.playlistId;
-  if(!playlistId || playlistId.startsWith('PL_PLACEHOLDER')) {
-    // placeholder: show notice and do nothing
-    $('ytNow').textContent = `Playlist (${pl.title}) — pendiente ID real`;
-    showMiniPlayerFallbackMessage(pl.title);
-    return;
-  }
-  showMiniPlayer(pl.title);
-  if(YT_API_loaded){
-    const container = 'yt-player';
-    // initialize player if missing
-    if(!playlistPlayer){
-      playlistPlayer = new YT.Player(container, {
-        height: '160',
-        width: '300',
-        playerVars: { autoplay: 1, controls: 1, modestbranding: 1, rel: 0, listType: 'playlist', list: playlistId },
-        events: {
-          onReady: (e) => {
-            e.target.playVideo && e.target.playVideo();
-            isUsingPlaylistPlayer = true;
-            $('ytNow').textContent = `Reproduciendo playlist: ${pl.title}`;
-          },
-          onStateChange: onPlaylistStateChange
-        }
-      });
-    } else {
-      // load or cue the playlist
-      try {
-        playlistPlayer.loadPlaylist && playlistPlayer.loadPlaylist({list: playlistId, listType:'playlist', index:0, suggestedQuality:'default'});
-        isUsingPlaylistPlayer = true;
-        $('ytNow').textContent = `Reproduciendo playlist: ${pl.title}`;
-      } catch(e){
-        // fallback: destroy and recreate
-        playlistPlayer.destroy && playlistPlayer.destroy();
-        playlistPlayer = null;
-        playPlaylistIndex(currentPlaylistIndex);
-      }
-    }
-  } else {
-    // fallback embed
-    const body = $('miniBody');
-    body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML = `<iframe width="100%" height="140" src="https://www.youtube.com/embed?listType=playlist&list=${playlistId}&autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`);
-    $('ytNow').textContent = `Reproduciendo playlist: ${pl.title}`;
-    document.getElementById('miniPlayer').style.display = 'block';
-  }
+/* calcula orden diario como rotación basada en fecha */
+function computeDailyOrder(n){
+  const day = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  let seed = 0;
+  for(const ch of day) seed = (seed + Number(ch||0)) % 100000;
+  const offset = n ? (seed % n) : 0;
+  const order = [];
+  for(let i=0;i<n;i++) order.push((offset + i) % n);
+  return order;
 }
 
-/* when playlist player fires state changes: detect end of playlist to rotate to next */
+/* helper: devuelve el índice real dentro de PLAYLISTS según el orden del día */
+function mapLogicalToReal(idx){
+  if(!PLAY_ORDER.length) return idx % PLAYLISTS.length;
+  return PLAY_ORDER[idx % PLAY_ORDER.length];
+}
+
+/* crea/reemplaza el player con el listType adecuado */
+function createPlayerWithList(listType, listParam, title){
+  const containerId = 'yt-player';
+  try { if(playlistPlayer && playlistPlayer.destroy) playlistPlayer.destroy(); } catch(e){}
+  playlistPlayer = new YT.Player(containerId, {
+    height: '160',
+    width: '300',
+    playerVars: { autoplay: 1, controls: 1, modestbranding: 1, rel: 0, listType: listType, list: listParam },
+    events: {
+      onReady: (e)=>{ e.target.playVideo && e.target.playVideo(); isUsingPlaylistPlayer = true; $('ytNow').textContent = `Reproduciendo: ${title}`; applyAudioOnly(); },
+      onStateChange: onPlaylistStateChange
+    }
+  });
+}
+
+/* reproduce la playlist según el índice lógico del día */
+function playPlaylistIndex(logicalIndex){
+  if(!PLAYLISTS || PLAYLISTS.length === 0) return;
+  currentPlaylistIndex = logicalIndex % PLAYLISTS.length;
+  const realIndex = mapLogicalToReal(currentPlaylistIndex);
+  const pl = PLAYLISTS[realIndex];
+  const pid = pl.playlistId || '';
+  showMiniPlayer(pl.title);
+
+  // Soporte: 'search:consulta' o 'RD...' o 'PL...'
+  if(pid.startsWith('search:')){
+    const q = pid.slice('search:'.length);
+    if(YT_API_loaded){
+      createPlayerWithList('search', q, pl.title);
+    } else {
+      const body = $('miniBody');
+      body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML =
+        `<iframe width="100%" height="140" src="https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}&autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`);
+      $('ytNow').textContent = `Reproduciendo: ${pl.title}`;
+    }
+    $('miniOpen').href = `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+    return;
+  }
+
+  // 'RD...' (mix) o 'PL...' (playlist estándar)
+  const listParam = pid;
+  if(YT_API_loaded){
+    createPlayerWithList('playlist', listParam, pl.title);
+  } else {
+    const body = $('miniBody');
+    body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML =
+      `<iframe width="100%" height="140" src="https://www.youtube.com/embed?listType=playlist&list=${encodeURIComponent(listParam)}&autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`);
+    $('ytNow').textContent = `Reproduciendo playlist: ${pl.title}`;
+  }
+  $('miniOpen').href = `https://www.youtube.com/playlist?list=${encodeURIComponent(listParam)}`;
+}
+
+/* detecta fin y pasa a la siguiente de la rotación diaria */
 function onPlaylistStateChange(event){
-  // event.data values: -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 video cued
-  // To detect end of playlist reliably, check when state==0 and playlist index is last.
   try {
-    const player = playlistPlayer;
-    if(!player || !player.getPlaylist) return;
     const state = event.data;
     if(state === YT.PlayerState.PLAYING){
-      // update now text
-      const info = PLAYLISTS[currentPlaylistIndex];
-      if(info) $('ytNow').textContent = `Reproduciendo playlist: ${info.title}`;
+      const realIndex = mapLogicalToReal(currentPlaylistIndex);
+      const info = PLAYLISTS[realIndex];
+      if(info) $('ytNow').textContent = `Reproduciendo: ${info.title}`;
     }
     if(state === YT.PlayerState.ENDED || state === 0){
-      // check current index vs playlist length
-      const idx = player.getPlaylistIndex && player.getPlaylistIndex();
-      const length = player.getPlaylist && player.getPlaylist().length;
-      // if it's the last item, advance to next playlist
-      if(typeof idx !== 'undefined' && typeof length !== 'undefined'){
-        if(idx >= (length-1)){
-          // advance playlist
-          advanceToNextPlaylist();
-        }
-      } else {
-        // conservative fallback: after ended, advance
-        advanceToNextPlaylist();
-      }
+      advanceToNextPlaylist();
     }
   } catch(e){
-    // on any error, try to advance
     advanceToNextPlaylist();
   }
 }
-
-/* advance to next playlist and start playback */
 function advanceToNextPlaylist(){
   currentPlaylistIndex = (currentPlaylistIndex + 1) % PLAYLISTS.length;
-  // small timeout to allow UI to settle
-  setTimeout(()=> {
-    playPlaylistIndex(currentPlaylistIndex);
-  }, 600);
+  setTimeout(()=> playPlaylistIndex(currentPlaylistIndex), 600);
 }
 
-/* Show the mini player UI (without loading content here) */
+/* UI mini player */
 function showMiniPlayer(title){
   const m = $('miniPlayer');
   $('miniTitle').textContent = title || 'YouTube';
-  $('miniOpen').href = PLAYLISTS[currentPlaylistIndex] && PLAYLISTS[currentPlaylistIndex].playlistId ? `https://www.youtube.com/playlist?list=${PLAYLISTS[currentPlaylistIndex].playlistId}` : '#';
   m.style.display = 'block'; m.setAttribute('aria-hidden','false');
 }
 
-/* fallback message for placeholder playlists */
-function showMiniPlayerFallbackMessage(title){
-  const m = $('miniPlayer');
-  $('miniTitle').textContent = title || 'YouTube';
-  $('miniOpen').href = '#';
-  const body = $('miniBody');
-  body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML = `<div style="padding:12px;color:#bfeffd">Playlist "${title}" requiere ID real. Si quieres, puedo buscar playlists reales y ponerlas aquí.</div>`);
-  m.style.display = 'block'; m.setAttribute('aria-hidden','false');
-}
-
-/* play a single video in the mini player (not a playlist) */
+/* play single video (desde la rejilla) */
 function playSingleVideo(videoId, title){
-  currentPlaylistIndex = 0;
   isUsingPlaylistPlayer = false;
-  // if YT API loaded, create a player that loads a single video
   if(YT_API_loaded){
-    if(playlistPlayer){
-      try {
-        playlistPlayer.loadVideoById && playlistPlayer.loadVideoById(videoId);
-      } catch(e){
-        // replace instance
-        playlistPlayer.destroy && playlistPlayer.destroy();
-        playlistPlayer = new YT.Player('yt-player', {
-          height: '160',
-          width: '300',
-          videoId: videoId,
-          playerVars: { autoplay: 1, controls: 1, modestbranding: 1 },
-          events: { onReady: (e)=> e.target.playVideo(), onStateChange: onPlaylistStateChange }
-        });
-      }
-    } else {
-      playlistPlayer = new YT.Player('yt-player', {
-        height: '160',
-        width: '300',
-        videoId: videoId,
-        playerVars: { autoplay: 1, controls: 1, modestbranding: 1 },
-        events: { onReady: (e)=> e.target.playVideo(), onStateChange: onPlaylistStateChange }
-      });
-    }
+    try { if(playlistPlayer && playlistPlayer.destroy) playlistPlayer.destroy(); } catch(e){}
+    playlistPlayer = new YT.Player('yt-player', {
+      height: '160', width: '300', videoId,
+      playerVars: { autoplay: 1, controls: 1, modestbranding: 1 },
+      events: { onReady: (e)=>{ e.target.playVideo(); applyAudioOnly(); }, onStateChange: onPlaylistStateChange }
+    });
   } else {
     const body = $('miniBody');
-    body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML = `<iframe width="100%" height="140" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`);
+    body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML =
+      `<iframe width="100%" height="140" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`);
   }
   showMiniPlayer(title);
+  $('miniOpen').href = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
 }
 
 /* stop and hide mini player */
@@ -976,7 +928,7 @@ $('miniToggleSize').addEventListener('click', ()=>{
   document.addEventListener('touchend', ()=> dragging=false);
 })();
 
-/* audioOnly toggle (hides the iframe visually) */
+/* audioOnly toggle (oculta visualmente el iframe) */
 $('audioOnlyToggle').addEventListener('change', applyAudioOnly);
 function applyAudioOnly(){
   const audioOnly = $('audioOnlyToggle').checked;
@@ -1001,13 +953,12 @@ function applyAudioOnly(){
   }
 }
 
-/* ---------- Search (simple client-side filter of YT_POOL) ---------- */
+/* ---------- Search (filtro simple del pool local) ---------- */
 function doSearch(){
   const k = $('ytKeyword').value.trim().toLowerCase();
   if(!k){ loadDailyRecs(); return; }
   const results = YT_POOL.filter(p => p.title.toLowerCase().includes(k));
-  if(results.length) renderYTGrid(results);
-  else renderYTGrid(dailyRotation(YT_POOL,6));
+  renderYTGrid(results.length ? results : dailyRotation(YT_POOL,6));
 }
 
 /* ---------- Subscription form ---------- */
@@ -1017,7 +968,7 @@ $('subForm').addEventListener('submit', e=>{
   $('emailInput').value = '';
 });
 
-/* ---------- Load daily recommendations (6 items) ---------- */
+/* ---------- Recomendaciones diarias (rejilla) ---------- */
 function loadDailyRecs(){
   const items = dailyRotation(YT_POOL, 6);
   renderYTGrid(items);
@@ -1030,17 +981,19 @@ function init(){
   loadDailyRecs();
   renderYTGrid(dailyRotation(YT_POOL,6));
   loadDailyMusic();
+
+  // calcular rotación diaria de playlists
+  PLAY_ORDER = computeDailyOrder(PLAYLISTS.length);
 }
 init();
 
-/* ---------- expose utility to allow external playlist-swap (optional) ---------- */
+/* ---------- Expose utility para reemplazar playlists externamente ---------- */
 window.replacePlaylists = function(newPlaylists){
-  // newPlaylists: [{title, playlistId}, ...]
   if(Array.isArray(newPlaylists) && newPlaylists.length){
     PLAYLISTS.length = 0;
     newPlaylists.forEach(p => PLAYLISTS.push(p));
     currentPlaylistIndex = 0;
-    // start first playlist automatically
+    PLAY_ORDER = computeDailyOrder(PLAYLISTS.length);
     playPlaylistIndex(0);
   }
 };
