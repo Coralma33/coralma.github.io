@@ -12,8 +12,8 @@
   --glass: rgba(255,255,255,0.04);
   --muted:#9fd8ea; --text:#e6f9ff;
   --finished:#ff6b6b;
+  --btn-orange: #ff8a3d;
 }
-/* Reset + base */
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; -webkit-font-smoothing:antialiased}
 body{
@@ -45,27 +45,20 @@ nav a:hover{background:var(--glass)}
 .selector-row{display:flex;gap:10px;align-items:center;width:100%;justify-content:center;flex-wrap:wrap}
 select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
 .btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-.btn-stop{background:linear-gradient(90deg,#ffb35c,#ff7a18);color:#021018;padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+.btn-orange{background:linear-gradient(90deg,var(--btn-orange),#ffb081);color:#021018;padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
 
 /* timer / circle */
-/* usamos variables CSS para combinar transformaciones (escala por progreso + animación 'respiración') */
-.med-circle{
-  width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;
-  cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);
-  transition:border-color .2s, box-shadow .25s;
-  --user-scale:1;
-  --breath:1;
-  transform: scale(var(--user-scale)) scale(var(--breath));
-}
-/* breathing animation (activa cuando el temporizador está corriendo) */
+.med-circle{width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:transform .12s,border-color .2s}
+.med-circle:hover{transform:scale(1.06) translateZ(0)}
+.time-display{font-weight:700;}
+
+/* pulso sutil del círculo mientras está en reposo */
 @keyframes breathe {
-  0%   { --breath:1; }
-  50%  { --breath:1.06; }
-  100% { --breath:1; }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
 }
-.med-circle.breathing { animation: breathe 6s ease-in-out infinite; }
-.med-circle:hover{ box-shadow:0 18px 60px rgba(60,100,150,0.26); }
+.med-circle.idle { animation: breathe 6s ease-in-out infinite; }
 
 /* articles */
 .articles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px;max-height:480px;overflow:auto;padding-right:6px}
@@ -118,6 +111,12 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
 }
 .social-bar img{width:34px;height:34px;display:block;}
 
+/* tweak TikTok icon color so it contraste bien con fondo (solo se aplica al PNG existente) */
+.social-bar a.tiktok img{
+  filter: invert(62%) sepia(36%) saturate(400%) hue-rotate(135deg) brightness(1) contrast(1);
+  drop-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
 /* modal */
 .modal-back{position:fixed;inset:0;background:rgba(0,6,12,0.65);display:none;align-items:center;justify-content:center;padding:18px;z-index:4000}
 .modal-back.on{display:flex}
@@ -165,12 +164,9 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
             <div class="selector-row">
               <label for="soundSelect" style="color:#bfeffd">Sonido</label>
               <select id="soundSelect" aria-label="Selecciona sonido">
-                <!-- sample mp3s -->
-                <option value="rain">Lluvia suave</option>
-                <option value="forest">Bosque</option>
-                <option value="river">Río</option>
-                <option value="ocean">Océano</option>
-                <option value="night">Noche - grillos</option>
+                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">Lluvia suave</option>
+                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">Bosque</option>
+                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">Río</option>
               </select>
             </div>
 
@@ -184,13 +180,15 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
           </div>
 
           <div style="margin-top:14px" class="center">
-            <div id="medCircle" class="med-circle" role="button" tabindex="0">Click para<br>meditar</div>
+            <div id="medCircle" class="med-circle idle" role="button" tabindex="0">Click para<br>meditar</div>
             <div class="time-display" style="margin-top:10px">Tiempo: <span id="timeDisplay">00:00</span></div>
           </div>
 
           <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
             <button id="startBtn" class="btn-primary">Iniciar</button>
-            <button id="stopBtn" class="btn-stop">Detener</button>
+            <!-- Botón naranja adicional justo al lado -->
+            <button id="orangeBtn" class="btn-orange" title="Acción rápida">▶ Ambiente</button>
+            <button id="stopBtn" class="btn-primary" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">Detener</button>
             <label style="margin-left:8px;font-size:13px"><input id="audioOnlyToggle" type="checkbox"> Solo audio (ocultar video)</label>
           </div>
 
@@ -213,10 +211,10 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
             <button class="btn-primary" onclick="loadDailyRecs()">Rec. del día</button>
           </div>
 
-          <div class="youtube-grid" id="youtubeGrid"></div>
+          <div class="youtube-grid" id="youtubeGrid" aria-live="polite" aria-atomic="true"></div>
 
           <div id="ytPlayerContainer">
-            <div id="yt-player"></div>
+            <iframe id="ytPlayer" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
               <button class="btn-primary" onclick="stopYT()">Detener</button>
               <span id="ytNow" style="margin-left:8px;font-size:13px;color:#bfeffd"></span>
@@ -278,7 +276,7 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
       </div>
     </div>
     <div class="mp-body" id="miniBody">
-      <div id="yt-player-inner"></div>
+      <div id="yt-player"></div>
       <div style="margin-top:8px;font-size:13px;color:#bfeffd"><a id="miniOpen" href="#" target="_blank" style="color:#bfeffd">Abrir en YouTube</a></div>
     </div>
   </div>
@@ -327,30 +325,28 @@ function updateDisplays(){
   if(td) td.textContent = text;
   $('floatingTime').textContent = text;
 
-  // escala proporcional (usa variable CSS para no romper la animación 'breath')
+  // --- escala proporcional del círculo y botón flotante ---
   const total = Math.max(1, timerTotal || 300);
   const proportion = Math.max(0, timerSec / total); // 1 -> 0
-  const minScale = 0.18;
-  const scale = Math.max(minScale, proportion);
+  const minScaleCircle = 0.18;
+  const minScaleFloating = 0.18;
+  const scale = Math.max(minScaleCircle, proportion);
+  const fScale = Math.max(minScaleFloating, proportion);
 
   const med = $('medCircle');
-  if(med) med.style.setProperty('--user-scale', scale);
-
-  // breathing class activa cuando el temporizador está corriendo
-  if(timerInterval && med) med.classList.add('breathing');
-  else if(med) med.classList.remove('breathing');
+  if(med) med.style.transform = `scale(${scale})`;
+  const fb = $('floatingBtn');
+  if(fb) fb.style.transform = `scale(${fScale})`;
 
   // change color when finished
   if(timerSec <= 0){
     $('floatingBtn').classList.add('finished');
     if(med) med.style.border = '4px solid rgba(255,107,107,0.85)';
-    // ajustar escala final
-    if(med) med.style.setProperty('--user-scale', 0.0);
-    $('floatingBtn').style.transform = 'scale(0.12)';
+    if(med) med.style.transform = 'scale(0)';
+    if(fb) fb.style.transform = 'scale(0.12)';
   } else {
     $('floatingBtn').classList.remove('finished');
     if(med) med.style.border = '0';
-    $('floatingBtn').style.transform = ''; // respeta la posicion/dragging
   }
 }
 
@@ -371,7 +367,7 @@ function startTimer(){
       clearInterval(timerInterval);
       timerInterval = null;
       updateDisplays();
-      // al finalizar podrías reproducir un timbre aquí
+      // you could add an end sound here if desired
     }
   }, 1000);
 }
@@ -382,25 +378,50 @@ function stopTimer(){
   updateDisplays();
 }
 
-/* ---------- UI bindings (start/stop/circle) ---------- */
+/* UI bindings */
 $('startBtn').addEventListener('click', ()=> {
-  // reproducir audio de ambiente seleccionado
   const audio = $('natureAudio');
-  const soundKey = $('soundSelect').value;
-  syncSoundToMusicAndYT(soundKey, { autoplayMiniYT: true });
+  const sel = $('soundSelect').value;
+  if(sel){
+    audio.src = sel;
+    audio.play().catch(()=>{});
+    $('audioNotice').style.display='block';
+    $('audioNotice').innerText='Reproduciendo sonido: '+(document.querySelector('#soundSelect option:checked').text || '');
+  }
   startTimer();
+  // show mini-player with first daily rec for ambience (optional)
+  const recs = dailyRotation(YT_POOL,1);
+  if(recs && recs[0]) playPlaylistIndex(currentPlaylistIndex || 0);
 });
 $('stopBtn').addEventListener('click', ()=> {
   $('natureAudio').pause();
-  stopYT();
   stopTimer();
   $('audioNotice').style.display='none';
 });
 $('medCircle').addEventListener('click', ()=> {
   const audio = $('natureAudio');
-  const soundKey = $('soundSelect').value;
-  syncSoundToMusicAndYT(soundKey, { autoplayMiniYT: true });
+  const sel = $('soundSelect').value;
+  if(sel){
+    audio.src = sel;
+    audio.play().catch(()=>{});
+    $('audioNotice').style.display='block';
+    $('audioNotice').innerText='Reproduciendo sonido: '+(document.querySelector('#soundSelect option:checked').text || '');
+  }
   startTimer();
+});
+
+/* orange quick button plays today's ambient audio */
+$('orangeBtn').addEventListener('click', ()=>{
+  const idx = getDailyMusicIndex();
+  const item = MUSIC_DAILY[idx];
+  if(item){
+    $('natureAudio').src = item.url;
+    $('natureAudio').play().catch(()=>{});
+    $('audioNotice').style.display='block';
+    $('audioNotice').innerText = 'Reproduciendo: ' + item.name;
+    // sync select if name matches
+    syncSelectToName(item.name);
+  }
 });
 
 /* Sync floating: clicking floating starts/stops same timer */
@@ -408,15 +429,19 @@ $('floatingBtn').addEventListener('click', (e)=>{
   if(isDragging) return;
   if(timerInterval) stopTimer();
   else {
-    const soundKey = $('soundSelect').value;
-    syncSoundToMusicAndYT(soundKey, { autoplayMiniYT: false });
+    const audio = $('natureAudio');
+    const sel = $('soundSelect').value;
+    if(sel){
+      audio.src = sel;
+      audio.play().catch(()=>{});
+      $('audioNotice').style.display='block';
+    }
     startTimer();
   }
 });
 
 /* ---------- Drag for floating ---------- */
 const floating = $('floatingBtn');
-let offsetX=0, offsetY=0;
 floating.addEventListener('mousedown', e => {
   isDragging = true;
   offsetX = e.clientX - floating.offsetLeft;
@@ -445,11 +470,13 @@ document.addEventListener('touchmove', e => {
 document.addEventListener('touchend', ()=> isDragging=false);
 
 /* ---------- Articles (rotate every 3 days) ---------- */
-const ARTICLES_KEY = 'coralma_articles_v4';
-const ARTICLES_DATE_KEY = 'coralma_articles_date_v4';
+const ARTICLES_KEY = 'coralma_articles_v3';
+const ARTICLES_DATE_KEY = 'coralma_articles_date_v3';
 const ROTATE_MS = 3 * 24 * 60 * 60 * 1000;
 const MAX_ARTICLES = 30;
 
+/* ... (fetchWikipediaTopics, fetchRedditPosts, fetchArxiv, loadArticles, renderArticles) ...
+   -- identical to your previous implementation to preserve behavior -- */
 async function fetchWikipediaTopics(topics = ['Meditation','Mindfulness','Neuroscience','Gratitude','Relaxation']) {
   const results = [];
   for(const t of topics){
@@ -468,7 +495,6 @@ async function fetchWikipediaTopics(topics = ['Meditation','Mindfulness','Neuros
   }
   return results;
 }
-
 async function fetchRedditPosts(subs=['Meditation','Philosophy']){
   const results = [];
   for(const s of subs){
@@ -492,7 +518,6 @@ async function fetchRedditPosts(subs=['Meditation','Philosophy']){
   }
   return results;
 }
-
 async function fetchArxiv(query='mindfulness OR meditation', max=12){
   try{
     const api = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&start=0&max_results=${max}`;
@@ -512,7 +537,6 @@ async function fetchArxiv(query='mindfulness OR meditation', max=12){
     });
   }catch(e){ return []; }
 }
-
 async function loadArticles(){
   try{
     const last = localStorage.getItem(ARTICLES_DATE_KEY);
@@ -538,7 +562,6 @@ async function loadArticles(){
     renderArticles(items);
   }
 }
-
 function renderArticles(items){
   const grid = $('articlesGrid');
   grid.innerHTML = '';
@@ -570,7 +593,6 @@ const modalTitle = $('modalTitle');
 const modalBody = $('modalBody');
 const modalRefs = $('modalRefs');
 $('closeModal').addEventListener('click', ()=> modalBack.classList.remove('on'));
-
 function openArticleModal(a){
   modalTitle.textContent = a.title || 'Artículo';
   modalBody.textContent = a.extract || 'No hay resumen disponible.';
@@ -578,145 +600,347 @@ function openArticleModal(a){
   modalBack.classList.add('on');
 }
 
-/* ---------- PLAYLISTS / YT rotation (20 ejemplos) ---------- */
-/* Cada playlist es un objeto { name, videos: [videoId1, videoId2, ...] }.
-   Puedes reemplazar con playlists reales (o IDs de playlist de YouTube). */
+/* ---------- YouTube playlists & rotation ---------- */
+
+/*
+  IMPORTANT: Replace the PLAYLISTS array entries with real YouTube PLAYLIST IDs.
+  The code is ready to handle 20 playlists. For each playlist we keep:
+    { title: 'friendly name', playlistId: 'PLxxxx...' }
+  If you want, dime y busco e inyecto 20 playlists reales. Por ahora hay placeholders.
+*/
+
 const PLAYLISTS = [
-  {name:'Forest Ambience 1', videos:['2OEL4P1Rz04','OdIJ2x3nxzQ']},
-  {name:'Ocean Waves 1', videos:['VudJ_3R8F7A','ABdFQvT2gBI']},
-  {name:'Rain Sounds 1', videos:['qMiwb7cR3pE','W0s0cKZqjSE']},
-  {name:'Mountain Stream 1', videos:['5qap5aO4i9A','2OEL4P1Rz04']},
-  {name:'Jungle Ambience 1', videos:['OdIJ2x3nxzQ','1ZYbU82GVz4']},
-  {name:'Night Crickets 1', videos:['1ZYbU82GVz4','qMiwb7cR3pE']},
-  {name:'Deep Ocean 1', videos:['ABdFQvT2gBI','VudJ_3R8F7A']},
-  {name:'Waterfall 1', videos:['W0s0cKZqjSE','5qap5aO4i9A']},
-  {name:'Forest Ambience 2', videos:['OdIJ2x3nxzQ','2OEL4P1Rz04']},
-  {name:'Ocean Waves 2', videos:['VudJ_3R8F7A','ABdFQvT2gBI']},
-  {name:'Rain Sounds 2', videos:['qMiwb7cR3pE','1ZYbU82GVz4']},
-  {name:'Stream & Birds', videos:['5qap5aO4i9A','OdIJ2x3nxzQ']},
-  {name:'Tropical Night', videos:['1ZYbU82GVz4','OdIJ2x3nxzQ']},
-  {name:'Gentle Ocean', videos:['ABdFQvT2gBI','W0s0cKZqjSE']},
-  {name:'Calm River', videos:['2OEL4P1Rz04','qMiwb7cR3pE']},
-  {name:'Meditative Water', videos:['W0s0cKZqjSE','ABdFQvT2gBI']},
-  {name:'Ambient Flow', videos:['5qap5aO4i9A','1ZYbU82GVz4']},
-  {name:'Night Ambience 2', videos:['1ZYbU82GVz4','2OEL4P1Rz04']},
-  {name:'Forest Deep 3', videos:['OdIJ2x3nxzQ','5qap5aO4i9A']},
-  {name:'Ocean Sleep 3', videos:['VudJ_3R8F7A','W0s0cKZqjSE']}
+  /* 20 placeholders — reemplázalos por IDs reales (ej: 'PLxxx') */
+  {title: 'Relax – Forest mix', playlistId: 'PL_PLACEHOLDER_1'},
+  {title: 'Ocean Waves Playlist', playlistId: 'PL_PLACEHOLDER_2'},
+  {title: 'Rain & Nature', playlistId: 'PL_PLACEHOLDER_3'},
+  {title: 'Meditation Music 432Hz', playlistId: 'PL_PLACEHOLDER_4'},
+  {title: 'Binaural Relaxation', playlistId: 'PL_PLACEHOLDER_5'},
+  {title: 'Deep Sleep Sounds', playlistId: 'PL_PLACEHOLDER_6'},
+  {title: 'Study Ambient', playlistId: 'PL_PLACEHOLDER_7'},
+  {title: 'Nature Streams', playlistId: 'PL_PLACEHOLDER_8'},
+  {title: 'Tibetan Bowls', playlistId: 'PL_PLACEHOLDER_9'},
+  {title: 'Calm Piano', playlistId: 'PL_PLACEHOLDER_10'},
+  {title: 'Chillout Nature', playlistId: 'PL_PLACEHOLDER_11'},
+  {title: 'White Noise Long', playlistId: 'PL_PLACEHOLDER_12'},
+  {title: 'Ambient Night', playlistId: 'PL_PLACEHOLDER_13'},
+  {title: 'Ghz / Frequencies', playlistId: 'PL_PLACEHOLDER_14'},
+  {title: 'Forest Birds', playlistId: 'PL_PLACEHOLDER_15'},
+  {title: 'Waterfall Soothing', playlistId: 'PL_PLACEHOLDER_16'},
+  {title: 'Gentle Wind', playlistId: 'PL_PLACEHOLDER_17'},
+  {title: 'Cave Drips', playlistId: 'PL_PLACEHOLDER_18'},
+  {title: 'Ocean Deep', playlistId: 'PL_PLACEHOLDER_19'},
+  {title: 'Guided Breathing', playlistId: 'PL_PLACEHOLDER_20'}
 ];
 
-/* Se eligen 6 recomendaciones en la UI (no quité el 6). */
-function dailyRotationPlaylists(pool, count=6){
-  // seed por día para rotación determinista
-  const dayKey = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+/* small pool of single videos used to show thumbnails in sidebar / grid;
+   kept small so UI is responsive; this pool is independent from playlists */
+const YT_POOL = [
+  {title:'Relaxing Forest Sounds', videoId:'2OEL4P1Rz04'},
+  {title:'Ocean Waves for Meditation', videoId:'VudJ_3R8F7A'},
+  {title:'Rain Sounds Nature', videoId:'qMiwb7cR3pE'},
+  {title:'Mountain Stream', videoId:'5qap5aO4i9A'},
+  {title:'Jungle Ambience', videoId:'OdIJ2x3nxzQ'},
+  {title:'Calm Night Crickets', videoId:'1ZYbU82GVz4'},
+  {title:'Deep Ocean Waves', videoId:'ABdFQvT2gBI'},
+  {title:'Waterfall Relaxation', videoId:'W0s0cKZqjSE'}
+];
+
+/* dailyRotation generalized: keeps the same 6 recommendation count (no te quité el 6) */
+function dailyRotation(pool, count=6){
+  const day = new Date().toISOString().slice(0,10).replace(/-/g,''); // YYYYMMDD
   let seed = 0;
-  for(const c of dayKey) seed += Number(c || 0);
-  const start = seed % pool.length;
-  const out = [];
+  for(const ch of day) seed = (seed + Number(ch||0)) % 100000;
+  const offset = seed % pool.length;
+  const arr = [];
   for(let i=0;i<count;i++){
-    out.push(pool[(start + i) % pool.length]);
+    arr.push(pool[(offset + i) % pool.length]);
   }
-  return out;
+  return arr;
 }
 
-/* ---------- YouTube IFrame API & player management ---------- */
+/* ---------- Render YT grid (video thumbnails) ---------- */
+function renderYTGrid(items){
+  const grid = $('youtubeGrid');
+  grid.innerHTML = '';
+  items.forEach(it=>{
+    const thumb = document.createElement('div');
+    thumb.className = 'youtube-thumb';
+    const img = document.createElement('img');
+    img.src = `https://i.ytimg.com/vi/${it.videoId}/hqdefault.jpg`;
+    img.alt = it.title;
+    const title = document.createElement('div');
+    title.className = 'yt-title';
+    title.textContent = it.title;
+    const controls = document.createElement('div');
+    controls.className = 'youtube-controls';
+    const playBtn = document.createElement('button');
+    playBtn.className='btn-primary';
+    playBtn.textContent = '▶️';
+    playBtn.addEventListener('click', ()=> playSingleVideo(it.videoId, it.title));
+    const openBtn = document.createElement('button');
+    openBtn.className='btn-primary';
+    openBtn.textContent = 'Abrir';
+    openBtn.addEventListener('click', ()=> window.open(`https://www.youtube.com/watch?v=${it.videoId}`,'_blank'));
+    controls.appendChild(playBtn);
+    controls.appendChild(openBtn);
+
+    thumb.appendChild(img);
+    thumb.appendChild(title);
+    thumb.appendChild(controls);
+    grid.appendChild(thumb);
+  });
+}
+
+/* ---------- DAILY MUSIC (5 canciones) ---------- */
+const MUSIC_DAILY = [
+  {name: 'Lluvia', url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"},
+  {name: 'Bosque', url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"},
+  {name: 'Río', url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"},
+  {name: 'Montaña', url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"},
+  {name: 'Desierto', url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"}
+];
+
+function getDailyMusicIndex(){
+  return Math.floor(Date.now()/(1000*60*60*24)) % MUSIC_DAILY.length;
+}
+
+function loadDailyMusic(){
+  const idx = getDailyMusicIndex();
+  const item = MUSIC_DAILY[idx];
+  const audio = $('natureAudio');
+  // we don't autoplay on load per browser policies; we set source
+  audio.src = item.url;
+
+  // render lista lateral con las 5 canciones (la de hoy marcada)
+  const dl = $('dailyList');
+  if(dl){
+    dl.innerHTML = '';
+    MUSIC_DAILY.forEach((it, i) => {
+      const div = document.createElement('div');
+      div.style.display='flex'; div.style.gap='8px'; div.style.alignItems='center';
+      const img = document.createElement('img');
+      img.src = `https://i.ytimg.com/vi/${YT_POOL[i % YT_POOL.length].videoId}/default.jpg`;
+      img.style.width='56px'; img.style.height='40px'; img.style.objectFit='cover'; img.style.borderRadius='6px';
+      const title = document.createElement('div');
+      title.style.fontSize='13px';
+      title.textContent = (i === idx) ? `${it.name} (hoy)` : it.name;
+      const play = document.createElement('button');
+      play.className='btn-primary';
+      play.textContent='▶️';
+      play.addEventListener('click', ()=> {
+        audio.src = it.url;
+        audio.play().catch(()=>{});
+        syncSelectToName(it.name);
+        $('audioNotice').style.display='block';
+        $('audioNotice').innerText='Reproduciendo sonido: '+it.name;
+      });
+      div.appendChild(img); div.appendChild(title); div.appendChild(play);
+      dl.appendChild(div);
+    });
+  }
+
+  // sincronizar el select si el nombre de la canción del día coincide con alguna opción
+  syncSelectToName(item.name);
+}
+
+/* helper: try to match a select option by name substring */
+function syncSelectToName(name){
+  const opts = document.querySelectorAll('#soundSelect option');
+  opts.forEach(o=>{
+    if(o.textContent.toLowerCase().includes(name.toLowerCase())){
+      o.selected = true;
+    }
+  });
+}
+
+/* ---------- YouTube IFrame API player for playlists ---------- */
 let YT_API_loaded = false;
-let ytPlayerInstance = null;
-let currentPlaylistIndex = 0;  // índice dentro de PLAYLISTS
-let currentPlaylist = PLAYLISTS[0];
+let playlistPlayer = null;       // YT.Player instance for playlist playback
+let currentPlaylistIndex = 0;    // index into PLAYLISTS
+let currentPlaylistItemIndex = 0; // item index inside current playlist (tracked via state)
+let isUsingPlaylistPlayer = false;
 
 function loadYouTubeAPI(){
-  if(window.YT && window.YT.Player){
-    YT_API_loaded = true;
-    createYTPlayerPlaceholder();
-    return;
-  }
+  if(window.YT && window.YT.Player){ YT_API_loaded = true; return; }
   const tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   document.head.appendChild(tag);
-  window.onYouTubeIframeAPIReady = () => {
-    YT_API_loaded = true;
-    createYTPlayerPlaceholder();
-  };
+  window.onYouTubeIframeAPIReady = () => { YT_API_loaded = true; };
 }
-function createYTPlayerPlaceholder(){
-  // crea player (se creará con primer video pero no se mostrará hasta showMiniPlayer)
-  if(ytPlayerInstance) return;
-  ytPlayerInstance = new YT.Player('yt-player', {
-    height: '160',
-    width: '300',
-    videoId: currentPlaylist.videos[0],
-    playerVars: { autoplay: 0, controls: 1, modestbranding: 1, rel: 0 },
-    events: { onReady: onPlayerReady, onStateChange: onPlayerStateChange }
-  });
-}
-function onPlayerReady(e){
-  // listo
-}
-function onPlayerStateChange(event){
-  const YTState = window.YT && window.YT.PlayerState;
-  if(!YTState) return;
-  if(event.data === YTState.ENDED){
-    // Cuando un video termina, si era el último de la playlist, avanzamos a la siguiente playlist
-    try{
-      const idx = ytPlayerInstance.getPlaylistIndex();
-      const list = currentPlaylist.videos || [];
-      if(typeof idx === 'number' && idx >= list.length - 1){
-        // terminó la playlist actual
-        playNextPlaylist();
+loadYouTubeAPI();
+
+/* create or update the playlist player (uses playlist parameter) */
+function playPlaylistIndex(index){
+  if(!PLAYLISTS || PLAYLISTS.length === 0) return;
+  currentPlaylistIndex = index % PLAYLISTS.length;
+  const pl = PLAYLISTS[currentPlaylistIndex];
+  const playlistId = pl.playlistId;
+  if(!playlistId || playlistId.startsWith('PL_PLACEHOLDER')) {
+    // placeholder: show notice and do nothing
+    $('ytNow').textContent = `Playlist (${pl.title}) — pendiente ID real`;
+    showMiniPlayerFallbackMessage(pl.title);
+    return;
+  }
+  showMiniPlayer(pl.title);
+  if(YT_API_loaded){
+    const container = 'yt-player';
+    // initialize player if missing
+    if(!playlistPlayer){
+      playlistPlayer = new YT.Player(container, {
+        height: '160',
+        width: '300',
+        playerVars: { autoplay: 1, controls: 1, modestbranding: 1, rel: 0, listType: 'playlist', list: playlistId },
+        events: {
+          onReady: (e) => {
+            e.target.playVideo && e.target.playVideo();
+            isUsingPlaylistPlayer = true;
+            $('ytNow').textContent = `Reproduciendo playlist: ${pl.title}`;
+          },
+          onStateChange: onPlaylistStateChange
+        }
+      });
+    } else {
+      // load or cue the playlist
+      try {
+        playlistPlayer.loadPlaylist && playlistPlayer.loadPlaylist({list: playlistId, listType:'playlist', index:0, suggestedQuality:'default'});
+        isUsingPlaylistPlayer = true;
+        $('ytNow').textContent = `Reproduciendo playlist: ${pl.title}`;
+      } catch(e){
+        // fallback: destroy and recreate
+        playlistPlayer.destroy && playlistPlayer.destroy();
+        playlistPlayer = null;
+        playPlaylistIndex(currentPlaylistIndex);
       }
-    }catch(e){}
-  }
-}
-
-function showMiniPlayerForPlaylist(index){
-  // muestra mini-player y carga la playlist por índice
-  if(index < 0 || index >= PLAYLISTS.length) return;
-  currentPlaylistIndex = index;
-  currentPlaylist = PLAYLISTS[currentPlaylistIndex];
-  $('miniTitle').textContent = currentPlaylist.name;
-  $('miniOpen').href = `https://www.youtube.com/results?search_query=${encodeURIComponent(currentPlaylist.name)}`;
-  const mp = $('miniPlayer');
-  mp.style.display = 'block';
-  mp.setAttribute('aria-hidden','false');
-  // si API lista, cargar como playlist
-  if(YT_API_loaded && ytPlayerInstance && ytPlayerInstance.loadPlaylist){
-    // loadPlaylist acepta array de video ids
-    ytPlayerInstance.loadPlaylist(currentPlaylist.videos, 0, 0);
+    }
   } else {
-    // fallback: insertar iframe manualmente (no controla fin)
-    const inner = document.getElementById('yt-player-inner');
-    inner.innerHTML = `<iframe width="100%" height="140" src="https://www.youtube.com/embed/${currentPlaylist.videos[0]}?autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    // fallback embed
+    const body = $('miniBody');
+    body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML = `<iframe width="100%" height="140" src="https://www.youtube.com/embed?listType=playlist&list=${playlistId}&autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`);
+    $('ytNow').textContent = `Reproduciendo playlist: ${pl.title}`;
+    document.getElementById('miniPlayer').style.display = 'block';
   }
-  applyAudioOnly(); // aplicar modo audioOnly si está activado
 }
 
-function playNextPlaylist(){
-  currentPlaylistIndex++;
-  if(currentPlaylistIndex >= PLAYLISTS.length){
-    // cuando se acaban todas las playlists, barajar y reiniciar (cambia el orden)
-    shuffleArray(PLAYLISTS);
-    currentPlaylistIndex = 0;
+/* when playlist player fires state changes: detect end of playlist to rotate to next */
+function onPlaylistStateChange(event){
+  // event.data values: -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 video cued
+  // To detect end of playlist reliably, check when state==0 and playlist index is last.
+  try {
+    const player = playlistPlayer;
+    if(!player || !player.getPlaylist) return;
+    const state = event.data;
+    if(state === YT.PlayerState.PLAYING){
+      // update now text
+      const info = PLAYLISTS[currentPlaylistIndex];
+      if(info) $('ytNow').textContent = `Reproduciendo playlist: ${info.title}`;
+    }
+    if(state === YT.PlayerState.ENDED || state === 0){
+      // check current index vs playlist length
+      const idx = player.getPlaylistIndex && player.getPlaylistIndex();
+      const length = player.getPlaylist && player.getPlaylist().length;
+      // if it's the last item, advance to next playlist
+      if(typeof idx !== 'undefined' && typeof length !== 'undefined'){
+        if(idx >= (length-1)){
+          // advance playlist
+          advanceToNextPlaylist();
+        }
+      } else {
+        // conservative fallback: after ended, advance
+        advanceToNextPlaylist();
+      }
+    }
+  } catch(e){
+    // on any error, try to advance
+    advanceToNextPlaylist();
   }
-  showMiniPlayerForPlaylist(currentPlaylistIndex);
 }
 
+/* advance to next playlist and start playback */
+function advanceToNextPlaylist(){
+  currentPlaylistIndex = (currentPlaylistIndex + 1) % PLAYLISTS.length;
+  // small timeout to allow UI to settle
+  setTimeout(()=> {
+    playPlaylistIndex(currentPlaylistIndex);
+  }, 600);
+}
+
+/* Show the mini player UI (without loading content here) */
+function showMiniPlayer(title){
+  const m = $('miniPlayer');
+  $('miniTitle').textContent = title || 'YouTube';
+  $('miniOpen').href = PLAYLISTS[currentPlaylistIndex] && PLAYLISTS[currentPlaylistIndex].playlistId ? `https://www.youtube.com/playlist?list=${PLAYLISTS[currentPlaylistIndex].playlistId}` : '#';
+  m.style.display = 'block'; m.setAttribute('aria-hidden','false');
+}
+
+/* fallback message for placeholder playlists */
+function showMiniPlayerFallbackMessage(title){
+  const m = $('miniPlayer');
+  $('miniTitle').textContent = title || 'YouTube';
+  $('miniOpen').href = '#';
+  const body = $('miniBody');
+  body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML = `<div style="padding:12px;color:#bfeffd">Playlist "${title}" requiere ID real. Si quieres, puedo buscar playlists reales y ponerlas aquí.</div>`);
+  m.style.display = 'block'; m.setAttribute('aria-hidden','false');
+}
+
+/* play a single video in the mini player (not a playlist) */
+function playSingleVideo(videoId, title){
+  currentPlaylistIndex = 0;
+  isUsingPlaylistPlayer = false;
+  // if YT API loaded, create a player that loads a single video
+  if(YT_API_loaded){
+    if(playlistPlayer){
+      try {
+        playlistPlayer.loadVideoById && playlistPlayer.loadVideoById(videoId);
+      } catch(e){
+        // replace instance
+        playlistPlayer.destroy && playlistPlayer.destroy();
+        playlistPlayer = new YT.Player('yt-player', {
+          height: '160',
+          width: '300',
+          videoId: videoId,
+          playerVars: { autoplay: 1, controls: 1, modestbranding: 1 },
+          events: { onReady: (e)=> e.target.playVideo(), onStateChange: onPlaylistStateChange }
+        });
+      }
+    } else {
+      playlistPlayer = new YT.Player('yt-player', {
+        height: '160',
+        width: '300',
+        videoId: videoId,
+        playerVars: { autoplay: 1, controls: 1, modestbranding: 1 },
+        events: { onReady: (e)=> e.target.playVideo(), onStateChange: onPlaylistStateChange }
+      });
+    }
+  } else {
+    const body = $('miniBody');
+    body.querySelector('#yt-player') && (body.querySelector('#yt-player').innerHTML = `<iframe width="100%" height="140" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`);
+  }
+  showMiniPlayer(title);
+}
+
+/* stop and hide mini player */
 function stopYT(){
-  if(ytPlayerInstance && ytPlayerInstance.stopVideo) try{ ytPlayerInstance.stopVideo(); }catch(e){}
+  if(playlistPlayer && playlistPlayer.stopVideo) playlistPlayer.stopVideo();
   const m = $('miniPlayer');
   m.style.display = 'none';
   m.setAttribute('aria-hidden','true');
-  const inner = document.getElementById('yt-player-inner');
-  if(inner) inner.innerHTML = '';
+  const body = $('miniBody');
+  const container = body.querySelector('#yt-player');
+  if(container && container.tagName === 'IFRAME') container.src='';
 }
 
-/* Controles mini-player */
-$('miniPlay').addEventListener('click', ()=> { if(ytPlayerInstance && ytPlayerInstance.playVideo) ytPlayerInstance.playVideo(); });
-$('miniPause').addEventListener('click', ()=> { if(ytPlayerInstance && ytPlayerInstance.pauseVideo) ytPlayerInstance.pauseVideo(); });
-$('miniStop').addEventListener('click', ()=> { if(ytPlayerInstance && ytPlayerInstance.stopVideo) ytPlayerInstance.stopVideo(); stopYT(); });
+/* mini-player controls */
+$('miniPlay').addEventListener('click', ()=> { if(playlistPlayer && playlistPlayer.playVideo) playlistPlayer.playVideo(); });
+$('miniPause').addEventListener('click', ()=> { if(playlistPlayer && playlistPlayer.pauseVideo) playlistPlayer.pauseVideo(); });
+$('miniStop').addEventListener('click', ()=> { if(playlistPlayer && playlistPlayer.stopVideo) playlistPlayer.stopVideo(); stopYT(); });
 $('miniClose').addEventListener('click', ()=> stopYT());
-$('miniToggleSize').addEventListener('click', ()=> { $('miniPlayer').classList.toggle('small'); });
+$('miniToggleSize').addEventListener('click', ()=>{
+  const m = $('miniPlayer');
+  m.classList.toggle('small');
+});
 
-/* draggable mini-player */
+/* draggable mini-player (header) */
 (function(){
   const mp = $('miniPlayer');
   const hdr = $('miniHeader');
@@ -735,7 +959,6 @@ $('miniToggleSize').addEventListener('click', ()=> { $('miniPlayer').classList.t
     mp.style.bottom = 'auto';
   });
   document.addEventListener('mouseup', ()=> dragging=false);
-  // touch
   hdr.addEventListener('touchstart', e=>{
     dragging=true;
     const t = e.touches[0];
@@ -753,23 +976,24 @@ $('miniToggleSize').addEventListener('click', ()=> { $('miniPlayer').classList.t
   document.addEventListener('touchend', ()=> dragging=false);
 })();
 
-/* audioOnly toggle */
+/* audioOnly toggle (hides the iframe visually) */
 $('audioOnlyToggle').addEventListener('change', applyAudioOnly);
 function applyAudioOnly(){
   const audioOnly = $('audioOnlyToggle').checked;
   const mp = $('miniPlayer');
   if(!mp || mp.style.display==='none') return;
-  if(YT_API_loaded && ytPlayerInstance && ytPlayerInstance.getIframe){
-    const iframe = ytPlayerInstance.getIframe();
-    if(audioOnly){
-      iframe.style.width='1px'; iframe.style.height='1px'; iframe.style.opacity='0'; iframe.style.pointerEvents='none';
-    } else {
-      iframe.style.width='100%'; iframe.style.height='160px'; iframe.style.opacity='1'; iframe.style.pointerEvents='auto';
+  if(YT_API_loaded && playlistPlayer && playlistPlayer.getIframe){
+    const iframe = playlistPlayer.getIframe();
+    if(iframe){
+      if(audioOnly){
+        iframe.style.width='1px'; iframe.style.height='1px'; iframe.style.opacity='0'; iframe.style.pointerEvents='none';
+      } else {
+        iframe.style.width='100%'; iframe.style.height='160px'; iframe.style.opacity='1'; iframe.style.pointerEvents='auto';
+      }
     }
   } else {
-    // fallback: ocultar iframe visualmente
-    const body = document.getElementById('yt-player-inner');
-    const ifr = body && body.querySelector('iframe');
+    const body = $('miniBody');
+    const ifr = body.querySelector('iframe');
     if(ifr){
       if(audioOnly){ ifr.style.width='1px'; ifr.style.height='1px'; ifr.style.opacity='0'; }
       else { ifr.style.width='100%'; ifr.style.height='140px'; ifr.style.opacity='1'; }
@@ -777,179 +1001,49 @@ function applyAudioOnly(){
   }
 }
 
-/* ---------- SEARCH / RENDER YT GRID ---------- */
-function renderYTGrid(items){
-  const grid = $('youtubeGrid');
-  grid.innerHTML = '';
-  items.forEach((it, idx)=>{
-    const thumb = document.createElement('div');
-    thumb.className = 'youtube-thumb';
-    const img = document.createElement('img');
-    // thumbnail usa primer video de playlist cuando existe
-    const vid = (it.videos && it.videos[0]) || it.videoId || '';
-    img.src = vid ? `https://i.ytimg.com/vi/${vid}/hqdefault.jpg` : '';
-    img.alt = it.name || it.title || 'YouTube';
-    const title = document.createElement('div');
-    title.className = 'yt-title';
-    title.textContent = it.name || it.title || 'Recomendación';
-    const controls = document.createElement('div');
-    controls.className = 'youtube-controls';
-    const playBtn = document.createElement('button');
-    playBtn.className='btn-primary';
-    playBtn.textContent = '▶️';
-    playBtn.addEventListener('click', ()=> showMiniPlayerForPlaylist(idx)); // usa el índice dentro de items — más abajo ajustamos para que items sean PLAYLISTS filtradas
-    const openBtn = document.createElement('button');
-    openBtn.className='btn-primary';
-    openBtn.textContent = 'Abrir';
-    openBtn.addEventListener('click', ()=> window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(it.name || it.title || '')}`,'_blank'));
-    controls.appendChild(playBtn);
-    controls.appendChild(openBtn);
-
-    thumb.appendChild(img);
-    thumb.appendChild(title);
-    thumb.appendChild(controls);
-    grid.appendChild(thumb);
-  });
-}
-
+/* ---------- Search (simple client-side filter of YT_POOL) ---------- */
 function doSearch(){
   const k = $('ytKeyword').value.trim().toLowerCase();
   if(!k){ loadDailyRecs(); return; }
-  const results = PLAYLISTS.filter(p => (p.name || '').toLowerCase().includes(k));
-  if(results.length) renderYTGrid(results.slice(0,12)); // limita resultados
-  else renderYTGrid(dailyRotationPlaylists(PLAYLISTS,6));
+  const results = YT_POOL.filter(p => p.title.toLowerCase().includes(k));
+  if(results.length) renderYTGrid(results);
+  else renderYTGrid(dailyRotation(YT_POOL,6));
 }
 
-/* ---------- MUSIC DAILY list (sin repetición en el día) ---------- */
-/* MUSIC_PLAYER is the audio element for local mp3 ambiance (separate de YouTube) */
-const MUSIC_DAILY = [
-  {name:'Lluvia', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'},
-  {name:'Bosque', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'},
-  {name:'Río', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'},
-  {name:'Océano', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'},
-  {name:'Noche', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'}
-];
+/* ---------- Subscription form ---------- */
+$('subForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  $('subInfo').textContent = '¡Gracias! Te hemos suscrito (demo)';
+  $('emailInput').value = '';
+});
 
-function loadDailyMusic(){
-  // determina índice diario
-  const idx = Math.floor(Date.now()/(1000*60*60*24)) % MUSIC_DAILY.length;
-  const item = MUSIC_DAILY[idx];
-  const audio = $('natureAudio');
-  audio.src = item.url;
-
-  // render lateral
-  const dl = $('dailyList');
-  if(dl){
-    dl.innerHTML = '';
-    MUSIC_DAILY.forEach((it, i)=>{
-      const div = document.createElement('div');
-      div.style.display='flex'; div.style.gap='8px'; div.style.alignItems='center';
-      const img = document.createElement('img');
-      img.src = `https://i.ytimg.com/vi/${PLAYLISTS[i % PLAYLISTS.length].videos[0]}/default.jpg`;
-      img.style.width='56px'; img.style.height='40px'; img.style.objectFit='cover'; img.style.borderRadius='6px';
-      const title = document.createElement('div');
-      title.style.fontSize='13px';
-      title.textContent = (i === idx) ? `${it.name} (hoy)` : it.name;
-      const play = document.createElement('button');
-      play.className='btn-primary';
-      play.textContent='▶️';
-      play.addEventListener('click', ()=> {
-        audio.src = it.url;
-        audio.play().catch(()=>{});
-        // sincroniza select si coincide por palabra
-        syncSelectByName(it.name);
-        $('audioNotice').style.display='block';
-        $('audioNotice').innerText='Reproduciendo sonido: '+it.name;
-      });
-      div.appendChild(img); div.appendChild(title); div.appendChild(play);
-      dl.appendChild(div);
-    });
-  }
-
-  // sincroniza el select si coincide
-  syncSelectByName(item.name);
-}
-
-/* sincroniza el select #soundSelect según nombre (busca coincidencias) */
-function syncSelectByName(name){
-  const opts = document.querySelectorAll('#soundSelect option');
-  opts.forEach(o=>{
-    if(o.textContent.toLowerCase().includes(name.toLowerCase())){
-      o.selected = true;
-    }
-  });
-}
-
-/* ---------- Mapeo entre sonido (select) y playlists/MUSIC_DAILY ---------- */
-function syncSoundToMusicAndYT(soundKey, opts = { autoplayMiniYT: false }){
-  // soundKey será valores como 'rain', 'forest', 'river', 'ocean', 'night'
-  const audio = $('natureAudio');
-  // mapeo simple a pistas locales (MUSIC_DAILY) y playlists (nombre que incluye palabra)
-  const keyMap = {
-    rain: {match:'rain|lluvia'},
-    forest: {match:'forest|bosque'},
-    river: {match:'river|río'},
-    ocean: {match:'ocean|océano'},
-    night: {match:'night|noche'}
-  };
-  const km = keyMap[soundKey] || null;
-  // audio local
-  if(km){
-    // busca en MUSIC_DAILY por coincidencia
-    const m = MUSIC_DAILY.find(x => (x.name || '').toLowerCase().match(new RegExp(km.match, 'i')));
-    if(m) { audio.src = m.url; audio.play().catch(()=>{}); $('audioNotice').style.display='block'; $('audioNotice').innerText = 'Reproduciendo sonido: '+m.name; }
-  }
-  // busca playlist en PLAYLISTS
-  if(km){
-    const pIndex = PLAYLISTS.findIndex(p => (p.name || '').toLowerCase().match(new RegExp(km.match, 'i')));
-    if(pIndex >= 0){
-      if(opts.autoplayMiniYT) showMiniPlayerForPlaylist(pIndex);
-      else {
-        // sólo pre-load / update UI title
-        $('miniTitle').textContent = PLAYLISTS[pIndex].name;
-        $('miniOpen').href = `https://www.youtube.com/results?search_query=${encodeURIComponent(PLAYLISTS[pIndex].name)}`;
-      }
-    }
-  }
-}
-
-/* ---------- Utils ---------- */
-function shuffleArray(a){
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-/* ---------- Init y funciones de UI ---------- */
+/* ---------- Load daily recommendations (6 items) ---------- */
 function loadDailyRecs(){
-  const items = dailyRotationPlaylists(PLAYLISTS, 6);
+  const items = dailyRotation(YT_POOL, 6);
   renderYTGrid(items);
-  // render lateral dailyList with play for the day (already handled in loadDailyMusic)
 }
+
+/* ---------- Init ---------- */
 function init(){
   updateDisplays();
   loadArticles();
-  loadDailyMusic();
   loadDailyRecs();
-  // inicializar YT API (no fuerza reproducción)
-  loadYouTubeAPI();
-
-  // mantener el grid con 6 items: cuando renderYTGrid pinta, asume array simple
-  // crear evento para cambio de select (sin autoplay)
-  document.getElementById('soundSelect').addEventListener('change', (e)=>{
-    const val = e.target.value;
-    syncSoundToMusicAndYT(val, { autoplayMiniYT: false });
-  });
+  renderYTGrid(dailyRotation(YT_POOL,6));
+  loadDailyMusic();
 }
 init();
 
-/* ---------- Small accessibility / fallback ---------- */
-/* Si el usuario quiere reproducir una playlist concreta desde la lista lateral, se pueden mapear índices:
-   Aquí re-renderizamos el grid para que cada botón apunte a la playlist concreta en PLAYLISTS (día seleccionado).
-   Para demo, loadDailyRecs usa dailyRotationPlaylists(PLAYLISTS,6) */
-
+/* ---------- expose utility to allow external playlist-swap (optional) ---------- */
+window.replacePlaylists = function(newPlaylists){
+  // newPlaylists: [{title, playlistId}, ...]
+  if(Array.isArray(newPlaylists) && newPlaylists.length){
+    PLAYLISTS.length = 0;
+    newPlaylists.forEach(p => PLAYLISTS.push(p));
+    currentPlaylistIndex = 0;
+    // start first playlist automatically
+    playPlaylistIndex(0);
+  }
+};
 </script>
 </body>
 </html>
