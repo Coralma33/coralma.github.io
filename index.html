@@ -4,61 +4,64 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Tarot — Bruja & Bola de Cristal (Demo)</title>
-<meta name="description" content="Lectura de tarot interactiva: 78 cartas, Cruz Celta, tirada de 3, animaciones GSAP y restricción 1 tirada/día." />
+<title>Tarot — Bruja & Bola de Cristal (Rider‑Waite, demo)</title>
+<meta name="description" content="Lectura de tarot interactiva: 78 cartas (Rider‑Waite), tiradas animadas, buscador YouTube opcional, meditación y artículos." />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#070714;--panel:#071022;--card-back:#081226;--accent:#9a6cff;--accent2:#6ec6d9;--glass:rgba(255,255,255,0.03);--text:#e6f9ff}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;color:var(--text);background:radial-gradient(circle at 10% 10%, rgba(106,78,255,0.04), transparent 7%), linear-gradient(180deg,#04050a,#071022);}
-.container{max-width:1120px;margin:22px auto;padding:18px}
+.container{max-width:1200px;margin:22px auto;padding:18px}
 .header{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:12px}
 .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
 .main{display:grid;grid-template-columns:1fr 420px;gap:18px;margin-top:18px}
 .panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-.mystic-area{position:relative;min-height:560px;border-radius:12px;overflow:hidden;background-image:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));display:flex;align-items:center;justify-content:center}
-.bruja-wrap{position:absolute;left:22px;bottom:20px;width:320px;height:420px;pointer-events:none}
-.bruja{width:100%;height:100%;background-image:url('https://images.unsplash.com/photo-1543109743-9fa0f2f2bc52?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder');background-size:cover;background-position:center;border-radius:12px;filter:brightness(0.75) saturate(0.9) contrast(1.05);box-shadow:inset 0 -60px 120px rgba(0,0,0,0.5)}
-.ball{position:absolute;left:40%;top:18%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 40% 30%, rgba(255,255,255,0.95), rgba(200,240,255,0.12) 30%, rgba(0,0,0,0.2) 70%);box-shadow:0 10px 40px rgba(120,80,255,0.18), 0 0 80px rgba(110,198,217,0.08);display:flex;align-items:center;justify-content:center;color:#021018;font-weight:700}
-.ball.glow{box-shadow:0 10px 80px rgba(154,108,255,0.28), 0 0 140px rgba(110,198,217,0.12)}
-.table{width:760px;height:420px;border-radius:12px;background:linear-gradient(180deg,rgba(4,6,12,0.6),rgba(0,0,0,0.6));display:flex;align-items:center;justify-content:center;position:relative}
-.deck{position:absolute;left:18%;top:50%;transform:translate(-50%,-50%);width:120px;height:160px}
-.card-back{width:100%;height:100%;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:#021018;font-weight:800;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+.mystic-area{position:relative;min-height:620px;border-radius:12px;overflow:hidden;background-image:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));display:flex;align-items:center;justify-content:center}
+.bruja-wrap{position:absolute;left:18px;bottom:18px;width:340px;height:520px;pointer-events:none}
+.bruja{width:100%;height:100%;background-size:cover;background-position:center;border-radius:12px;filter:brightness(0.8) saturate(0.9) contrast(1.05);box-shadow:inset 0 -60px 120px rgba(0,0,0,0.5)}
+.ball{position:absolute;left:44%;top:14%;width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#021018;font-weight:700;z-index:40}
+.ball .core{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 40% 30%, rgba(255,255,255,0.95), rgba(200,240,255,0.12) 30%, rgba(0,0,0,0.2) 70%);box-shadow:0 10px 80px rgba(154,108,255,0.28),0 0 160px rgba(110,198,217,0.12);display:flex;align-items:center;justify-content:center}
+.table{width:780px;height:520px;border-radius:12px;background:linear-gradient(180deg,rgba(4,6,12,0.6),rgba(0,0,0,0.6));display:flex;align-items:center;justify-content:center;position:relative}
+.deck{position:absolute;left:18%;top:52%;transform:translate(-50%,-50%);width:140px;height:200px;z-index:30}
+.card-back{width:100%;height:100%;border-radius:8px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;color:#021018;font-weight:800;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
 .spread-area{position:relative;width:100%;height:100%}
-.pos{position:absolute;width:140px;height:200px;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:auto}
+.pos{position:absolute;width:140px;height:200px;pointer-events:auto}
 .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .btn{padding:10px 12px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021018;font-weight:700;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text)}
 .legend{font-size:13px;color:#bfeffd;margin-top:10px}
-.card-visual{width:140px;height:200px;border-radius:8px;backface-visibility:hidden;position:relative}
-.card-face{position:absolute;inset:0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;padding:8px;text-align:center}
-.front{background:linear-gradient(180deg,#fff,#f0f6ff);color:#021018;transform:rotateY(180deg)}
-.back{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#021018}
+.card-visual{width:140px;height:200px;border-radius:8px;backface-visibility:hidden;position:relative;overflow:hidden}
+.card-visual img{width:100%;height:100%;object-fit:cover;display:block}
 .card-flip{transform-style:preserve-3d;transition:transform .8s;}
 .card-flip.revealed{transform:rotateY(180deg)}
+.front{position:absolute;inset:0;border-radius:8px;backface-visibility:hidden;transform:rotateY(180deg)}
+.back{position:absolute;inset:0;border-radius:8px;backface-visibility:hidden;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center}
 .info{margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02)}
 .small{font-size:13px;color:#bfeffd}
 .right-panel{display:flex;flex-direction:column;gap:12px}
 .youTubeWrap{border-radius:10px;overflow:hidden;background:rgba(0,0,0,0.45);padding:8px}
-#ytPlayer{width:100%;height:240px;border:0}
+#ytPlayer{width:100%;height:260px;border:0}
+.searchResults{display:grid;grid-template-columns:repeat(1,1fr);gap:8px;margin-top:8px;max-height:220px;overflow:auto}
+.searchItem{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,0.02);padding:6px;border-radius:8px}
+.searchItem img{width:120px;height:70px;object-fit:cover;border-radius:6px}
 .notice{padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);font-size:14px}
 .footer{margin-top:12px;font-size:13px;color:#9fd8ea}
 .dimmed{filter:grayscale(0.6) brightness(0.45);}
-@media(max-width:980px){.main{grid-template-columns:1fr} .bruja-wrap{display:none} .table{width:100%;height:360px}}
+@media(max-width:980px){.main{grid-template-columns:1fr} .bruja-wrap{display:none} .table{width:100%;height:420px}}
 </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <div class="brand"><div class="logo">TA</div><div><h2>Tarot — Lectura Mística</h2><div style="font-size:13px;color:#bfeffd">Bruja, bola de cristal y tiradas animadas</div></div></div>
+      <div class="brand"><div class="logo">TA</div><div><h2>Tarot — Lectura Mística</h2><div style="font-size:13px;color:#bfeffd">Rider‑Waite — 78 cartas</div></div></div>
       <div>
         <button class="btn" id="btnReset">Reiniciar tiradas</button>
       </div>
     </div><div class="main">
   <div class="panel mystic-area" id="mystic">
-    <div class="bruja-wrap"><div class="bruja" id="brujaImg"></div></div>
-    <div class="ball" id="crystal">✦</div>
+    <div class="bruja-wrap"><div class="bruja" id="brujaImg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/6/68/Pamela_Colman_Smith_1907_01.jpg');"></div></div>
+    <div class="ball" id="crystal"><div class="core">✦</div></div>
 
     <div class="table" id="table">
       <div class="deck" id="deckEl"><div class="card-back">MAZO</div></div>
@@ -75,287 +78,236 @@ html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;color:var(--tex
         <button class="btn" id="readCeltic">Cruz Celta (10 posiciones)</button>
         <button class="btn ghost" id="previewBtn">Previsualizar Baraja</button>
       </div>
-      <div class="legend small">Limitado a <strong>1 tirada por día</strong> (almacenado en tu navegador). Si ya hiciste una lectura hoy, la bruja se oscurecerá.</div>
+      <div class="legend small">Limitado a <strong>1 tirada por día</strong> (almacenado en tu navegador). Usa <strong>Reiniciar tiradas</strong> para pruebas.</div>
       <div class="info" id="readInfo">Estado: <span id="statusText">Disponible</span></div>
     </div>
 
     <div class="panel">
-      <h4>Reproductor YouTube</h4>
+      <h4>Reproductor YouTube + Buscador</h4>
       <div class="youTubeWrap">
         <div id="ytPlayer"></div>
         <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
-          <input id="ytInput" placeholder="ID o URL de YouTube" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)">
-          <button class="btn" id="loadYT">Cargar</button>
+          <input id="ytQuery" placeholder="Buscar en YouTube (ej. 'ambient music')" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)">
+          <button class="btn" id="ytSearch">Buscar</button>
         </div>
+        <div class="small" style="margin-top:6px">Introduce tu API Key de YouTube (opcional) para ver resultados integrados. Si no tienes API Key, el botón abrirá la búsqueda en YouTube en una nueva pestaña.</div>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          <input id="ytApiKey" placeholder="(opcional) YouTube API Key" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)">
+        </div>
+        <div id="searchResults" class="searchResults"></div>
       </div>
-      <div class="notice small" style="margin-top:8px">Sólo un reproductor — puedes cambiar el video pegando su URL o ID.</div>
+      <div class="notice small" style="margin-top:8px">Al seleccionar un resultado, el video se cargará en el reproductor integrado.</div>
     </div>
 
     <div class="panel">
       <h4>Significado</h4>
-      <div id="meanings" class="small">Selecciona una carta para ver su significado.</div>
+      <div id="meanings" class="small">Selecciona una carta para ver su significado; las cartas usan imágenes Rider‑Waite (vía Wikimedia Commons).</div>
     </div>
 
-    <div class="panel footer">Hecho con ❤️ — Guarda este archivo como <code>index.html</code> y ábrelo en tu navegador.</div>
+    <div class="panel footer">Guarda este archivo como <code>index.html</code> y ábrelo en tu navegador. Si no ves las imágenes, asegúrate de tener conexión a internet (las imágenes se cargan desde Wikimedia Commons).</div>
   </aside>
 </div>
 
   </div><script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script><script>
-/* ------------------ Datos: 78 cartas (nombres + significados breves) ------------------ */
+/* ------------------ TAROT 78 (nombres + significados + image via Wikimedia Special:FilePath) ------------------ */
+// Nota: usamos Special:FilePath para aceder a imágenes en Commons (redirige a la URL real).
+function filePath(name){ return 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(name); }
+
 const TAROT78 = [
-  // Arcanos Mayores (0-21)
-  {id:0,name:'El Loco',upright:'Comienzo, fe, espontaneidad',reversed:'Impulsividad, falta de dirección'},
-  {id:1,name:'El Mago',upright:'Voluntad, recursos, manifestación',reversed:'Engaño, falta de concentración'},
-  {id:2,name:'La Sacerdotisa',upright:'Intuición, misterio, sabiduría interior',reversed:'Secretos, desconexión interior'},
-  {id:3,name:'La Emperatriz',upright:'Abundancia, creatividad, fertilidad',reversed:'Estancamiento creativo'},
-  {id:4,name:'El Emperador',upright:'Orden, estructura, control',reversed:'Rigidez, abuso de poder'},
-  {id:5,name:'El Sumo Sacerdote',upright:'Tradición, enseñanza, guía',reversed:'Dogma, conflicto con normas'},
-  {id:6,name:'Los Enamorados',upright:'Relación, decisión, unión',reversed:'Duda, conflicto moral'},
-  {id:7,name:'El Carro',upright:'Triunfo, dirección, disciplina',reversed:'Estancamiento, falta de control'},
-  {id:8,name:'La Fuerza',upright:'Coraje, compasión, dominio interno',reversed:'Debilidad, ira contenida'},
-  {id:9,name:'El Ermitaño',upright:'Introspección, búsqueda interior',reversed:'Soledad forzada, aislamiento'},
-  {id:10,name:'La Rueda de la Fortuna',upright:'Ciclos, destino, cambio',reversed:'Resistencia al cambio, mala racha'},
-  {id:11,name:'La Justicia',upright:'Equilibrio, verdad, responsabilidad',reversed:'Injusticia, desequilibrio'},
-  {id:12,name:'El Colgado',upright:'Perspectiva nueva, pausa',reversed:'Estancamiento, sacrificio inútil'},
-  {id:13,name:'La Muerte',upright:'Transformación, cierre necesario',reversed:'Resistencia al cambio'},
-  {id:14,name:'La Templanza',upright:'Moderación, equilibrio, sanación',reversed:'Desequilibrio, excesos'},
-  {id:15,name:'El Diablo',upright:'Ataduras, tentaciones, sombras',reversed:'Liberación, conciencia de cadenas'},
-  {id:16,name:'La Torre',upright:'Ruptura, revelación, liberación',reversed:'Catástrofe evitada, resistencia a lo inevitable'},
-  {id:17,name:'La Estrella',upright:'Esperanza, guía, inspiración',reversed:'Desánimo, pérdida de fe'},
-  {id:18,name:'La Luna',upright:'Subconsciente, sueños, intuición',reversed:'Confusión, engaño'},
-  {id:19,name:'El Sol',upright:'Éxito, claridad, vitalidad',reversed:'Alegría parcial, retrasos'},
-  {id:20,name:'El Juicio',upright:'Renacimiento, llamado, evaluación',reversed:'Autocrítica, estancamiento moral'},
-  {id:21,name:'El Mundo',upright:'Culminación, realización, cierre',reversed:'Cierre incompleto, transición' },
-  // Arcanos Menores: Bastos (Wands) 14 cartas
-  {id:22,name:'As de Bastos',upright:'Inicio creativo, inspiración',reversed:'Bloqueo creativo'},
-  {id:23,name:'Dos de Bastos',upright:'Planificación, visión',reversed:'Indecisión'},
-  {id:24,name:'Tres de Bastos',upright:'Expansión, exploración',reversed:'Retrasos en planes'},
-  {id:25,name:'Cuatro de Bastos',upright:'Celebración, hogar',reversed:'Inestabilidad doméstica'},
-  {id:26,name:'Cinco de Bastos',upright:'Conflicto sano, competencia',reversed:'Peleas innecesarias'},
-  {id:27,name:'Seis de Bastos',upright:'Reconocimiento, victoria',reversed:'Falsa modestia'},
-  {id:28,name:'Siete de Bastos',upright:'Defensa, perseverancia',reversed:'Agotamiento'},
-  {id:29,name:'Ocho de Bastos',upright:'Movimiento rápido, noticias',reversed:'Retrasos'},
-  {id:30,name:'Nueve de Bastos',upright:'Resistencia, preparación',reversed:'Fatiga'},
-  {id:31,name:'Diez de Bastos',upright:'Carga, responsabilidad',reversed:'Descarga, alivio'},
-  {id:32,name:'Paje de Bastos',upright:'Mensaje creativo, curiosidad',reversed:'Inmadurez'},
-  {id:33,name:'Caballero de Bastos',upright:'Impulso, valentía',reversed:'Impulsividad destructiva'},
-  {id:34,name:'Reina de Bastos',upright:'Carisma, liderazgo',reversed:'Jealousía'},
-  {id:35,name:'Rey de Bastos',upright:'Visión, autoridad creativa',reversed:'Tiranía'},
-  // Copas (Cups)
-  {id:36,name:'As de Copas',upright:'Amor, nuevos sentimientos',reversed:'Bloqueo emocional'},
-  {id:37,name:'Dos de Copas',upright:'Alianza, relación',reversed:'Desconexión'},
-  {id:38,name:'Tres de Copas',upright:'Celebración, amistad',reversed:'Excesos sociales'},
-  {id:39,name:'Cuatro de Copas',upright:'Meditación, reevaluación',reversed:'Apatía'},
-  {id:40,name:'Cinco de Copas',upright:'Pérdida, duelo',reversed:'Aceptación'},
-  {id:41,name:'Seis de Copas',upright:'Recuerdos, nostalgia',reversed:'Estancamiento pasado'},
-  {id:42,name:'Siete de Copas',upright:'Opciones, fantasía',reversed:'Confusión'},
-  {id:43,name:'Ocho de Copas',upright:'Partida, búsqueda',reversed:'Miedo al cambio'},
-  {id:44,name:'Nueve de Copas',upright:'Satisfacción, deseos cumplidos',reversed:'Complacencia'},
-  {id:45,name:'Diez de Copas',upright:'Armonía familiar, felicidad',reversed:'Ilusión rota'},
-  {id:46,name:'Paje de Copas',upright:'Mensaje emocional, intuición',reversed:'Emociones inmaduras'},
-  {id:47,name:'Caballero de Copas',upright:'Romanticismo, propuesta',reversed:'Falso romance'},
-  {id:48,name:'Reina de Copas',upright:'Empatía, nutrición emocional',reversed:'Vulnerabilidad'},
-  {id:49,name:'Rey de Copas',upright:'Estabilidad emocional, guía',reversed:'Manipulación emocional'},
-  // Espadas (Swords)
-  {id:50,name:'As de Espadas',upright:'Claridad mental, verdad',reversed:'Confusión'},
-  {id:51,name:'Dos de Espadas',upright:'Indecisión, equilibrio',reversed:'Evitar decisiones'},
-  {id:52,name:'Tres de Espadas',upright:'Dolor, ruptura',reversed:'Sanación'},
-  {id:53,name:'Cuatro de Espadas',upright:'Descanso, recuperación',reversed:'Estancamiento'},
-  {id:54,name:'Cinco de Espadas',upright:'Conflicto, pérdida',reversed:'Remordimiento'},
-  {id:55,name:'Seis de Espadas',upright:'Transición, viaje',reversed:'Resistencia al cambio'},
-  {id:56,name:'Siete de Espadas',upright:'Estrategia, discreción',reversed:'Engaño descubierto'},
-  {id:57,name:'Ocho de Espadas',upright:'Limitación mental, miedo',reversed:'Liberación gradual'},
-  {id:58,name:'Nueve de Espadas',upright:'Ansiedad, pesadillas',reversed:'Alivio'},
-  {id:59,name:'Diez de Espadas',upright:'Final doloroso, liberación',reversed:'Recuperación lenta'},
-  {id:60,name:'Paje de Espadas',upright:'Curiosidad mental, noticias',reversed:'Chisme'},
-  {id:61,name:'Caballero de Espadas',upright:'Acción rápida, desafío',reversed:'Ira impulsiva'},
-  {id:62,name:'Reina de Espadas',upright:'Claridad, límites',reversed:'Frialdad'},
-  {id:63,name:'Rey de Espadas',upright:'Lógica, autoridad intelectual',reversed:'Abuso intelectual'},
-  // Oros (Pentacles)
-  {id:64,name:'As de Oros',upright:'Prosperidad, oportunidad',reversed:'Oportunidad perdida'},
-  {id:65,name:'Dos de Oros',upright:'Balance material, adaptación',reversed:'Caos financiero'},
-  {id:66,name:'Tres de Oros',upright:'Trabajo en equipo, habilidad',reversed:'Falta de colaboración'},
-  {id:67,name:'Cuatro de Oros',upright:'Seguridad, ahorro',reversed:'Avaricia'},
-  {id:68,name:'Cinco de Oros',upright:'Escasez, dificultad',reversed:'Recuperación'},
-  {id:69,name:'Seis de Oros',upright:'Generosidad, intercambio',reversed:'Dependencia'},
-  {id:70,name:'Siete de Oros',upright:'Paciencia, evaluación',reversed:'Impaciencia'},
-  {id:71,name:'Ocho de Oros',upright:'Maestría, trabajo',reversed:'Monotonía'},
-  {id:72,name:'Nueve de Oros',upright:'Independencia, logro',reversed:'Soledad'},
-  {id:73,name:'Diez de Oros',upright:'Legado, prosperidad familiar',reversed:'Inestabilidad heredada'},
-  {id:74,name:'Paje de Oros',upright:'Mensaje práctico, aprendizaje',reversed:'Procrastinación'},
-  {id:75,name:'Caballero de Oros',upright:'Constancia, responsabilidad',reversed:'Rigidez'},
-  {id:76,name:'Reina de Oros',upright:'Cuidado práctico, abundancia',reversed:'Descuido'},
-  {id:77,name:'Rey de Oros',upright:'Seguridad, éxito material',reversed:'Materialismo'}
+  {id:0,name:'El Loco',upright:'Comienzo, fe, espontaneidad',reversed:'Impulsividad, falta de dirección', img:filePath('RWS_Tarot_00_Fool.jpg')},
+  {id:1,name:'El Mago',upright:'Voluntad, recursos, manifestación',reversed:'Engaño, falta de concentración', img:filePath('RWS_Tarot_01_Magician.jpg')},
+  {id:2,name:'La Sacerdotisa',upright:'Intuición, misterio, sabiduría interior',reversed:'Secretos, desconexión interior', img:filePath('RWS_Tarot_02_High_Priestess.jpg')},
+  {id:3,name:'La Emperatriz',upright:'Abundancia, creatividad, fertilidad',reversed:'Estancamiento creativo', img:filePath('RWS_Tarot_03_Empress.jpg')},
+  {id:4,name:'El Emperador',upright:'Orden, estructura, control',reversed:'Rigidez, abuso de poder', img:filePath('RWS_Tarot_04_Emperor.jpg')},
+  {id:5,name:'El Sumo Sacerdote',upright:'Tradición, enseñanza, guía',reversed:'Dogma, conflicto con normas', img:filePath('RWS_Tarot_05_High_Priest.jpg')},
+  {id:6,name:'Los Enamorados',upright:'Relación, decisión, unión',reversed:'Duda, conflicto moral', img:filePath('RWS_Tarot_06_Lovers.jpg')},
+  {id:7,name:'El Carro',upright:'Triunfo, dirección, disciplina',reversed:'Estancamiento, falta de control', img:filePath('RWS_Tarot_07_Chariot.jpg')},
+  {id:8,name:'La Fuerza',upright:'Coraje, compasión, dominio interno',reversed:'Debilidad, ira contenida', img:filePath('RWS_Tarot_08_Strength.jpg')},
+  {id:9,name:'El Ermitaño',upright:'Introspección, búsqueda interior',reversed:'Soledad forzada, aislamiento', img:filePath('RWS_Tarot_09_Hermit.jpg')},
+  {id:10,name:'La Rueda de la Fortuna',upright:'Ciclos, destino, cambio',reversed:'Resistencia al cambio, mala racha', img:filePath('RWS_Tarot_10_Wheel_of_Fortune.jpg')},
+  {id:11,name:'La Justicia',upright:'Equilibrio, verdad, responsabilidad',reversed:'Injusticia, desequilibrio', img:filePath('RWS_Tarot_11_Justice.jpg')},
+  {id:12,name:'El Colgado',upright:'Perspectiva nueva, pausa',reversed:'Estancamiento, sacrificio inútil', img:filePath('RWS_Tarot_12_Hanged_Man.jpg')},
+  {id:13,name:'La Muerte',upright:'Transformación, cierre necesario',reversed:'Resistencia al cambio', img:filePath('RWS_Tarot_13_Death.jpg')},
+  {id:14,name:'La Templanza',upright:'Moderación, equilibrio, sanación',reversed:'Desequilibrio, excesos', img:filePath('RWS_Tarot_14_Temperance.jpg')},
+  {id:15,name:'El Diablo',upright:'Ataduras, tentaciones, sombras',reversed:'Liberación, conciencia de cadenas', img:filePath('RWS_Tarot_15_Devil.jpg')},
+  {id:16,name:'La Torre',upright:'Ruptura, revelación, liberación',reversed:'Catástrofe evitada, resistencia a lo inevitable', img:filePath('RWS_Tarot_16_Tower.jpg')},
+  {id:17,name:'La Estrella',upright:'Esperanza, guía, inspiración',reversed:'Desánimo, pérdida de fe', img:filePath('RWS_Tarot_17_Star.jpg')},
+  {id:18,name:'La Luna',upright:'Subconsciente, sueños, intuición',reversed:'Confusión, engaño', img:filePath('RWS_Tarot_18_Moon.jpg')},
+  {id:19,name:'El Sol',upright:'Éxito, claridad, vitalidad',reversed:'Alegría parcial, retrasos', img:filePath('RWS_Tarot_19_Sun.jpg')},
+  {id:20,name:'El Juicio',upright:'Renacimiento, llamado, evaluación',reversed:'Autocrítica, estancamiento moral', img:filePath('RWS_Tarot_20_Judgement.jpg')},
+  {id:21,name:'El Mundo',upright:'Culminación, realización, cierre',reversed:'Cierre incompleto, transición', img:filePath('RWS_Tarot_21_World.jpg')},
+  // Bastos 22-35
+  {id:22,name:'As de Bastos',upright:'Inicio creativo, inspiración',reversed:'Bloqueo creativo', img:filePath('RWS_Tarot_ACE_WANDS.jpg')},
+  {id:23,name:'Dos de Bastos',upright:'Planificación, visión',reversed:'Indecisión', img:filePath('RWS_Tarot_02_Wands.jpg')},
+  {id:24,name:'Tres de Bastos',upright:'Expansión, exploración',reversed:'Retrasos en planes', img:filePath('RWS_Tarot_03_Wands.jpg')},
+  {id:25,name:'Cuatro de Bastos',upright:'Celebración, hogar',reversed:'Inestabilidad doméstica', img:filePath('RWS_Tarot_04_Wands.jpg')},
+  {id:26,name:'Cinco de Bastos',upright:'Conflicto sano, competencia',reversed:'Peleas innecesarias', img:filePath('RWS_Tarot_05_Wands.jpg')},
+  {id:27,name:'Seis de Bastos',upright:'Reconocimiento, victoria',reversed:'Falsa modestia', img:filePath('RWS_Tarot_06_Wands.jpg')},
+  {id:28,name:'Siete de Bastos',upright:'Defensa, perseverancia',reversed:'Agotamiento', img:filePath('RWS_Tarot_07_Wands.jpg')},
+  {id:29,name:'Ocho de Bastos',upright:'Movimiento rápido, noticias',reversed:'Retrasos', img:filePath('RWS_Tarot_08_Wands.jpg')},
+  {id:30,name:'Nueve de Bastos',upright:'Resistencia, preparación',reversed:'Fatiga', img:filePath('RWS_Tarot_09_Wands.jpg')},
+  {id:31,name:'Diez de Bastos',upright:'Carga, responsabilidad',reversed:'Descarga, alivio', img:filePath('RWS_Tarot_10_Wands.jpg')},
+  {id:32,name:'Paje de Bastos',upright:'Mensaje creativo, curiosidad',reversed:'Inmadurez', img:filePath('RWS_Tarot_Page_Wands.jpg')},
+  {id:33,name:'Caballero de Bastos',upright:'Impulso, valentía',reversed:'Impulsividad destructiva', img:filePath('RWS_Tarot_Knight_Wands.jpg')},
+  {id:34,name:'Reina de Bastos',upright:'Carisma, liderazgo',reversed:'Celos', img:filePath('RWS_Tarot_Queen_Wands.jpg')},
+  {id:35,name:'Rey de Bastos',upright:'Visión, autoridad creativa',reversed:'Tiranía', img:filePath('RWS_Tarot_King_Wands.jpg')},
+  // Copas 36-49
+  {id:36,name:'As de Copas',upright:'Amor, nuevos sentimientos',reversed:'Bloqueo emocional', img:filePath('RWS_Tarot_ACE_CUPS.jpg')},
+  {id:37,name:'Dos de Copas',upright:'Alianza, relación',reversed:'Desconexión', img:filePath('RWS_Tarot_02_Cups.jpg')},
+  {id:38,name:'Tres de Copas',upright:'Celebración, amistad',reversed:'Excesos sociales', img:filePath('RWS_Tarot_03_Cups.jpg')},
+  {id:39,name:'Cuatro de Copas',upright:'Meditación, reevaluación',reversed:'Apatía', img:filePath('RWS_Tarot_04_Cups.jpg')},
+  {id:40,name:'Cinco de Copas',upright:'Pérdida, duelo',reversed:'Aceptación', img:filePath('RWS_Tarot_05_Cups.jpg')},
+  {id:41,name:'Seis de Copas',upright:'Recuerdos, nostalgia',reversed:'Estancamiento pasado', img:filePath('RWS_Tarot_06_Cups.jpg')},
+  {id:42,name:'Siete de Copas',upright:'Opciones, fantasía',reversed:'Confusión', img:filePath('RWS_Tarot_07_Cups.jpg')},
+  {id:43,name:'Ocho de Copas',upright:'Partida, búsqueda',reversed:'Miedo al cambio', img:filePath('RWS_Tarot_08_Cups.jpg')},
+  {id:44,name:'Nueve de Copas',upright:'Satisfacción, deseos cumplidos',reversed:'Complacencia', img:filePath('RWS_Tarot_09_Cups.jpg')},
+  {id:45,name:'Diez de Copas',upright:'Armonía familiar, felicidad',reversed:'Ilusión rota', img:filePath('RWS_Tarot_10_Cups.jpg')},
+  {id:46,name:'Paje de Copas',upright:'Mensaje emocional, intuición',reversed:'Emociones inmaduras', img:filePath('RWS_Tarot_Page_Cups.jpg')},
+  {id:47,name:'Caballero de Copas',upright:'Romanticismo, propuesta',reversed:'Falso romance', img:filePath('RWS_Tarot_Knight_Cups.jpg')},
+  {id:48,name:'Reina de Copas',upright:'Empatía, nutrición emocional',reversed:'Vulnerabilidad', img:filePath('RWS_Tarot_Queen_Cups.jpg')},
+  {id:49,name:'Rey de Copas',upright:'Estabilidad emocional, guía',reversed:'Manipulación emocional', img:filePath('RWS_Tarot_King_Cups.jpg')},
+  // Espadas 50-63
+  {id:50,name:'As de Espadas',upright:'Claridad mental, verdad',reversed:'Confusión', img:filePath('RWS_Tarot_ACE_SWORDS.jpg')},
+  {id:51,name:'Dos de Espadas',upright:'Indecisión, equilibrio',reversed:'Evitar decisiones', img:filePath('RWS_Tarot_02_Swords.jpg')},
+  {id:52,name:'Tres de Espadas',upright:'Dolor, ruptura',reversed:'Sanación', img:filePath('RWS_Tarot_03_Swords.jpg')},
+  {id:53,name:'Cuatro de Espadas',upright:'Descanso, recuperación',reversed:'Estancamiento', img:filePath('RWS_Tarot_04_Swords.jpg')},
+  {id:54,name:'Cinco de Espadas',upright:'Conflicto, pérdida',reversed:'Remordimiento', img:filePath('RWS_Tarot_05_Swords.jpg')},
+  {id:55,name:'Seis de Espadas',upright:'Transición, viaje',reversed:'Resistencia al cambio', img:filePath('RWS_Tarot_06_Swords.jpg')},
+  {id:56,name:'Siete de Espadas',upright:'Estrategia, discreción',reversed:'Engaño descubierto', img:filePath('RWS_Tarot_07_Swords.jpg')},
+  {id:57,name:'Ocho de Espadas',upright:'Limitación mental, miedo',reversed:'Liberación gradual', img:filePath('RWS_Tarot_08_Swords.jpg')},
+  {id:58,name:'Nueve de Espadas',upright:'Ansiedad, pesadillas',reversed:'Alivio', img:filePath('RWS_Tarot_09_Swords.jpg')},
+  {id:59,name:'Diez de Espadas',upright:'Final doloroso, liberación',reversed:'Recuperación lenta', img:filePath('RWS_Tarot_10_Swords.jpg')},
+  {id:60,name:'Paje de Espadas',upright:'Curiosidad mental, noticias',reversed:'Chisme', img:filePath('RWS_Tarot_Page_Swords.jpg')},
+  {id:61,name:'Caballero de Espadas',upright:'Acción rápida, desafío',reversed:'Ira impulsiva', img:filePath('RWS_Tarot_Knight_Swords.jpg')},
+  {id:62,name:'Reina de Espadas',upright:'Claridad, límites',reversed:'Frialdad', img:filePath('RWS_Tarot_Queen_Swords.jpg')},
+  {id:63,name:'Rey de Espadas',upright:'Lógica, autoridad intelectual',reversed:'Abuso intelectual', img:filePath('RWS_Tarot_King_Swords.jpg')},
+  // Oros 64-77
+  {id:64,name:'As de Oros',upright:'Prosperidad, oportunidad',reversed:'Oportunidad perdida', img:filePath('RWS_Tarot_ACE_PENTACLES.jpg')},
+  {id:65,name:'Dos de Oros',upright:'Balance material, adaptación',reversed:'Caos financiero', img:filePath('RWS_Tarot_02_Pentacles.jpg')},
+  {id:66,name:'Tres de Oros',upright:'Trabajo en equipo, habilidad',reversed:'Falta de colaboración', img:filePath('RWS_Tarot_03_Pentacles.jpg')},
+  {id:67,name:'Cuatro de Oros',upright:'Seguridad, ahorro',reversed:'Avaricia', img:filePath('RWS_Tarot_04_Pentacles.jpg')},
+  {id:68,name:'Cinco de Oros',upright:'Escasez, dificultad',reversed:'Recuperación', img:filePath('RWS_Tarot_05_Pentacles.jpg')},
+  {id:69,name:'Seis de Oros',upright:'Generosidad, intercambio',reversed:'Dependencia', img:filePath('RWS_Tarot_06_Pentacles.jpg')},
+  {id:70,name:'Siete de Oros',upright:'Paciencia, evaluación',reversed:'Impaciencia', img:filePath('RWS_Tarot_07_Pentacles.jpg')},
+  {id:71,name:'Ocho de Oros',upright:'Maestría, trabajo',reversed:'Monotonía', img:filePath('RWS_Tarot_08_Pentacles.jpg')},
+  {id:72,name:'Nueve de Oros',upright:'Independencia, logro',reversed:'Soledad', img:filePath('RWS_Tarot_09_Pentacles.jpg')},
+  {id:73,name:'Diez de Oros',upright:'Legado, prosperidad familiar',reversed:'Inestabilidad heredada', img:filePath('RWS_Tarot_10_Pentacles.jpg')},
+  {id:74,name:'Paje de Oros',upright:'Mensaje práctico, aprendizaje',reversed:'Procrastinación', img:filePath('RWS_Tarot_Page_Pentacles.jpg')},
+  {id:75,name:'Caballero de Oros',upright:'Constancia, responsabilidad',reversed:'Rigidez', img:filePath('RWS_Tarot_Knight_Pentacles.jpg')},
+  {id:76,name:'Reina de Oros',upright:'Cuidado práctico, abundancia',reversed:'Descuido', img:filePath('RWS_Tarot_Queen_Pentacles.jpg')},
+  {id:77,name:'Rey de Oros',upright:'Seguridad, éxito material',reversed:'Materialismo', img:filePath('RWS_Tarot_King_Pentacles.jpg')}
 ];
 
-/* ------------------ Estado ------------------ */
+/* ------------------ Estado y utilidades ------------------ */
 let deck = [];
 const spreadPositions = { three: [ {x:30,y:50},{x:50,y:50},{x:70,y:50} ],
-                          celtic: [ // 10 positions relative % inside .spread-area
-                            {x:45,y:45}, // 0 - central
-                            {x:55,y:45}, // 1 - cross (overlay)
-                            {x:45,y:35}, // 2
-                            {x:45,y:55}, // 3
-                            {x:35,y:45}, // 4
-                            {x:65,y:45}, // 5
-                            {x:18,y:30}, // 6 supporting
-                            {x:82,y:30}, // 7
-                            {x:18,y:70}, // 8
-                            {x:82,y:70}  // 9
-                          ] };
+                          celtic: [ {x:50,y:50},{x:60,y:50},{x:50,y:40},{x:50,y:60},{x:40,y:50},{x:70,y:50},{x:20,y:30},{x:80,y:30},{x:20,y:70},{x:80,y:70} ] };
 
 const spreadEl = document.getElementById('spread');
 const statusText = document.getElementById('statusText');
 const meaningsEl = document.getElementById('meanings');
-const brujaImg = document.getElementById('brujaImg');
 const crystal = document.getElementById('crystal');
 
-/* ------------------ YouTube (solo 1) ------------------ */
-let ytPlayer = null;
-function loadYouTubeAPI(){
-  if(window.YT && window.YT.Player) return initYT();
-  const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s);
-  window.onYouTubeIframeAPIReady = initYT;
-}
-function initYT(){
-  const el = document.getElementById('ytPlayer');
-  ytPlayer = new YT.Player(el, { height:'240', width:'100%', videoId:'2OEL4P1Rz04', playerVars:{autoplay:0,controls:1,rel:0} });
-}
-$('loadYT')?.addEventListener('click', ()=>{
-  const val = document.getElementById('ytInput').value.trim();
-  if(!val) return alert('Pega un ID o URL');
-  const id = extractYTId(val);
-  if(!id) return alert('No pude extraer ID del enlace');
-  if(ytPlayer && ytPlayer.loadVideoById) ytPlayer.loadVideoById(id); else initYT();
-});
-function extractYTId(url){
-  // acepta ID puro o url normal
-  const idMatch = url.match(/[A-Za-z0-9_-]{11}/);
-  return idMatch ? idMatch[0] : null;
-}
-
-/* ------------------ Deck & helpers ------------------ */
 function buildDeck(){ deck = TAROT78.slice(); shuffle(deck); }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
-function canDraw(){
-  const key = 'tarot_last_draw_date';
-  const last = localStorage.getItem(key);
-  const today = new Date().toISOString().slice(0,10);
-  if(last === today) return false;
-  localStorage.setItem(key, today);
-  return true;
-}
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+function alreadyDrewToday(){ return localStorage.getItem('tarot_last_draw_date') === todayKey(); }
+function markDrewToday(){ localStorage.setItem('tarot_last_draw_date', todayKey()); }
+function clearDraw(){ localStorage.removeItem('tarot_last_draw_date'); updateAvailability(); }
 
-function alreadyDrewToday(){ const key='tarot_last_draw_date'; return localStorage.getItem(key) === new Date().toISOString().slice(0,10); }
+function updateAvailability(){ if(alreadyDrewToday()){ statusText.textContent='Ya hiciste tu tirada hoy'; document.getElementById('mystic').classList.add('dimmed'); } else { statusText.textContent='Disponible'; document.getElementById('mystic').classList.remove('dimmed'); } }
+updateAvailability();
 
-function setUnavailableUI(){ statusText.textContent = 'Ya hiciste tu tirada hoy'; crystal.classList.add('dimmed'); document.getElementById('mystic').classList.add('dimmed'); }
-function setAvailableUI(){ statusText.textContent = 'Disponible'; crystal.classList.remove('dimmed'); document.getElementById('mystic').classList.remove('dimmed'); }
-
-/* init availability */
-if(alreadyDrewToday()) setUnavailableUI(); else setAvailableUI();
-
-/* ------------------ Create visual card element ------------------ */
-function createCardEl(card, idx){
+/* ------------------ Visual cards ------------------ */
+function createCardEl(card){
   const wrap = document.createElement('div'); wrap.className='pos'; wrap.style.width='140px'; wrap.style.height='200px';
-  wrap.dataset.idx = card.id;
   const flip = document.createElement('div'); flip.className='card-flip'; flip.style.width='100%'; flip.style.height='100%'; flip.style.position='relative';
-  // front
-  const front = document.createElement('div'); front.className='card-face front'; front.innerHTML = `<div style="font-size:14px;">${card.name}</div>`;
-  // back
-  const back = document.createElement('div'); back.className='card-face back'; back.innerHTML = `<div style="font-size:14px;">TAROT</div>`;
-  flip.appendChild(front); flip.appendChild(back);
-  wrap.appendChild(flip);
-  // click to reveal
-  wrap.addEventListener('click', ()=>{ if(flip.classList.contains('revealed')) return; revealCard(wrap, card); });
+  const front = document.createElement('div'); front.className='card-visual front'; const img = document.createElement('img'); img.src = card.img; img.alt = card.name; front.appendChild(img);
+  const back = document.createElement('div'); back.className='card-visual back'; back.innerHTML = '<div style="font-weight:800">TAROT</div>';
+  flip.appendChild(front); flip.appendChild(back); wrap.appendChild(flip);
+  wrap.dataset.id = card.id;
+  wrap.addEventListener('click', ()=>{ if(flip.classList.contains('revealed')) return; revealCard(flip, card); });
   return wrap;
 }
 
-/* ------------------ Reveal logic ------------------ */
-function revealCard(el, card){
-  const flip = el.querySelector('.card-flip');
-  // flip with GSAP
-  gsap.to(flip, {rotationY:180, duration:0.9, ease:'power3.inOut', onComplete:()=>{
-    flip.classList.add('revealed'); // ensure state
-    // show meaning
+function revealCard(flipEl, card){
+  gsap.to(flipEl, {rotationY:180, duration:0.9, ease:'power3.inOut', onComplete:()=>{
+    flipEl.classList.add('revealed');
     meaningsEl.innerHTML = `<strong>${card.name}</strong><br/><em>Derecha:</em> ${card.upright}<br/><em>Invertida:</em> ${card.reversed}`;
   }});
 }
 
-/* ------------------ Animate deal ------------------ */
 function clearSpread(){ spreadEl.innerHTML=''; }
-
-function positionElementPercent(el,x,y){ el.style.left = x+'%'; el.style.top = y+'%'; el.style.transform = 'translate(-50%,-50%)'; }
 
 function animateDeal(cards, positions){
   clearSpread();
-  const container = spreadEl;
-  const deckRect = document.getElementById('deckEl').getBoundingClientRect();
-  const contRect = container.getBoundingClientRect();
   const tl = gsap.timeline();
-  cards.forEach((card, i)=>{
-    const node = createCardEl(card, i);
-    container.appendChild(node);
-    // place initially over deck
-    node.style.left = '20%'; node.style.top = '50%'; node.style.transform = 'translate(-50%,-50%) scale(0.9) rotate(' + (Math.random()*10-5) + 'deg)';
-    // animate to target
+  cards.forEach((card,i)=>{
+    const node = createCardEl(card);
+    spreadEl.appendChild(node);
+    // start over deck
+    node.style.left = '18%'; node.style.top = '52%'; node.style.transform = 'translate(-50%,-50%) scale(0.9) rotate(' + (Math.random()*8-4) + 'deg)';
     const pos = positions[i];
-    tl.to(node, {duration:0.9, xPercent:0, yPercent:0, left:pos.x+'%', top:pos.y+'%', rotation:0, scale:1, ease:'power2.out'}, '-=0.65');
-    // slight stagger
+    tl.to(node, {duration:0.9, left:pos.x+'%', top:pos.y+'%', rotation:0, scale:1, ease:'power2.out'}, '-=0.7');
+    // small stagger for depth
   });
-  // final micro bounce on crystal
-  tl.to('#crystal',{scale:1.06,duration:0.6,yoyo:true,repeat:1,ease:'sine.inOut'}, '>-0.2');
+  tl.to('#crystal .core',{scale:1.08,duration:0.6,yoyo:true,repeat:1,ease:'sine.inOut'}, '>-0.2');
 }
 
-/* ------------------ Requests: 3 card / single / celtic ------------------ */
-function actionDrawThree(){
-  if(alreadyDrewToday()) { alert('Hoy ya hiciste una lectura. Vuelve mañana.'); setUnavailableUI(); return; }
+/* ------------------ Actions ------------------ */
+function actionDraw(count, positions){
+  if(alreadyDrewToday()){ alert('Hoy ya hiciste una lectura. Vuelve mañana.'); updateAvailability(); return; }
   if(!confirm('Confirmas usar tu lectura diaria ahora? (1 por día)')) return;
   buildDeck(); shuffle(deck);
-  if(!canDraw()) { alert('No disponible.'); setUnavailableUI(); return; }
-  setUnavailableUI();
-  const cards = [deck.pop(), deck.pop(), deck.pop()];
-  animateDeal(cards, spreadPositions.three);
+  // mark now
+  markDrewToday(); updateAvailability();
+  const picked = [];
+  for(let i=0;i<count;i++) picked.push(deck.pop());
+  animateDeal(picked, positions.slice(0,count));
 }
 
-function actionDrawSingle(){
-  if(alreadyDrewToday()) { alert('Hoy ya hiciste una lectura. Vuelve mañana.'); setUnavailableUI(); return; }
-  if(!confirm('Confirmas usar tu lectura diaria ahora? (1 por día)')) return;
-  buildDeck(); shuffle(deck);
-  if(!canDraw()) { alert('No disponible.'); setUnavailableUI(); return; }
-  setUnavailableUI();
-  const cards = [deck.pop()];
-  animateDeal(cards, [ {x:50,y:50} ] );
-}
+document.getElementById('readThree').addEventListener('click', ()=> actionDraw(3, spreadPositions.three));
+document.getElementById('readSingle').addEventListener('click', ()=> actionDraw(1, [{x:50,y:50}]));
+document.getElementById('readCeltic').addEventListener('click', ()=> actionDraw(10, spreadPositions.celtic));
 
-function actionDrawCeltic(){
-  if(alreadyDrewToday()) { alert('Hoy ya hiciste una lectura. Vuelve mañana.'); setUnavailableUI(); return; }
-  if(!confirm('Confirmas usar tu lectura diaria ahora? (1 por día)')) return;
-  buildDeck(); shuffle(deck);
-  if(!canDraw()) { alert('No disponible.'); setUnavailableUI(); return; }
-  setUnavailableUI();
-  const cards = [];
-  for(let i=0;i<10;i++) cards.push(deck.pop());
-  animateDeal(cards, spreadPositions.celtic);
-}
-
-/* ------------------ UI bindings ------------------ */
-document.getElementById('readThree').addEventListener('click', actionDrawThree);
-document.getElementById('readSingle').addEventListener('click', actionDrawSingle);
-document.getElementById('readCeltic').addEventListener('click', actionDrawCeltic);
-document.getElementById('btnReset').addEventListener('click', ()=>{ localStorage.removeItem('tarot_last_draw_date'); setAvailableUI(); alert('Reiniciado: ahora puedes hacer una lectura hoy.'); });
+document.getElementById('btnReset').addEventListener('click', ()=>{ if(confirm('Reiniciar tiradas de prueba? Esto permite tirar otra vez hoy.')){ clearDraw(); alert('Reinicio completo. Ahora puedes hacer una lectura hoy.'); }});
 
 document.getElementById('previewBtn').addEventListener('click', ()=>{
   buildDeck(); shuffle(deck);
   clearSpread();
-  // show 6 sample cards fanned
   const sample = deck.slice(0,6);
   const positions = [{x:30,y:55},{x:36,y:53},{x:42,y:51},{x:58,y:51},{x:64,y:53},{x:70,y:55}];
   animateDeal(sample, positions);
 });
 
+/* ------------------ YouTube search (optional API key) ------------------ */
+let ytPlayer = null;
+function loadYouTubeAPI(){ if(window.YT && window.YT.Player){ initYT(); return; } const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; document.head.appendChild(s); window.onYouTubeIframeAPIReady = initYT; }
+function initYT(){ ytPlayer = new YT.Player('ytPlayer', {height:'240',width:'100%',videoId:'2OEL4P1Rz04',playerVars:{autoplay:0,controls:1,rel:0}}); }
+loadYouTubeAPI();
+
+async function ytSearch(query){ const apiKey = document.getElementById('ytApiKey').value.trim(); if(!apiKey){ // fallback: open YouTube search in new tab
+    window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(query),'_blank'); return; }
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&q=${encodeURIComponent(query)}&key=${encodeURIComponent(apiKey)}`;
+  try{
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('error');
+    const data = await r.json(); renderSearchResults(data.items || []);
+  }catch(e){ alert('Error buscando en YouTube: revisa tu API Key o busca en YouTube directamente.'); window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(query),'_blank'); }
+}
+
+function renderSearchResults(items){ const container = document.getElementById('searchResults'); container.innerHTML=''; items.forEach(it=>{
+  const vid = it.id.videoId; const snip = it.snippet; const div = document.createElement('div'); div.className='searchItem'; div.innerHTML = `<img src="${snip.thumbnails.medium.url}" alt="${snip.title}"><div style="flex:1"><div style="font-size:13px;font-weight:700">${snip.title}</div><div style="font-size:12px;color:#bfeffd">${snip.channelTitle}</div><div style="margin-top:8px"><button class='btn' data-id='${vid}'>Cargar</button></div></div>`;
+  container.appendChild(div);
+  div.querySelector('button').addEventListener('click', ()=>{ if(ytPlayer && ytPlayer.loadVideoById) ytPlayer.loadVideoById(vid); else initYT(); window.scrollTo({top:0,behavior:'smooth'}); });
+}); }
+
+document.getElementById('ytSearch').addEventListener('click', ()=>{ const q=document.getElementById('ytQuery').value.trim(); if(!q) return alert('Escribe una búsqueda'); ytSearch(q); });
+
 /* ------------------ Init ------------------ */
-function init(){ buildDeck(); shuffle(deck); loadYouTubeAPI(); }
+function init(){ buildDeck(); shuffle(deck); updateAvailability(); }
 init();
+
 </script></body>
 </html>
