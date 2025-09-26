@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>CorAlma — Encuentra tu calma</title>
-<meta name="description" content="Meditaciones, sonidos, artículos, tarot y playlists. Todo en una página." />
+<meta name="description" content="Meditaciones, sonidos, artículos dinámicos, tarot interactivo y playlists." />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root{
@@ -24,10 +24,16 @@ body{
     radial-gradient(circle at 90% 70%, rgba(110,198,217,0.04), transparent 10%),
     linear-gradient(180deg,var(--bg1), var(--bg2));
   min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  padding-bottom:60px;
+  padding-bottom:80px;
+  position:relative;
+  overflow-x:hidden;
 }
-.container{max-width:1180px;margin:24px auto;padding:18px}
+
+/* particle canvas sits behind */
+#particleCanvas{position:fixed;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.14}
+
+/* container */
+.container{max-width:1180px;margin:24px auto;padding:18px;position:relative;z-index:1}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px}
 .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
@@ -35,34 +41,58 @@ nav{display:flex;gap:10px;align-items:center}
 nav a{color:#cfeffb;text-decoration:none;padding:8px 10px;border-radius:9px}
 nav a:hover{background:var(--glass)}
 
-/* layout */
+/* cards & layout */
 .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:22px}
 .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:12px}
 .med-card{padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);box-shadow:0 10px 40px rgba(15,30,50,0.45)}
 .center{display:flex;flex-direction:column;align-items:center;gap:12px}
+
+/* controls */
+select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
 .btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
 
-/* Articles */
+/* meditation */
+.selector-row{display:flex;gap:10px;align-items:center;width:100%;justify-content:flex-start;flex-wrap:wrap}
+.med-circle{width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:transform .12s,border-color .2s}
+.med-circle:hover{transform:scale(1.03)}
+
+/* floating timer */
+.floating-btn{position:fixed;right:20px;bottom:20px;width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;cursor:move;z-index:2000;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:background .25s}
+.floating-btn.finished{background:var(--finished); color:#fff;}
+
+/* articles */
 .articles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px;max-height:320px;overflow:auto;padding-right:6px}
 .article-card{padding:12px;border-radius:10px;background:rgba(255,255,255,0.01);text-align:left}
-.article-card h3{margin:0 0 6px 0;font-size:16px}
-.article-card p{margin:0;color:#cfeef7;font-size:14px}
 
-/* YouTube playlists */
+/* playlists */
 .playlists{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
 .playlists iframe{width:100%;height:200px;border-radius:8px;border:0;}
 
-/* Tarot */
+/* tarot area */
 #tarotSection{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap}
-#mazo{width:180px;height:260px;border-radius:10px;background-image:linear-gradient(180deg,#2a1f44,#1b2633);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(0,0,0,0.5);cursor:pointer;border:4px solid rgba(255,255,255,0.03)}
+#mazo{width:180px;height:260px;border-radius:10px;background-image:linear-gradient(180deg,#2a1f44,#1b2633);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(0,0,0,0.5);cursor:pointer;border:4px solid rgba(255,255,255,0.03);position:relative}
 #mazo:hover{transform:translateY(-4px);transition:transform .18s}
-#cardReveal{width:220px;height:320px;border-radius:10px;object-fit:cover;box-shadow:0 18px 50px rgba(0,0,0,0.6);display:none}
-.card-inverted{transform: rotate(180deg);}
+#cardWrap{min-width:220px;min-height:320px;display:flex;align-items:center;justify-content:center}
+#cardReveal{width:220px;height:320px;border-radius:10px;object-fit:cover;box-shadow:0 18px 50px rgba(0,0,0,0.6);display:none;backface-visibility:hidden;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.card-inverted{transform: rotateX(180deg) rotateY(0deg) scale(1);}
 #tarotText{max-width:640px;background:var(--card-bg);padding:12px;border-radius:10px;color:#dff8ff}
 .loader{width:36px;height:36px;border-radius:50%;border:4px solid rgba(255,255,255,0.06);border-top-color:var(--accent1);animation:spin 1s linear infinite;margin:auto}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* social bar (exact icons/buttons left intact as requested) */
+/* history thumbnails */
+#history{display:flex;gap:8px;align-items:center;margin-top:10px}
+.hist-thumb{width:48px;height:70px;border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.hist-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* mazo-grid (full deck) */
+#deckGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:6px;padding:8px;background:rgba(0,0,0,0.12);border-radius:8px;max-height:300px;overflow:auto;margin-top:12px}
+.card-mini{width:100%;height:84px;border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+.card-mini img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* phrases */
+.phrase-box{background:var(--card-bg);padding:14px;border-radius:10px;color:#dff8ff;font-size:15px;min-height:72px;display:flex;align-items:center;justify-content:center;text-align:center;transition:opacity .6s}
+
+/* social bar (exact icons/buttons kept intact) */
 .social-bar {
   position: fixed;
   top: 45%;
@@ -80,18 +110,6 @@ nav a:hover{background:var(--glass)}
 .social-bar a:hover{background:rgba(255,255,255,0.04)}
 .social-bar .pay{background:linear-gradient(90deg,#ffd100,#2d9cff);border-radius:10px;padding:8px}
 
-/* Floating timer */
-.floating-btn{position:fixed;right:20px;bottom:20px;width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;cursor:move;z-index:2000;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:background .25s}
-.floating-btn.finished{background:var(--finished); color:#fff;}
-
-/* Meditación simple */
-.selector-row{display:flex;gap:10px;align-items:center;width:100%;justify-content:flex-start;flex-wrap:wrap}
-.med-circle{width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:transform .12s,border-color .2s}
-.med-circle:hover{transform:scale(1.03)}
-
-/* phrases */
-.phrase-box{background:var(--card-bg);padding:14px;border-radius:10px;color:#dff8ff;font-size:15px;min-height:72px;display:flex;align-items:center;justify-content:center;text-align:center}
-
 /* responsive */
 @media(max-width:980px){
   .grid{grid-template-columns:1fr}
@@ -104,6 +122,8 @@ nav a:hover{background:var(--glass)}
 </style>
 </head>
 <body>
+  <!-- particle canvas (background stars/constellation) -->
+  <canvas id="particleCanvas"></canvas>
 
   <!-- Social bar (kept exactly as requested) -->
   <div class="social-bar" aria-hidden="false">
@@ -186,25 +206,42 @@ nav a:hover{background:var(--glass)}
         <section id="tarot" class="card" style="margin-top:16px">
           <h3>Tarot — Toca el mazo</h3>
           <div id="tarotSection">
-            <div id="mazo" title="Toca el mazo para sacar una carta" aria-label="Mazo de tarot">
-              <div style="color:#fff;text-align:center;font-weight:700">MAZO</div>
+            <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+              <div id="mazo" title="Toca el mazo para sacar una carta" aria-label="Mazo de tarot">
+                <div style="color:#fff;text-align:center;font-weight:700">MAZO</div>
+              </div>
+              <button id="toggleDeckBtn" class="btn-primary" style="font-size:13px;padding:6px 8px">Ver mazo completo</button>
             </div>
 
             <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
-              <div id="cardWrap" style="min-width:220px;min-height:320px;display:flex;align-items:center;justify-content:center">
+              <div id="cardWrap">
                 <div id="cardLoader" class="loader" style="display:none"></div>
                 <img id="cardReveal" alt="Carta revelada" />
               </div>
+
               <div id="tarotText" aria-live="polite">Toca el mazo para revelar una carta. Se mostrará interpretación de Wikipedia (traducida al español si es necesario).</div>
+
+              <div id="history" aria-hidden="false"></div>
             </div>
           </div>
+
+          <!-- Deck grid (hidden by default) -->
+          <div id="deckGrid" style="display:none"></div>
         </section>
 
         <!-- YouTube Música -->
         <section id="music" class="card" style="margin-top:16px">
           <h3>Recomendaciones / Playlists (YouTube)</h3>
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-            <input id="ytSearchInput" type="text" placeholder="Buscar en YouTube..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dff8ff">
+            <input id="ytSearchInput" type="text" placeholder="Buscar en YouTube..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dff8ff" list="ytSuggestions">
+            <datalist id="ytSuggestions">
+              <option value="relajación"></option>
+              <option value="meditación guiada"></option>
+              <option value="sonidos de la naturaleza"></option>
+              <option value="concentración"></option>
+              <option value="respiración"></option>
+              <option value="ruido blanco"></option>
+            </datalist>
             <button class="btn-primary" onclick="ytSearch()">Buscar</button>
           </div>
           <div class="playlists">
@@ -254,17 +291,65 @@ nav a:hover{background:var(--glass)}
 /* ----------------- Helpers ----------------- */
 const $ = id => document.getElementById(id);
 
+/* ---------- Particle background (light constelation) ---------- */
+(function initParticles(){
+  const canvas = document.getElementById('particleCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w = canvas.width = innerWidth;
+  let h = canvas.height = innerHeight;
+  window.addEventListener('resize', ()=>{ w = canvas.width = innerWidth; h = canvas.height = innerHeight; init(); });
+
+  const particles = [];
+  const COUNT = Math.floor((w*h)/90000) * 40 + 40; // scale with screen
+  function rand(min,max){ return Math.random()*(max-min)+min; }
+  function init(){
+    particles.length = 0;
+    const n = Math.max(40, Math.floor((w*h)/120000));
+    for(let i=0;i<n;i++){
+      particles.push({x:rand(0,w), y:rand(0,h), vx:rand(-0.15,0.15), vy:rand(-0.05,0.05), r:rand(0.4,1.6), a:rand(0.05,0.4)});
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(let p of particles){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0) p.x = w; if(p.x>w) p.x=0; if(p.y<0) p.y=h; if(p.y>h) p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+      ctx.fill();
+    }
+    // connect some
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const p1 = particles[i], p2 = particles[j];
+        const dx = p1.x - p2.x, dy = p1.y - p2.y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath();
+          ctx.moveTo(p1.x,p1.y);
+          ctx.lineTo(p2.x,p2.y);
+          ctx.strokeStyle = `rgba(110,198,217,${0.02 + (0.12*(1 - d/120))})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  init();
+  draw();
+})();
+
 /* ---------- Timer & sync (page + floating) ---------- */
-let timerSec = 300;            // seconds left
+let timerSec = 300;
 let timerInterval = null;
-
 function pad(n){ return String(n).padStart(2,'0'); }
-
 function updateDisplays(){
   const m = Math.floor(timerSec/60), s = timerSec%60;
   const text = `${pad(m)}:${pad(s)}`;
-  const td = $('timeDisplay');
-  if(td) td.textContent = text;
+  const td = $('timeDisplay'); if(td) td.textContent = text;
   $('floatingTime').textContent = text;
   if(timerSec <= 0){
     $('floatingBtn').classList.add('finished');
@@ -274,78 +359,39 @@ function updateDisplays(){
     const mc = $('medCircle'); if(mc) mc.style.border = '0';
   }
 }
-
 function setTimer(sec){
   timerSec = sec;
   updateDisplays();
 }
-
 function startTimer(){
   if(timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(()=>{
-    if(timerSec > 0){
-      timerSec--;
-      updateDisplays();
-    } else {
-      clearInterval(timerInterval);
-      timerInterval = null;
-      updateDisplays();
-      // bell (optional)
-      try { new Audio('https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg').play(); } catch(e){}
-    }
-  }, 1000);
+    if(timerSec > 0){ timerSec--; updateDisplays(); }
+    else { clearInterval(timerInterval); timerInterval = null; updateDisplays(); try{ new Audio('https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg').play(); }catch(e){} }
+  },1000);
 }
+function stopTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval = null; updateDisplays(); }
 
-function stopTimer(){
-  if(timerInterval) clearInterval(timerInterval);
-  timerInterval = null;
-  updateDisplays();
-}
+/* UI bindings meditation */
+const startBtn = $('startBtn'); const stopBtn = $('stopBtn');
+if(startBtn) startBtn.addEventListener('click', ()=>{ const audio = $('natureAudio'); const sel = $('soundSelect')?.value; if(sel && audio){ audio.src = sel; audio.play().catch(()=>{}); } startTimer(); });
+if(stopBtn) stopBtn.addEventListener('click', ()=>{ const audio = $('natureAudio'); if(audio) audio.pause(); stopTimer(); });
+const medCircle = $('medCircle'); if(medCircle) medCircle.addEventListener('click', ()=>{ const audio = $('natureAudio'); const sel = $('soundSelect')?.value; if(sel && audio){ audio.src = sel; audio.play().catch(()=>{}); } startTimer(); });
 
-/* UI bindings for meditation */
-const startBtn = $('startBtn');
-const stopBtn = $('stopBtn');
-if(startBtn) startBtn.addEventListener('click', ()=> {
-  const audio = $('natureAudio');
-  const sel = $('soundSelect')?.value;
-  if(sel && audio){ audio.src = sel; audio.play().catch(()=>{}); }
-  startTimer();
-});
-if(stopBtn) stopBtn.addEventListener('click', ()=> { const audio = $('natureAudio'); if(audio) audio.pause(); stopTimer(); });
-const medCircle = $('medCircle');
-if(medCircle) medCircle.addEventListener('click', ()=> {
-  const audio = $('natureAudio'); const sel = $('soundSelect')?.value; if(sel && audio){ audio.src = sel; audio.play().catch(()=>{}); }
-  startTimer();
-});
-
-/* Sync floating: clicking floating toggles timer */
-const floatingBtn = $('floatingBtn');
-if(floatingBtn) {
-  floatingBtn.addEventListener('click', (e)=>{
-    if(isDragging) return;
-    if(timerInterval) stopTimer();
-    else startTimer();
-  });
-}
-
-/* ---------- Drag for floating ---------- */
+/* floating drag */
 let isDragging=false, offsetX=0, offsetY=0;
 const floating = $('floatingBtn');
 if(floating){
-  floating.addEventListener('mousedown', e => {
-    isDragging = true;
-    offsetX = e.clientX - floating.offsetLeft;
-    offsetY = e.clientY - floating.offsetTop;
-    e.preventDefault();
-  });
-  document.addEventListener('mousemove', e => { if(!isDragging) return; floating.style.left = (e.clientX - offsetX) + 'px'; floating.style.top = (e.clientY - offsetY) + 'px'; });
-  document.addEventListener('mouseup', () => { isDragging=false; });
-  floating.addEventListener('touchstart', e => { isDragging = true; const t = e.touches[0]; offsetX = t.clientX - floating.offsetLeft; offsetY = t.clientY - floating.offsetTop; });
-  document.addEventListener('touchmove', e => { if(!isDragging) return; const t = e.touches[0]; floating.style.left = (t.clientX - offsetX) + 'px'; floating.style.top = (t.clientY - offsetY) + 'px'; });
+  floating.addEventListener('mousedown', e=>{ isDragging=true; offsetX = e.clientX - floating.offsetLeft; offsetY = e.clientY - floating.offsetTop; e.preventDefault(); });
+  document.addEventListener('mousemove', e=>{ if(!isDragging) return; floating.style.left = (e.clientX - offsetX) + 'px'; floating.style.top = (e.clientY - offsetY) + 'px'; });
+  document.addEventListener('mouseup', ()=> isDragging=false);
+  floating.addEventListener('touchstart', e=>{ isDragging=true; const t=e.touches[0]; offsetX=t.clientX - floating.offsetLeft; offsetY=t.clientY - floating.offsetTop; });
+  document.addEventListener('touchmove', e=>{ if(!isDragging) return; const t=e.touches[0]; floating.style.left=(t.clientX-offsetX)+'px'; floating.style.top=(t.clientY-offsetY)+'px'; });
   document.addEventListener('touchend', ()=> isDragging=false);
+  floating.addEventListener('click', ()=> { if(isDragging) return; if(timerInterval) stopTimer(); else startTimer(); });
 }
 
-/* ---------- Articles (demo content) ---------- */
+/* ---------- Articles (demo) ---------- */
 const ARTICLES = [
   {source:'Wikipedia', title:'Meditation', extract:'Meditation is a practice where an individual uses a technique to train attention and awareness.' , url:'https://en.wikipedia.org/wiki/Meditation'},
   {source:'Local', title:'Rutina de gratitud', extract:'Pequeños ejercicios diarios para practicar la gratitud.', url:'#'},
@@ -354,14 +400,10 @@ const ARTICLES = [
 function renderArticles(items){
   const grid = $('articlesGrid'); if(!grid) return;
   grid.innerHTML = '';
-  items.forEach(a=>{
-    const card = document.createElement('div'); card.className='article-card';
-    card.innerHTML = `<h3>${a.title}</h3><p>${a.extract}</p><div class="source">Fuente: ${a.source}</div>`;
-    grid.appendChild(card);
-  });
+  items.forEach(a=>{ const card = document.createElement('div'); card.className='article-card'; card.innerHTML = `<h3>${a.title}</h3><p>${a.extract}</p><div class="source">Fuente: ${a.source}</div>`; grid.appendChild(card); });
 }
 
-/* ---------- Frases diarias (30 frases) ---------- */
+/* ---------- Frases diarias (30) + fade rotation ---------- */
 const PHRASES = [
   "Respira profundo: cada aliento te ancla al presente.",
   "La calma nace cuando sueltas lo que no puedes controlar.",
@@ -395,21 +437,31 @@ const PHRASES = [
   "Tu ritmo no tiene que competir con nadie más."
 ];
 
-function getTodayPhrase(){
+function getTodayPhraseDeterministic(){
   const today = new Date().toISOString().slice(0,10);
-  const stored = localStorage.getItem('coralma_phrase_date');
-  if(stored === today){
+  const storedDate = localStorage.getItem('coralma_phrase_date');
+  if(storedDate === today){
     const idx = Number(localStorage.getItem('coralma_phrase_idx') || 0);
-    return PHRASES[idx % PHRASES.length];
+    return idx % PHRASES.length;
   } else {
-    // deterministic by date so it changes each day but predictable
-    const daySeed = new Date().getDate() + new Date().getMonth() + new Date().getFullYear();
-    const idx = (daySeed % PHRASES.length);
+    // deterministic seed by date but pseudo-random enough
+    const dt = new Date();
+    const seed = dt.getFullYear() + dt.getMonth() + dt.getDate();
+    const idx = seed % PHRASES.length;
     localStorage.setItem('coralma_phrase_date', today);
     localStorage.setItem('coralma_phrase_idx', String(idx));
-    return PHRASES[idx];
+    return idx;
   }
 }
+let phraseIdx = getTodayPhraseDeterministic();
+function showPhrase(idx){
+  const box = $('phraseBox'); if(!box) return;
+  box.style.opacity = 0;
+  setTimeout(()=>{ box.textContent = PHRASES[idx % PHRASES.length]; box.style.opacity = 1; }, 520);
+}
+showPhrase(phraseIdx);
+// rotate every 30s with gentle transition but keep same daily phrase as base: we will cycle through +1 each interval
+setInterval(()=>{ phraseIdx = (phraseIdx + 1) % PHRASES.length; showPhrase(phraseIdx); }, 30000);
 
 /* ---------- YouTube search (direct) ---------- */
 function ytSearch(){
@@ -419,12 +471,8 @@ function ytSearch(){
   window.open(url, '_blank');
 }
 
-/* ---------- TAROT deck (majors + minors generated) ---------- */
-/* Using raw.githubusercontent.com ekelen/tarot-api structure for images:
-   majors in images/rws_major/<nn_name.jpg>
-   minors in images/rws_minor/<suit>/<name>.jpg
-   We'll construct filenames for minors (ace_of_wands, two_of_wands, ... page_of_wands, knight..., queen..., king...)
-*/
+/* ---------- TAROT deck (majors + minors) ---------- */
+/* Source images from ekelen/tarot-api (raw github). */
 const MAJORS = [
   {img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/00_the_fool.jpg', title_en:'The Fool (Tarot card)'},
   {img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/01_the_magician.jpg', title_en:'The Magician (Tarot card)'},
@@ -449,17 +497,14 @@ const MAJORS = [
   {img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/20_judgement.jpg', title_en:'Judgement (Tarot card)'},
   {img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/21_the_world.jpg', title_en:'The World (Tarot card)'}
 ];
-
 const SUITS = ['wands','cups','swords','pentacles'];
 const RANKS = ['ace','two','three','four','five','six','seven','eight','nine','ten','page','knight','queen','king'];
-
 function buildMinorDeck(){
   const arr = [];
   for(const suit of SUITS){
     for(const rank of RANKS){
       const name = `${rank}_of_${suit}.jpg`;
       const img = `https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_minor/${suit}/${name}`;
-      // english title like "Ace of Wands (Tarot card)"
       const capRank = rank.charAt(0).toUpperCase() + rank.slice(1).replace(/_/g,' ');
       const capSuit = suit.charAt(0).toUpperCase() + suit.slice(1);
       const title_en = `${capRank} of ${capSuit} (Tarot card)`;
@@ -468,11 +513,10 @@ function buildMinorDeck(){
   }
   return arr;
 }
-
 const MINORS = buildMinorDeck();
 const TAROT_DECK = [...MAJORS, ...MINORS];
 
-/* choose random card and random orientation (upright/inverted) */
+/* choose random card and orientation */
 function chooseCard(){
   const idx = Math.floor(Math.random() * TAROT_DECK.length);
   const card = TAROT_DECK[idx];
@@ -480,11 +524,13 @@ function chooseCard(){
   return {card, inverted};
 }
 
-/* fetch wikipedia summary in English then translate to Spanish via MyMemory.
-   We try English directly (titles are constructed with "(Tarot card)") because many cards have en pages.
-*/
+/* Wikipedia fetch + translation fallback (MyMemory). To limit calls, cached results in sessionStorage. */
 async function fetchWikiAndTranslate(title_en){
   try{
+    const cacheKey = 'wiki_'+title_en.replace(/\s+/g,'_');
+    const cached = sessionStorage.getItem(cacheKey);
+    if(cached) return JSON.parse(cached);
+
     const enUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title_en)}`;
     const res = await fetch(enUrl);
     if(res.ok){
@@ -492,17 +538,16 @@ async function fetchWikiAndTranslate(title_en){
       const enText = j.extract || '';
       const source = j.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(title_en)}`;
       if(enText){
+        // translate short text via MyMemory
         const tr = await translateMyMemory(enText, 'en', 'es');
-        return {text: tr, source};
+        const out = {text: tr, source};
+        sessionStorage.setItem(cacheKey, JSON.stringify(out));
+        return out;
       }
     }
-  }catch(e){
-    console.warn('wiki fetch error', e);
-  }
-  return {text: 'No se encontró interpretación en Wikipedia para esta carta.', source: ''};
+  }catch(e){ console.warn('wiki error', e); }
+  return {text:'No se encontró interpretación en Wikipedia para esta carta.', source:''};
 }
-
-/* MyMemory translation (public, free) */
 async function translateMyMemory(text, from='en', to='es'){
   try{
     const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text.slice(0,1000)) + `&langpair=${from}|${to}`;
@@ -510,92 +555,135 @@ async function translateMyMemory(text, from='en', to='es'){
     if(!r.ok) return text;
     const j = await r.json();
     return (j && j.responseData && j.responseData.translatedText) ? j.responseData.translatedText : text;
-  }catch(e){
-    console.warn('translate error', e);
-    return text;
-  }
+  }catch(e){ console.warn('translate error', e); return text; }
 }
 
-/* When user clicks the mazo: reveal card (to the side), show loader, fetch wiki, show translated text.
-   Persist last card & orientation in localStorage so refresh keeps it.
-*/
-const mazoEl = $('mazo');
-const cardReveal = $('cardReveal');
-const cardLoader = $('cardLoader');
-const tarotText = $('tarotText');
+/* persist last card */
+function persistLastCard(obj){ try{ localStorage.setItem('coralma_last_card', JSON.stringify(obj)); }catch(e){}}
+function loadPersistedCard(){ try{ const s = localStorage.getItem('coralma_last_card'); if(!s) return null; return JSON.parse(s);}catch(e){return null;}}
 
-function persistLastCard(cardObj){
-  try{ localStorage.setItem('coralma_last_card', JSON.stringify(cardObj)); } catch(e){}
-}
-function loadPersistedCard(){
+/* history (last 5) */
+function pushHistory(entry){
   try{
-    const s = localStorage.getItem('coralma_last_card');
-    if(!s) return null;
-    return JSON.parse(s);
-  }catch(e){ return null; }
+    const key = 'coralma_history';
+    const cur = JSON.parse(localStorage.getItem(key) || '[]');
+    cur.unshift(entry);
+    while(cur.length>5) cur.pop();
+    localStorage.setItem(key, JSON.stringify(cur));
+    renderHistory();
+  }catch(e){}
 }
-
-async function revealCardAction(){
+function getHistory(){ try{ return JSON.parse(localStorage.getItem('coralma_history')||'[]'); }catch(e){return [];} }
+function renderHistory(){
+  const hist = getHistory(); const container = $('history');
+  if(!container) return;
+  container.innerHTML = '';
+  hist.forEach((h, i)=>{
+    const d = document.createElement('div'); d.className='hist-thumb';
+    const img = document.createElement('img'); img.src = h.img; img.alt='hist'+i;
+    d.appendChild(img);
+    d.title = h.title_en + (h.inverted ? ' (invertida)' : '');
+    d.addEventListener('click', ()=> { showCardFromHistory(h); });
+    container.appendChild(d);
+  });
+}
+function showCardFromHistory(h){
+  const cardReveal = $('cardReveal'); const tarotText = $('tarotText'); const cardLoader = $('cardLoader');
   if(!cardReveal || !tarotText) return;
-  // show loader
-  cardLoader.style.display = 'block';
-  cardReveal.style.display = 'none';
-  const {card, inverted} = chooseCard();
-  // show image (it may 404 if filenames differ, but ekelen repo is standard)
-  cardReveal.src = card.img;
-  // wait a tick for image to try loading
-  cardReveal.onload = ()=> { /* nothing */ };
-  // fetch wiki + translate
-  const result = await fetchWikiAndTranslate(card.title_en);
-  // hide loader, show card
-  cardLoader.style.display = 'none';
-  cardReveal.style.display = 'block';
-  // apply inverted class if needed
-  if(inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
-  const sourceLink = result.source ? `<div style="margin-top:8px;font-size:12px;color:#9fd8ea">Fuente: <a href="${result.source}" target="_blank" style="color:#bfeffd">${result.source}</a></div>` : '';
-  tarotText.innerHTML = `<strong>Interpretación (Wikipedia — traducida):</strong><p style="margin:8px 0 0 0">${result.text}</p>${inverted ? '<div style="margin-top:8px;color:#ffd1a8;font-size:13px">Nota: carta invertida (interpretación invertida)</div>' : ''}${sourceLink}`;
-  // persist
-  persistLastCard({card, inverted, cachedText:result.text, source: result.source, img: card.img});
+  cardLoader.style.display='none'; cardReveal.style.display='block';
+  cardReveal.src = h.img; if(h.inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
+  const sourceLink = h.source ? `<div style="margin-top:8px;font-size:12px;color:#9fd8ea">Fuente: <a href="${h.source}" target="_blank" style="color:#bfeffd">${h.source}</a></div>` : '';
+  tarotText.innerHTML = `<strong>Interpretación (Wikipedia — traducida):</strong><p style="margin:8px 0 0 0">${h.text || ''}</p>${h.inverted ? '<div style="margin-top:8px;color:#ffd1a8;font-size:13px">Nota: carta invertida</div>' : ''}${sourceLink}`;
 }
 
-/* if there is persisted card, show it on load */
+/* reveal card action */
+const mazoEl = $('mazo'); const cardReveal = $('cardReveal'); const cardLoader = $('cardLoader'); const tarotText = $('tarotText');
+async function revealCardAction(pickManual){
+  if(!cardReveal || !tarotText || !cardLoader) return;
+  cardLoader.style.display = 'block'; cardReveal.style.display='none';
+  let cardObj;
+  if(pickManual && pickManual.img){
+    cardObj = {card: pickManual, inverted: Math.random()<0.5};
+  } else {
+    cardObj = chooseCard();
+  }
+  cardReveal.src = cardObj.card.img;
+  // fetch wiki & translate
+  const res = await fetchWikiAndTranslate(cardObj.card.title_en);
+  cardLoader.style.display = 'none'; cardReveal.style.display = 'block';
+  if(cardObj.inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
+  const sourceLink = res.source ? `<div style="margin-top:8px;font-size:12px;color:#9fd8ea">Fuente: <a href="${res.source}" target="_blank" style="color:#bfeffd">${res.source}</a></div>` : '';
+  tarotText.innerHTML = `<strong>Interpretación (Wikipedia — traducida):</strong><p style="margin:8px 0 0 0">${res.text}</p>${cardObj.inverted ? '<div style="margin-top:8px;color:#ffd1a8;font-size:13px">Nota: carta invertida</div>' : ''}${sourceLink}`;
+  // persist and push history
+  const entry = {img: cardObj.card.img, title_en: cardObj.card.title_en, inverted: cardObj.inverted, text: res.text, source: res.source, time: Date.now()};
+  persistLastCard(entry);
+  pushHistory(entry);
+}
+
+/* on load persisted */
 function showPersistedCardIfAny(){
   const p = loadPersistedCard();
   if(!p) return;
-  cardReveal.src = p.img;
-  cardReveal.style.display = 'block';
-  if(p.inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
+  if(cardReveal){ cardReveal.src = p.img; cardReveal.style.display='block'; if(p.inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted'); }
   const sourceLink = p.source ? `<div style="margin-top:8px;font-size:12px;color:#9fd8ea">Fuente: <a href="${p.source}" target="_blank" style="color:#bfeffd">${p.source}</a></div>` : '';
-  tarotText.innerHTML = `<strong>Interpretación (Wikipedia — traducida):</strong><p style="margin:8px 0 0 0">${p.cachedText || ''}</p>${p.inverted ? '<div style="margin-top:8px;color:#ffd1a8;font-size:13px">Nota: carta invertida (interpretación invertida)</div>' : ''}${sourceLink}`;
+  if(tarotText) tarotText.innerHTML = `<strong>Interpretación (Wikipedia — traducida):</strong><p style="margin:8px 0 0 0">${p.text || ''}</p>${p.inverted ? '<div style="margin-top:8px;color:#ffd1a8;font-size:13px">Nota: carta invertida</div>' : ''}${sourceLink}`;
+  renderHistory();
 }
 
-/* attach event */
-if(mazoEl){
-  mazoEl.addEventListener('click', ()=> {
-    revealCardAction();
+/* attach click */
+if(mazoEl) mazoEl.addEventListener('click', ()=> revealCardAction(false));
+
+/* deck grid toggle & render */
+const deckGrid = $('deckGrid'); const toggleDeckBtn = $('toggleDeckBtn');
+if(toggleDeckBtn){
+  toggleDeckBtn.addEventListener('click', ()=>{
+    if(deckGrid.style.display === 'none' || deckGrid.style.display === ''){
+      deckGrid.style.display = 'grid';
+      toggleDeckBtn.textContent = 'Ocultar mazo';
+      if(deckGrid.childElementCount === 0) renderDeckGrid();
+    } else {
+      deckGrid.style.display = 'none';
+      toggleDeckBtn.textContent = 'Ver mazo completo';
+    }
+  });
+}
+function renderDeckGrid(){
+  if(!deckGrid) return;
+  deckGrid.innerHTML = '';
+  TAROT_DECK.forEach((c,i)=>{
+    const d = document.createElement('div'); d.className='card-mini';
+    const img = document.createElement('img'); img.src=c.img; img.alt='c'+i; img.loading='lazy';
+    d.appendChild(img);
+    d.addEventListener('click', ()=> revealCardAction(c));
+    deckGrid.appendChild(d);
   });
 }
 
-/* ---------- Subscription form ---------- */
+/* ---------- subscription form ---------- */
 const subForm = $('subForm');
-if(subForm) subForm.addEventListener('submit', e=>{
-  e.preventDefault();
-  $('subInfo').textContent = '¡Gracias! Te hemos suscrito (demo)';
-  $('emailInput').value = '';
-});
+if(subForm) subForm.addEventListener('submit', e=>{ e.preventDefault(); $('subInfo').textContent = '¡Gracias! Te hemos suscrito (demo)'; $('emailInput').value = ''; });
 
-/* ---------- Init content ---------- */
+/* ---------- init ---------- */
 function init(){
   renderArticles(ARTICLES);
-  // phrase
-  const phraseBox = $('phraseBox');
-  if(phraseBox) phraseBox.textContent = getTodayPhrase();
-  // tarot persisted
+  // phrases
+  const storedIdx = Number(localStorage.getItem('coralma_phrase_idx') || phraseIdx);
+  phraseIdx = storedIdx;
+  showPhrase(phraseIdx);
+  // tarot persisted & history
   showPersistedCardIfAny();
-  // initialize timer displays
+  renderHistory();
+  // timer display
   updateDisplays();
 }
 init();
+
+/* keep performance: prefetch small images of card thumbs in background (deferred) */
+setTimeout(()=>{
+  try{
+    TAROT_DECK.slice(0,40).forEach(c=>{ const i = new Image(); i.src = c.img; });
+  }catch(e){}
+},2000);
 
 </script>
 </body>
