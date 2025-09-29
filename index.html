@@ -1,701 +1,189 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>CorAlma — Encuentra tu calma</title>
-<meta name="description" content="CorAlma — Tarot interactivo, Oráculo de Ángeles, meditaciones, playlists y artículos." />
-<style>
-/* ========================
-   Aurora Borealis theme
-   ====================== */
-:root{
-  --bg1:#031021;
-  --bg2:#06122b;
-  --aurora1: rgba(96, 238, 203, 0.14);
-  --aurora2: rgba(134, 94, 232, 0.12);
-  --aurora3: rgba(255, 190, 119, 0.06);
-  --accent1:#7EE7D3;
-  --accent2:#A27BFF;
-  --glass: rgba(255,255,255,0.04);
-  --muted:#9fd8ea;
-  --text:#e6f9ff;
-  --finished:#ff6b6b;
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; -webkit-font-smoothing:antialiased}
-body{
-  color:var(--text);
-  background:
-    radial-gradient(circle at 10% 10%, rgba(162,123,255,0.06), transparent 6%),
-    radial-gradient(circle at 90% 70%, rgba(126,231,211,0.04), transparent 10%),
-    linear-gradient(180deg,var(--bg1), var(--bg2));
-  min-height:100vh;
-  overflow-x:hidden;
-  position:relative;
-  background-attachment:fixed;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oráculo y Tarot</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(270deg, #0f0c29, #302b63, #24243e);
+      background-size: 600% 600%;
+      animation: aurora 20s ease infinite;
+      color: #fff;
+      overflow-x: hidden;
+    }
 
-/* container */
-.container{max-width:1180px;margin:24px auto;padding:18px;position:relative;z-index:1}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
-nav{display:flex;gap:10px;align-items:center}
-nav a{color:#cfeffb;text-decoration:none;padding:8px 10px;border-radius:9px}
-nav a:hover{background:var(--glass)}
+    @keyframes aurora {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-/* hero */
-.hero{margin-top:14px;border-radius:14px;padding:20px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));display:flex;gap:20px;align-items:center;position:relative;overflow:hidden}
-.hero-left{flex:1}
-.cta .btn-primary{margin-top:12px}
+    h1, h2 {
+      text-align: center;
+      margin: 20px 0;
+    }
 
-/* layout */
-.grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:22px}
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:12px}
-.med-card{padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);box-shadow:0 10px 40px rgba(15,30,50,0.45)}
-.center{display:flex;flex-direction:column;align-items:center;gap:12px}
-select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
-.btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+    .section {
+      margin: 40px auto;
+      max-width: 800px;
+      text-align: center;
+      padding: 20px;
+    }
 
-/* meditación */
-.selector-row{display:flex;gap:10px;align-items:center;width:100%;justify-content:center;flex-wrap:wrap}
-.med-circle{width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:transform .12s,border-color .2s}
-.med-circle:hover{transform:scale(1.03)}
-.time-display{font-weight:700}
+    /* ==== CARTAS ==== */
+    .card-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
 
-/* articles */
-.articles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px;max-height:320px;overflow:auto;padding-right:6px}
-.article-card{padding:12px;border-radius:10px;background:rgba(255,255,255,0.01);text-align:left}
-.article-card h3{margin:0 0 6px 0;font-size:16px}
-.article-card p{margin:0;color:#cfeef7;font-size:14px}
-.article-card .source{font-size:12px;color:#9fd8ea;margin-top:6px}
-.read-btn{margin-top:8px;padding:6px 8px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#dff8ff;cursor:pointer}
+    .card {
+      width: 200px;
+      height: 320px;
+      border-radius: 15px;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
 
-/* tarot / angels - mazos only (no gallery visible) */
-.mazo-box{width:180px;height:260px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.16));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
-.mazo-box:hover{transform:translateY(-6px);transition:transform .18s}
+    .card img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 12px;
+    }
 
-#cardReveal, #angelReveal {width:260px;height:380px;border-radius:10px;object-fit:cover;box-shadow:0 18px 50px rgba(0,0,0,0.6);display:block;backface-visibility:hidden;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.8,.2,1), opacity .6s}
-.card-inverted{transform: rotate(180deg)}
+    .card:hover {
+      transform: scale(1.05);
+    }
 
-/* glow animations for energy */
-@keyframes glowPulse {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); transform: scale(1); }
-  20% { box-shadow: 0 0 14px var(--glowColor); transform: scale(1.01); }
-  60% { box-shadow: 0 0 34px var(--glowColor); transform: scale(1.02); }
-  100% { box-shadow: 0 0 14px var(--glowColor); transform: scale(1); }
-}
-.glow-green{ --glowColor: rgba(98, 255, 150, 0.85); animation: glowPulse 2.6s ease-in-out infinite; }
-.glow-yellow{ --glowColor: rgba(255, 222, 100, 0.9); animation: glowPulse 2.6s ease-in-out infinite; }
-.glow-red{ --glowColor: rgba(255,90,90,0.95); animation: glowPulse 2.6s ease-in-out infinite; }
-.glow-angel{ --glowColor: rgba(170, 230, 255, 0.9); animation: glowPulse 3.2s ease-in-out infinite; }
+    .glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(0,255,200,0.7);
+      animation: pulse 3s infinite ease-in-out;
+      pointer-events: none;
+    }
 
-/* social bar (right) EXACT as requested */
-.social-bar {
-  position: fixed;
-  top: 45%;
-  right: 0;
-  transform: translateY(-50%);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding:8px;
-  background:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.06));
-  border-radius:12px 0 0 12px;
-  z-index:1200;
-}
-.social-bar a{display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:transparent;border-radius:8px;color:#fff;text-decoration:none}
-.social-bar a:hover{background:rgba(255,255,255,0.04)}
-.social-bar .pay{background:linear-gradient(90deg,#ffd100,#2d9cff);border-radius:10px;padding:8px}
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px rgba(0,255,200,0.4); }
+      50% { box-shadow: 0 0 40px rgba(0,255,200,0.9); }
+      100% { box-shadow: 0 0 10px rgba(0,255,200,0.4); }
+    }
 
-/* floating timer */
-.floating-btn{position:fixed;right:20px;bottom:20px;width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;cursor:move;z-index:2000;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:background .25s}
-.floating-btn.finished{background:var(--finished); color:#fff;}
+    /* ==== FRASES ==== */
+    .frase-box {
+      font-size: 1.2em;
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 20px;
+    }
 
-/* responsive */
-@media(max-width:980px){
-  .grid{grid-template-columns:1fr}
-  .social-bar{top:auto;bottom:10px;right:50%;transform:translateX(50%);flex-direction:row;border-radius:12px}
-}
-</style>
-</head>
-<body>
-  <!-- social bar (unchanged links) -->
-  <div class="social-bar" aria-hidden="false">
-    <a href="https://www.instagram.com/effectno33?igsh=MjAycWE4dTFsbXpw" target="_blank" title="Instagram"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" style="width:24px;height:24px"></a>
-    <a href="https://www.tiktok.com/@effect.33?_t=ZS-8zoEWdno7UL&_r=1" target="_blank" title="TikTok"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok" style="width:24px;height:24px"></a>
-    <a href="https://youtube.com/@effect.no33?si=1etVu0OT8KashHWN" target="_blank" title="YouTube"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" style="width:24px;height:24px"></a>
-    <a class="pay" href="https://www.paypal.com/donate/?hosted_button_id=GW4XCFHYRTJQQ" target="_blank" title="Donar con PayPal"><img src="https://www.paypalobjects.com/es_XC/i/btn/btn_donateCC_LG.gif" alt="PayPal" style="height:28px"></a>
-  </div>
+    /* ==== PLAYLIST ==== */
+    .playlist {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
 
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="logo">CA</div>
-        <div>
-          <h1>CorAlma</h1>
-          <div style="font-size:12px;color:#bfeffd">Encuentra tu calma en el universo interior</div>
-        </div>
-      </div>
-      <nav>
-        <a href="#">Inicio</a>
-        <a href="#medit-block">Meditación</a>
-        <a href="#art">Artículos</a>
-        <a href="#tarot">Tarot</a>
-        <a href="#angeles">Oráculo de Ángeles</a>
-        <a href="#music">Música</a>
-        <a href="#contact">Contacto</a>
-      </nav>
-    </header>
+    .playlist a img {
+      border-radius: 12px;
+      width: 200px;
+      height: 120px;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
 
-    <section class="hero card med-card" aria-labelledby="hero-title">
-      <div class="hero-left">
-        <h2 id="hero-title">Calma y presencia — prácticas y oráculos</h2>
-        <p>Tarot, oráculo de ángeles, meditaciones y música — diseñado con colores inspirados en auroras boreales.</p>
-        <div class="cta"><button class="btn-primary" onclick="document.getElementById('medit-block').scrollIntoView({behavior:'smooth'})">Iniciar Meditación</button></div>
-      </div>
-    </section>
+    .playlist a img:hover {
+      transform: scale(1.05);
+    }
 
-    <div class="grid">
-      <main>
-        <!-- Meditación -->
-        <section id="medit-block" class="card med-card" aria-labelledby="medit-title">
-          <h3 id="medit-title">Meditación interactiva</h3>
-          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-            <div class="selector-row" style="gap:8px">
-              <button class="btn-primary" onclick="setTimer(300)">5 min</button>
-              <button class="btn-primary" onclick="setTimer(600)">10 min</button>
-              <button class="btn-primary" onclick="setTimer(900)">15 min</button>
-            </div>
-          </div>
+    /* ==== ARTÍCULOS ==== */
+    .articles {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
 
-          <div style="margin-top:14px" class="center">
-            <div id="medCircle" class="med-circle" role="button" tabindex="0">Click para<br>meditar</div>
-            <div class="time-display" style="margin-top:10px">Tiempo: <span id="timeDisplay">00:00</span></div>
-          </div>
+    .articles a {
+      text-decoration: none;
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 12px;
+      transition: 0.3s;
+    }
 
-          <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
-            <button id="startBtn" class="btn-primary">Iniciar</button>
-            <button id="stopBtn" class="btn-primary" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">Detener</button>
-            <label style="margin-left:8px;font-size:13px"><input id="audioOnlyToggle" type="checkbox"> Solo audio</label>
-          </div>
-        </section>
+    .articles a:hover {
+      background: rgba(255,255,255,0.25);
+    }
 
-        <!-- Articles -->
-        <section class="card" id="art" style="margin-top:16px">
-          <h3 style="margin-top:0">Artículos</h3>
-          <div class="articles-grid" id="articlesGrid" role="list"></div>
-        </section>
+    /* ==== SOCIAL BAR DESKTOP ==== */
+    .social-bar {
+      position: fixed;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 1000;
+    }
 
-        <!-- Tarot: solo mazo visible, al tocar revela carta -->
-        <section id="tarot" class="card" style="margin-top:16px">
-          <h3>Tarot — Saca una carta (Tarot de Marsella)</h3>
-          <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
-            <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
-              <div id="tarotMazo" class="mazo-box" title="Toca para sacar una carta">
-                <div style="color:#dff8ff;font-weight:700">MAZO</div>
-              </div>
-              <div style="font-size:13px;color:#bfeffd">Toca el mazo para sacar una carta al azar</div>
-            </div>
+    .social-bar a {
+      width: 45px;
+      height: 45px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      text-decoration: none;
+      transition: 0.3s;
+    }
 
-            <div style="flex:1;min-width:320px">
-              <div style="display:flex;gap:12px;align-items:flex-start">
-                <div id="cardWrap" style="min-width:260px">
-                  <img id="cardReveal" src="" alt="Carta revelada" style="display:none" />
-                </div>
-                <div style="flex:1">
-                  <div id="tarotText" style="color:#dff8ff">Pulsa el mazo para revelar una carta del Tarot. La explicación está integrada y enlazada a Wikipedia para ampliar.</div>
-                </div>
-              </div>
-              <div id="historyTarot" style="margin-top:12px"></div>
-            </div>
-          </div>
-        </section>
+    .social-bar a:hover {
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(1.1);
+    }
 
-        <!-- Oráculo de Ángeles: igual comportamiento -->
-        <section id="angeles" class="card" style="margin-top:16px">
-          <h3>Oráculo de Ángeles — Saca una carta (Oráculo)</h3>
-          <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
-            <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
-              <div id="angelMazo" class="mazo-box" title="Toca para pedir un mensaje angelical">
-                <div style="color:#dff8ff;font-weight:700">MAZO</div>
-              </div>
-              <div style="font-size:13px;color:#bfeffd">Toca el mazo para recibir un mensaje angelical</div>
-            </div>
+    .social-bar svg {
+      width: 22px;
+      height: 22px;
+      fill: #fff;
+    }
 
-            <div style="flex:1;min-width:320px">
-              <div style="display:flex;gap:12px;align-items:flex-start">
-                <div id="angelWrap" style="min-width:260px">
-                  <img id="angelReveal" src="" alt="Carta angelical" style="display:none" />
-                </div>
-                <div style="flex:1">
-                  <div id="angelText" style="color:#dff8ff">Pulsa el mazo para recibir un mensaje de los ángeles. Mantén la calma y recibe la guía con el corazón abierto.</div>
-                </div>
-              </div>
-              <div id="historyAngel" style="margin-top:12px"></div>
-            </div>
-          </div>
-        </section>
+    /* ==== FAB MÓVIL ==== */
+    .fab-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1001;
+      display: none;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+    }
 
-        <!-- Music (playlists) -->
-        <section id="music" class="card" style="margin-top:16px">
-          <h3>Playlists (YouTube)</h3>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-            <input id="ytSearchInput" type="text" placeholder="Buscar en YouTube..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dff8ff" list="ytSuggestions">
-            <datalist id="ytSuggestions">
-              <option value="relajación"></option>
-              <option value="meditación guiada"></option>
-              <option value="sonidos de la naturaleza"></option>
-            </datalist>
-            <button class="btn-primary" onclick="ytSearch()">Buscar</button>
-          </div>
-          <div class="playlists" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
-            <iframe src="https://www.youtube.com/embed/videoseries?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <iframe src="https://www.youtube.com/embed/videoseries?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <iframe src="https://www.youtube.com/embed/videoseries?list=PL6FMHId50GbGGi06g4gMUzsfMNveEKNxQ" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
-        </section>
-
-      </main>
-
-      <aside>
-        <div class="card">
-          <h4 style="margin-top:0">Frases diarias</h4>
-          <div id="phraseBox" style="background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));padding:12px;border-radius:8px;min-height:72px;display:flex;align-items:center;justify-content:center;text-align:center;color:#dff8ff"></div>
-        </div>
-
-        <div class="card" id="reg" style="margin-top:12px">
-          <h4 style="margin-top:0">Registro / Frase mensual</h4>
-          <form id="subForm">
-            <input id="emailInput" type="email" placeholder="tu@correo.com" required style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dff8ff">
-            <div style="margin-top:10px"><button class="btn-primary" type="submit">Suscribirme</button></div>
-          </form>
-          <div id="subInfo" style="margin-top:12px;color:#bfeffd"></div>
-        </div>
-
-        <div class="card" id="don" style="margin-top:12px">
-          <h4 style="margin-top:0">Donaciones</h4>
-          <p style="margin:0 0 10px 0;color:#cfeef7">Si valoras este proyecto, apóyalo.</p>
-          <a class="btn-primary" href="https://www.paypal.com/donate/?hosted_button_id=GW4XCFHYRTJQQ" target="_blank" rel="noopener">Donar con PayPal</a>
-        </div>
-      </aside>
-    </div>
-
-    <footer id="contact" style="margin-top:20px">
-      <div style="color:#9fd8ea">Contacto: <a href="mailto:almacoralma@gmail.com">almacoralma@gmail.com</a></div>
-    </footer>
-  </div>
-
-  <!-- floating synchronized timer -->
-  <div id="floatingBtn" class="floating-btn" title="Arrástrame">
-    <div id="floatingLabel">Meditación</div>
-    <div id="floatingTime" style="font-size:13px;margin-top:6px">00:00</div>
-  </div>
-
-<script>
-/* ============================
-   DATA / CONFIG
-   - Tarot: TAROT_FULL (78)
-   - Angels: ANGEL_ORACLE (44)
-   - Images use placeholders by default for estabilidad; reemplaza IMG_BASE si subes a tu CDN.
-   ============================ */
-
-const IMG_PLACEHOLDER = (label, w=260, h=380) => `https://via.placeholder.com/${w}x${h}.png?text=${encodeURIComponent(label)}`;
-
-/* ---------------- TAROT: 78 cartas (breves) ---------------- */
-/* (Se incluyen las mismas 78 del set anterior, con placeholders) */
-const TAROT_FULL = [
-  /* Mayores */
-  {name:"0 - El Loco", img: IMG_PLACEHOLDER('El Loco'), desc:"Inicios, libertad, salto al vacío con fe. Invertida: imprudencia o falta de dirección.", wiki:"https://es.wikipedia.org/wiki/Loco_(tarot)"},
-  {name:"I - El Mago", img: IMG_PLACEHOLDER('El Mago'), desc:"Habilidad, manifestación, voluntad. Invertida: manipulación, distracción.", wiki:"https://es.wikipedia.org/wiki/Mago_(tarot)"},
-  {name:"II - La Sacerdotisa", img: IMG_PLACEHOLDER('La Sacerdotisa'), desc:"Intuición, misterio, sabiduría interior. Invertida: bloqueo intuitivo, secretos.", wiki:"https://es.wikipedia.org/wiki/Sacerdotisa_(tarot)"},
-  {name:"III - La Emperatriz", img: IMG_PLACEHOLDER('La Emperatriz'), desc:"Creatividad, abundancia, fertilidad. Invertida: bloqueo creativo o dependencia.", wiki:"https://es.wikipedia.org/wiki/Emperatriz_(tarot)"},
-  {name:"IV - El Emperador", img: IMG_PLACEHOLDER('El Emperador'), desc:"Estructura, autoridad, protección. Invertida: rigidez, abuso de poder.", wiki:"https://es.wikipedia.org/wiki/Emperador_(tarot)"},
-  {name:"V - El Sumo Sacerdote", img: IMG_PLACEHOLDER('El Sumo Sacerdote'), desc:"Tradición, enseñanza, guía espiritual. Invertida: dogmatismo.", wiki:"https://es.wikipedia.org/wiki/Sumo_Sacerdote_(tarot)"},
-  {name:"VI - Los Amantes", img: IMG_PLACEHOLDER('Los Amantes'), desc:"Decisiones del corazón, unión, valores compartidos. Invertida: conflicto, indecisión.", wiki:"https://es.wikipedia.org/wiki/Amantes_(tarot)"},
-  {name:"VII - El Carro", img: IMG_PLACEHOLDER('El Carro'), desc:"Voluntad, avance, victoria mediante control. Invertida: pérdida de control.", wiki:"https://es.wikipedia.org/wiki/Carro_(tarot)"},
-  {name:"VIII - La Justicia", img: IMG_PLACEHOLDER('La Justicia'), desc:"Equilibrio, ley, responsabilidad. Invertida: injusticia, sesgo.", wiki:"https://es.wikipedia.org/wiki/Justicia_(tarot)"},
-  {name:"IX - El Ermitaño", img: IMG_PLACEHOLDER('El Ermitaño'), desc:"Búsqueda interior, retiro, sabiduría. Invertida: soledad excesiva.", wiki:"https://es.wikipedia.org/wiki/Ermita%C3%B1o_(tarot)"},
-  {name:"X - La Rueda de la Fortuna", img: IMG_PLACEHOLDER('La Rueda'), desc:"Ciclo, cambio, destino. Invertida: resistencia al cambio.", wiki:"https://es.wikipedia.org/wiki/Rueda_de_la_Fortuna_(tarot)"},
-  {name:"XI - La Fuerza", img: IMG_PLACEHOLDER('La Fuerza'), desc:"Coraje, calma interior, dominio de impulsos. Invertida: dudas, debilidad.", wiki:"https://es.wikipedia.org/wiki/Fuerza_(tarot)"},
-  {name:"XII - El Colgado", img: IMG_PLACEHOLDER('El Colgado'), desc:"Entrega, cambio de perspectiva, pausa. Invertida: inmovilidad.", wiki:"https://es.wikipedia.org/wiki/Colgado_(tarot)"},
-  {name:"XIII - La Muerte", img: IMG_PLACEHOLDER('La Muerte'), desc:"Transformación, cierre necesario. Invertida: resistencia al cambio.", wiki:"https://es.wikipedia.org/wiki/Muerte_(tarot)"},
-  {name:"XIV - La Templanza", img: IMG_PLACEHOLDER('La Templanza'), desc:"Equilibrio, integración, moderación. Invertida: extremos.", wiki:"https://es.wikipedia.org/wiki/Templanza_(tarot)"},
-  {name:"XV - El Diablo", img: IMG_PLACEHOLDER('El Diablo'), desc:"Ataduras, materialismo, tentación. Invertida: liberación.", wiki:"https://es.wikipedia.org/wiki/Diablo_(tarot)"},
-  {name:"XVI - La Torre", img: IMG_PLACEHOLDER('La Torre'), desc:"Crisis súbita, derrumbe de estructuras falsas. Invertida: evitación del cambio.", wiki:"https://es.wikipedia.org/wiki/Torre_(tarot)"},
-  {name:"XVII - La Estrella", img: IMG_PLACEHOLDER('La Estrella'), desc:"Esperanza, guía espiritual, calma renovadora. Invertida: pérdida de fe momentánea.", wiki:"https://es.wikipedia.org/wiki/Estrella_(tarot)"},
-  {name:"XVIII - La Luna", img: IMG_PLACEHOLDER('La Luna'), desc:"Inconsciente, sueños, confusión. Invertida: claridad progresiva.", wiki:"https://es.wikipedia.org/wiki/Luna_(tarot)"},
-  {name:"XIX - El Sol", img: IMG_PLACEHOLDER('El Sol'), desc:"Éxito, vitalidad, verdad. Invertida: falsa felicidad, exceso.", wiki:"https://es.wikipedia.org/wiki/Sol_(tarot)"},
-  {name:"XX - El Juicio", img: IMG_PLACEHOLDER('El Juicio'), desc:"Renacimiento, evaluación, llamada interna. Invertida: autocondena.", wiki:"https://es.wikipedia.org/wiki/Juicio_(tarot)"},
-  {name:"XXI - El Mundo", img: IMG_PLACEHOLDER('El Mundo'), desc:"Integración, logro, cierre de ciclo. Invertida: metas incompletas.", wiki:"https://es.wikipedia.org/wiki/Mundo_(tarot)"},
-
-  /* Bastos */
-  {name:"As de Bastos", img: IMG_PLACEHOLDER('As de Bastos'), desc:"Nueva inspiración, chispa creativa.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Dos de Bastos", img: IMG_PLACEHOLDER('2 de Bastos'), desc:"Planificación, decisión inicial.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Tres de Bastos", img: IMG_PLACEHOLDER('3 de Bastos'), desc:"Expansión, visión a futuro.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Cuatro de Bastos", img: IMG_PLACEHOLDER('4 de Bastos'), desc:"Celebración, estabilidad en avances.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Cinco de Bastos", img: IMG_PLACEHOLDER('5 de Bastos'), desc:"Competencia, fricción creativa.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Seis de Bastos", img: IMG_PLACEHOLDER('6 de Bastos'), desc:"Reconocimiento, triunfo público.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Siete de Bastos", img: IMG_PLACEHOLDER('7 de Bastos'), desc:"Defensa de posición, coraje.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Ocho de Bastos", img: IMG_PLACEHOLDER('8 de Bastos'), desc:"Movimiento rápido, noticias.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Nueve de Bastos", img: IMG_PLACEHOLDER('9 de Bastos'), desc:"Perseverancia, última resistencia.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Diez de Bastos", img: IMG_PLACEHOLDER('10 de Bastos'), desc:"Carga, responsabilidad excesiva.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Paje de Bastos", img: IMG_PLACEHOLDER('Paje de Bastos'), desc:"Mensaje creativo, curiosidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Caballero de Bastos", img: IMG_PLACEHOLDER('Caballero de Bastos'), desc:"Impulso, pasión en acción.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Reina de Bastos", img: IMG_PLACEHOLDER('Reina de Bastos'), desc:"Confianza, liderazgo carismático.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Rey de Bastos", img: IMG_PLACEHOLDER('Rey de Bastos'), desc:"Visión, autoridad creativa.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-
-  /* Copas */
-  {name:"As de Copas", img: IMG_PLACEHOLDER('As de Copas'), desc:"Nuevo amor, apertura emocional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Dos de Copas", img: IMG_PLACEHOLDER('2 de Copas'), desc:"Alianza, relación significativa.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Tres de Copas", img: IMG_PLACEHOLDER('3 de Copas'), desc:"Celebración, comunidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Cuatro de Copas", img: IMG_PLACEHOLDER('4 de Copas'), desc:"Descontento, meditación sobre opciones.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Cinco de Copas", img: IMG_PLACEHOLDER('5 de Copas'), desc:"Pérdida, duelo y aprendizaje.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Seis de Copas", img: IMG_PLACEHOLDER('6 de Copas'), desc:"Recuerdos, nostalgia cálida.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Siete de Copas", img: IMG_PLACEHOLDER('7 de Copas'), desc:"Ilusiones, múltiples opciones.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Ocho de Copas", img: IMG_PLACEHOLDER('8 de Copas'), desc:"Dejar atrás, búsqueda interior.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Nueve de Copas", img: IMG_PLACEHOLDER('9 de Copas'), desc:"Satisfacción, deseos cumplidos.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Diez de Copas", img: IMG_PLACEHOLDER('10 de Copas'), desc:"Felicidad familiar, plenitud emocional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Paje de Copas", img: IMG_PLACEHOLDER('Paje de Copas'), desc:"Sensibilidad, iniciativa emocional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Caballero de Copas", img: IMG_PLACEHOLDER('Caballero de Copas'), desc:"Romanticismo, propuesta sentimental.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Reina de Copas", img: IMG_PLACEHOLDER('Reina de Copas'), desc:"Empatía, cuidado emocional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Rey de Copas", img: IMG_PLACEHOLDER('Rey de Copas'), desc:"Sabiduría emocional, equilibrio afectivo.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-
-  /* Espadas */
-  {name:"As de Espadas", img: IMG_PLACEHOLDER('As de Espadas'), desc:"Claridad mental, verdad emergente.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Dos de Espadas", img: IMG_PLACEHOLDER('2 de Espadas'), desc:"Bloqueo, decisión difícil.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Tres de Espadas", img: IMG_PLACEHOLDER('3 de Espadas'), desc:"Dolor, corazón herido.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Cuatro de Espadas", img: IMG_PLACEHOLDER('4 de Espadas'), desc:"Descanso necesario, recuperación.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Cinco de Espadas", img: IMG_PLACEHOLDER('5 de Espadas'), desc:"Derrota, conflicto ético.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Seis de Espadas", img: IMG_PLACEHOLDER('6 de Espadas'), desc:"Tránsito a mejores aguas, viaje interior.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Siete de Espadas", img: IMG_PLACEHOLDER('7 de Espadas'), desc:"Astucia, ocultamiento.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Ocho de Espadas", img: IMG_PLACEHOLDER('8 de Espadas'), desc:"Limitación mental, ansiedad percibida.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Nueve de Espadas", img: IMG_PLACEHOLDER('9 de Espadas'), desc:"Preocupaciones nocturnas, insomnio mental.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Diez de Espadas", img: IMG_PLACEHOLDER('10 de Espadas'), desc:"Final doloroso, punto de quiebre.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Paje de Espadas", img: IMG_PLACEHOLDER('Paje de Espadas'), desc:"Curiosidad intelectual, vigilancia.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Caballero de Espadas", img: IMG_PLACEHOLDER('Caballero de Espadas'), desc:"Acción impulsiva, decisión rápida.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Reina de Espadas", img: IMG_PLACEHOLDER('Reina de Espadas'), desc:"Claridad incisiva, comunicación franca.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Rey de Espadas", img: IMG_PLACEHOLDER('Rey de Espadas'), desc:"Justicia mental, juicio objetivo.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-
-  /* Oros */
-  {name:"As de Oros", img: IMG_PLACEHOLDER('As de Oros'), desc:"Oportunidad material, semilla de prosperidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Dos de Oros", img: IMG_PLACEHOLDER('2 de Oros'), desc:"Equilibrio práctico, manejo de recursos.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Tres de Oros", img: IMG_PLACEHOLDER('3 de Oros'), desc:"Trabajo conjunto, reconocimiento profesional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Cuatro de Oros", img: IMG_PLACEHOLDER('4 de Oros'), desc:"Apego a lo material, seguridad rígida.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Cinco de Oros", img: IMG_PLACEHOLDER('5 de Oros'), desc:"Escasez, sensación de estar afuera.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Seis de Oros", img: IMG_PLACEHOLDER('6 de Oros'), desc:"Generosidad, intercambio justo.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Siete de Oros", img: IMG_PLACEHOLDER('7 de Oros'), desc:"Evaluación de frutos, paciencia productiva.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Ocho de Oros", img: IMG_PLACEHOLDER('8 de Oros'), desc:"Perfeccionamiento, disciplina en oficio.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Nueve de Oros", img: IMG_PLACEHOLDER('9 de Oros'), desc:"Autonomía y cosecha de esfuerzo.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Diez de Oros", img: IMG_PLACEHOLDER('10 de Oros'), desc:"Legado, estabilidad familiar y riqueza.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Paje de Oros", img: IMG_PLACEHOLDER('Paje de Oros'), desc:"Oferta práctica, aprendizaje material.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Caballero de Oros", img: IMG_PLACEHOLDER('Caballero de Oros'), desc:"Trabajo constante, fiabilidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Reina de Oros", img: IMG_PLACEHOLDER('Reina de Oros'), desc:"Cuidado práctico, abundancia doméstica.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
-  {name:"Rey de Oros", img: IMG_PLACEHOLDER('Rey de Oros'), desc:"Seguridad, éxito material y estabilidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"}
-];
-
-/* ---------------- ORACLE ANGELS: 44 cartas/messages ---------------- */
-const ANGEL_ORACLE = [
-  {name:"Arcángel Miguel", img: IMG_PLACEHOLDER('Arcángel Miguel'), msg:"Protección y coraje. Pide claridad para cortar lo que ya no sirve.", ref:"https://es.wikipedia.org/wiki/Arc%C3%A1ngel_Miguel"},
-  {name:"Arcángel Rafael", img: IMG_PLACEHOLDER('Arcángel Rafael'), msg:"Sanación física y emocional. Abre tu corazón a la recuperación.", ref:"https://es.wikipedia.org/wiki/Arc%C3%A1ngel_Rafael"},
-  {name:"Arcángel Gabriel", img: IMG_PLACEHOLDER('Arcángel Gabriel'), msg:"Comunicación clara. Confía en los mensajes que recibes.", ref:"https://es.wikipedia.org/wiki/Arc%C3%A1ngel_Gabriel"},
-  {name:"Arcángel Uriel", img: IMG_PLACEHOLDER('Arcángel Uriel'), msg:"Sabiduría práctica. Busca la verdad con paz interior.", ref:""},
-  {name:"Ángel de la Guarda", img: IMG_PLACEHOLDER('Ángel Guardián'), msg:"Estás acompañado. Pide apoyo cuando lo necesites.", ref:""},
-  {name:"Ángel de la Paz", img: IMG_PLACEHOLDER('Ángel de la Paz'), msg:"Respira y vuelve al centro. La paz está en la respiración.", ref:""},
-  {name:"Ángel de la Abundancia", img: IMG_PLACEHOLDER('Abundancia'), msg:"Abre las manos para recibir. La prosperidad comienza por creer.", ref:""},
-  {name:"Ángel Mensajero", img: IMG_PLACEHOLDER('Mensajero'), msg:"Atento a las señales sutiles: llegan respuestas.", ref:""},
-  {name:"Ángel del Perdón", img: IMG_PLACEHOLDER('Perdón'), msg:"Perdonar libera el corazón. Hazlo por ti primero.", ref:""},
-  {name:"Ángel del Corazón", img: IMG_PLACEHOLDER('Corazón'), msg:"Ama con ternura: empieza por la compasión hacia ti.", ref:""},
-  {name:"Ángel del Camino", img: IMG_PLACEHOLDER('Camino'), msg:"Un paso a la vez, tu camino se revela con constancia.", ref:""},
-  {name:"Ángel del Descanso", img: IMG_PLACEHOLDER('Descanso'), msg:"Descansar es parte del proceso: date permiso para pausar.", ref:""},
-  {name:"Ángel del Propósito", img: IMG_PLACEHOLDER('Propósito'), msg:"Recuerda por qué empezaste; tu propósito te guía.", ref:""},
-  {name:"Ángel de la Creatividad", img: IMG_PLACEHOLDER('Creatividad'), msg:"Permite jugar y crear sin juzgar el resultado.", ref:""},
-  {name:"Ángel de la Confianza", img: IMG_PLACEHOLDER('Confianza'), msg:"Suelta el control: confía en el flujo de la vida.", ref:""},
-  {name:"Ángel de la Alegría", img: IMG_PLACEHOLDER('Alegría'), msg:"Busca lo que enciende tu corazón hoy.", ref:""},
-  {name:"Ángel del Silencio", img: IMG_PLACEHOLDER('Silencio'), msg:"En el silencio nacen las respuestas más claras.", ref:""},
-  {name:"Ángel de la Verdad", img: IMG_PLACEHOLDER('Verdad'), msg:"Habla con honestidad: la verdad libera.", ref:""},
-  {name:"Ángel de la Gratitud", img: IMG_PLACEHOLDER('Gratitud'), msg:"La gratitud transforma lo que tienes en suficiente.", ref:""},
-  {name:"Ángel del Nuevo Comienzo", img: IMG_PLACEHOLDER('Nuevo Comienzo'), msg:"Cada día es una página en blanco; escribe con intención.", ref:""},
-  {name:"Ángel Guardián del Hogar", img: IMG_PLACEHOLDER('Hogar'), msg:"Protege tu espacio: pon atención a tu entorno.", ref:""},
-  {name:"Ángel del Equilibrio", img: IMG_PLACEHOLDER('Equilibrio'), msg:"Busca el punto medio entre hacer y ser.", ref:""},
-  {name:"Ángel del Perdón", img: IMG_PLACEHOLDER('Perdón 2'), msg:"Suelta culpas antiguas; el perdón es liberación.", ref:""},
-  {name:"Ángel del Amor Propio", img: IMG_PLACEHOLDER('Amor Propio'), msg:"Cuida de ti como cuidarías a un ser querido.", ref:""},
-  {name:"Ángel de la Claridad", img: IMG_PLACEHOLDER('Claridad'), msg:"Aclara prioridades; una acción a la vez.", ref:""},
-  {name:"Ángel de la Curación", img: IMG_PLACEHOLDER('Curación'), msg:"La sanación requiere tiempo; sé paciente contigo.", ref:""},
-  {name:"Ángel de la Inspiración", img: IMG_PLACEHOLDER('Inspiración'), msg:"Deja que la inspiración te encuentre trabajando.", ref:""},
-  {name:"Ángel del Valor", img: IMG_PLACEHOLDER('Valor'), msg:"Da el paso que has estado postergando con valentía.", ref:""},
-  {name:"Ángel de la Sinceridad", img: IMG_PLACEHOLDER('Sinceridad'), msg:"Comunica desde la verdad suave y clara.", ref:""},
-  {name:"Ángel del Éxito", img: IMG_PLACEHOLDER('Éxito'), msg:"Define tu propia medida de éxito y avanza.", ref:""},
-  {name:"Ángel del Perdón (interno)", img: IMG_PLACEHOLDER('Perdón interno'), msg:"La compasión interna abre caminos de cambio.", ref:""},
-  {name:"Ángel de la Escucha", img: IMG_PLACEHOLDER('Escucha'), msg:"Escucha tu intuición: susurros que guían.", ref:""},
-  {name:"Ángel de la Protección", img: IMG_PLACEHOLDER('Protección 2'), msg:"Pide protección y siéntela alrededor tuyo.", ref:""},
-  {name:"Ángel de la Sutileza", img: IMG_PLACEHOLDER('Sutileza'), msg:"Las respuestas pueden llegar suaves; presta atención.", ref:""},
-  {name:"Ángel de la Renovación", img: IMG_PLACEHOLDER('Renovación'), msg:"Renueva una parte de tu vida que pide cambio.", ref:""},
-  {name:"Ángel del Agradecimiento", img: IMG_PLACEHOLDER('Agradecimiento 2'), msg:"Rememora 3 cosas por las que estás agradecido hoy.", ref:""},
-  {name:"Ángel del Servicio", img: IMG_PLACEHOLDER('Servicio'), msg:"Dar con intención trae sentido profundo.", ref:""},
-  {name:"Ángel de la Libertad", img: IMG_PLACEHOLDER('Libertad'), msg:"Libérate de lo que ya no eres; respira ligero.", ref:""},
-  {name:"Ángel de la Compasión", img: IMG_PLACEHOLDER('Compasión'), msg:"Actúa desde la compasión sin esperar respuesta.", ref:""},
-  {name:"Ángel de la Conexión", img: IMG_PLACEHOLDER('Conexión'), msg:"Cultiva relaciones que nutran tu alma.", ref:""}
-];
-
-/* ============================
-   UI: Tarot reveal & history
-   ============================ */
-const tarotMazo = document.getElementById('tarotMazo');
-const cardReveal = document.getElementById('cardReveal');
-const tarotText = document.getElementById('tarotText');
-const historyTarot = document.getElementById('historyTarot');
-
-function randomIndex(arr){ return Math.floor(Math.random()*arr.length); }
-
-tarotMazo.addEventListener('click', ()=> {
-  const idx = randomIndex(TAROT_FULL);
-  const card = TAROT_FULL[idx];
-  const inverted = Math.random() < 0.5;
-  revealTarot(card, inverted);
-});
-
-function revealTarot(cardObj, inverted=false){
-  cardReveal.src = cardObj.img;
-  cardReveal.style.display = 'block';
-  cardReveal.style.opacity = 0;
-  setTimeout(()=> cardReveal.style.opacity = 1, 60);
-  if(inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
-
-  // glow based on "energy"
-  const energy = tarotEnergy(cardObj.name);
-  cardReveal.classList.remove('glow-green','glow-yellow','glow-red','glow-angel');
-  if(energy==='green') cardReveal.classList.add('glow-green');
-  else if(energy==='red') cardReveal.classList.add('glow-red');
-  else cardReveal.classList.add('glow-yellow');
-
-  tarotText.innerHTML = `<strong style="font-size:16px">${cardObj.name}${inverted? ' — (invertida)':''}</strong>
-    <p style="margin-top:8px;color:#dff8ff">${cardObj.desc}</p>
-    ${cardObj.wiki? `<div style="margin-top:8px;font-size:13px;color:#9fd8ea">Leer más: <a href="${cardObj.wiki}" target="_blank" style="color:#bfeffd">${cardObj.wiki}</a></div>` : ''}`;
-
-  addTarotHistory(cardObj, inverted);
-}
-
-function tarotEnergy(name){
-  const pos = ["El Sol","La Estrella","El Mundo","As de Copas","Diez de Oros","Nueve de Oros"];
-  const neg = ["La Torre","La Muerte","El Diablo","Diez de Espadas","Tres de Espadas"];
-  if(pos.some(p=>name.includes(p))) return 'green';
-  if(neg.some(n=>name.includes(n))) return 'red';
-  return 'yellow';
-}
-
-/* history for tarot (last 5) */
-function addTarotHistory(cardObj, inverted){
-  try{
-    const KEY='coralma_hist_tarot';
-    const cur = JSON.parse(localStorage.getItem(KEY)||'[]');
-    cur.unshift({img:cardObj.img,name:cardObj.name,inverted:!!inverted,desc:cardObj.desc,wiki:cardObj.wiki,time:Date.now()});
-    while(cur.length>5) cur.pop();
-    localStorage.setItem(KEY, JSON.stringify(cur));
-    renderTarotHistory();
-  }catch(e){}
-}
-function renderTarotHistory(){
-  historyTarot.innerHTML='';
-  const arr = JSON.parse(localStorage.getItem('coralma_hist_tarot')||'[]');
-  arr.forEach(h=>{
-    const d = document.createElement('div'); d.style.display='inline-block'; d.style.marginRight='8px';
-    d.style.cursor='pointer'; d.title = h.name + (h.inverted? ' (invertida)':'');
-    d.innerHTML = `<img src="${h.img}" alt="${h.name}" style="width:48px;height:72px;object-fit:cover;border-radius:6px">`;
-    d.addEventListener('click', ()=> {
-      cardReveal.src = h.img; cardReveal.style.display='block'; if(h.inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
-      tarotText.innerHTML = `<strong>${h.name}${h.inverted? ' — (invertida)':''}</strong><p style="margin-top:8px">${h.desc}</p>${h.wiki? `<div style="margin-top:8px;font-size:12px;color:#9fd8ea">Fuente: <a href="${h.wiki}" target="_blank" style="color:#bfeffd">${h.wiki}</a></div>`: ''}`;
-    });
-    historyTarot.appendChild(d);
-  });
-}
-renderTarotHistory();
-
-/* ============================
-   UI: Angel reveal & history
-   ============================ */
-const angelMazo = document.getElementById('angelMazo');
-const angelReveal = document.getElementById('angelReveal');
-const angelText = document.getElementById('angelText');
-const historyAngel = document.getElementById('historyAngel');
-
-angelMazo.addEventListener('click', ()=> {
-  const idx = randomIndex(ANGEL_ORACLE);
-  const card = ANGEL_ORACLE[idx];
-  revealAngel(card);
-});
-
-function revealAngel(cardObj){
-  angelReveal.src = cardObj.img;
-  angelReveal.style.display = 'block';
-  angelReveal.style.opacity = 0;
-  setTimeout(()=> angelReveal.style.opacity = 1, 60);
-  angelReveal.classList.remove('glow-green','glow-yellow','glow-red','glow-angel');
-  angelReveal.classList.add('glow-angel');
-
-  angelText.innerHTML = `<strong style="font-size:16px">${cardObj.name}</strong>
-    <p style="margin-top:8px;color:#dff8ff">${cardObj.msg}</p>
-    ${cardObj.ref? `<div style="margin-top:8px;font-size:13px;color:#9fd8ea">Leer más: <a href="${cardObj.ref}" target="_blank" style="color:#bfeffd">${cardObj.ref}</a></div>` : ''}`;
-
-  addAngelHistory(cardObj);
-}
-
-/* history angels */
-function addAngelHistory(cardObj){
-  try{
-    const KEY='coralma_hist_angel';
-    const cur = JSON.parse(localStorage.getItem(KEY)||'[]');
-    cur.unshift({img:cardObj.img,name:cardObj.name,msg:cardObj.msg,ref:cardObj.ref,time:Date.now()});
-    while(cur.length>5) cur.pop();
-    localStorage.setItem(KEY, JSON.stringify(cur));
-    renderAngelHistory();
-  }catch(e){}
-}
-function renderAngelHistory(){
-  historyAngel.innerHTML='';
-  const arr = JSON.parse(localStorage.getItem('coralma_hist_angel')||'[]');
-  arr.forEach(h=>{
-    const d = document.createElement('div'); d.style.display='inline-block'; d.style.marginRight='8px';
-    d.style.cursor='pointer'; d.title = h.name;
-    d.innerHTML = `<img src="${h.img}" alt="${h.name}" style="width:48px;height:72px;object-fit:cover;border-radius:6px">`;
-    d.addEventListener('click', ()=> {
-      angelReveal.src = h.img; angelReveal.style.display='block';
-      angelText.innerHTML = `<strong>${h.name}</strong><p style="margin-top:8px">${h.msg}</p>${h.ref? `<div style="margin-top:8px;font-size:12px;color:#9fd8ea">Fuente: <a href="${h.ref}" target="_blank" style="color:#bfeffd">${h.ref}</a></div>`: ''}`;
-    });
-    historyAngel.appendChild(d);
-  });
-}
-renderAngelHistory();
-
-/* ============================
-   Meditation timer & floating sync
-   ============================ */
-let timerSec = 300;
-let timerInterval = null;
-function pad(n){ return String(n).padStart(2,'0'); }
-function updateDisplays(){
-  const m = Math.floor(timerSec/60), s = timerSec%60;
-  const text = `${pad(m)}:${pad(s)}`;
-  const td = document.getElementById('timeDisplay'); if(td) td.textContent=text;
-  document.getElementById('floatingTime').textContent = text;
-  if(timerSec<=0){ document.getElementById('floatingBtn').classList.add('finished'); const mc=document.getElementById('medCircle'); if(mc) mc.style.border='4px solid rgba(255,107,107,0.85)'; }
-  else { document.getElementById('floatingBtn').classList.remove('finished'); const mc=document.getElementById('medCircle'); if(mc) mc.style.border='0'; }
-}
-function setTimer(sec){ timerSec=sec; updateDisplays(); }
-function startTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=setInterval(()=>{ if(timerSec>0){ timerSec--; updateDisplays(); } else { clearInterval(timerInterval); timerInterval=null; updateDisplays(); try{ new Audio('https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg').play(); }catch(e){} } },1000); }
-function stopTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; updateDisplays(); }
-
-document.getElementById('startBtn').addEventListener('click', ()=> startTimer());
-document.getElementById('stopBtn').addEventListener('click', ()=> stopTimer());
-document.getElementById('medCircle').addEventListener('click', ()=> { if(timerInterval) stopTimer(); else startTimer(); });
-
-/* floating drag */
-let isDragging=false, offsetX=0, offsetY=0;
-const floating = document.getElementById('floatingBtn');
-floating.addEventListener('mousedown', e=>{ isDragging=true; offsetX=e.clientX-floating.offsetLeft; offsetY=e.clientY-floating.offsetTop; e.preventDefault(); });
-document.addEventListener('mousemove', e=>{ if(!isDragging) return; floating.style.left=(e.clientX-offsetX)+'px'; floating.style.top=(e.clientY-offsetY)+'px'; });
-document.addEventListener('mouseup', ()=> isDragging=false);
-floating.addEventListener('touchstart', e=>{ isDragging=true; const t=e.touches[0]; offsetX=t.clientX-floating.offsetLeft; offsetY=t.clientY-floating.offsetTop; });
-document.addEventListener('touchmove', e=>{ if(!isDragging) return; const t=e.touches[0]; floating.style.left=(t.clientX-offsetX)+'px'; floating.style.top=(t.clientY-offsetY)+'px'; });
-document.addEventListener('touchend', ()=> isDragging=false);
-floating.addEventListener('click', ()=> { if(isDragging) return; if(timerInterval) stopTimer(); else startTimer(); });
-
-/* ============================
-   Frases diarias (30)
-   ============================ */
-const PHRASES = [
-  "Respira profundo: cada aliento te ancla al presente.",
-  "La calma nace cuando sueltas lo que no puedes controlar.",
-  "Pequeños pasos hoy, grandes cambios mañana.",
-  "La atención plena transforma lo cotidiano en sagrado.",
-  "Acepta lo que eres; trabaja por lo que quieres ser.",
-  "Cuando observes sin juzgar, la mente se serena.",
-  "La gratitud abre puertas que la queja cierra.",
-  "Escucha tu cuerpo: él te habla con calma.",
-  "La paciencia es una forma de autocuidado.",
-  "Vuelve a lo simple: ahí reside la claridad.",
-  "Deja que el silencio te enseñe lo que las palabras no pueden.",
-  "Cuidar de ti es un acto de amor hacia los demás.",
-  "Haz una pausa: tu decisión será más clara después.",
-  "La bondad empieza contigo mismo.",
-  "Suelta el pasado; practica la presencia.",
-  "Un minuto de respiración consciente renueva tu día.",
-  "Permítete sentir sin definirlo todo.",
-  "El descanso también es trabajo importante.",
-  "Construye rituales que te devuelvan al centro.",
-  "Menos prisa, más presencia.",
-  "Observa tus pensamientos: no siempre son la verdad.",
-  "Cada emoción es un mensajero: escúchala con curiosidad.",
-  "El equilibrio se cultiva con pequeñas prácticas constantes.",
-  "Al respirar, recuerda que siempre hay un nuevo comienzo.",
-  "La ternura hacia ti cambia la forma en que ves el mundo.",
-  "Siembra rutina, cosecha calma.",
-  "No esperes permiso para cuidarte: date lo que necesitas.",
-  "La claridad aparece cuando bajas el volumen interno.",
-  "Encuentra asombro en lo sencillo.",
-  "Tu ritmo no tiene que competir con nadie más."
-];
-let phraseIdx = Number(localStorage.getItem('coralma_phrase_idx') || 0);
-const phraseBox = document.getElementById('phraseBox');
-function showPhrase(i){
-  if(!phraseBox) return;
-  phraseBox.style.opacity = 0;
-  setTimeout(()=>{ phraseBox.textContent = PHRASES[i % PHRASES.length]; phraseBox.style.opacity = 1; localStorage.setItem('coralma_phrase_idx', String(i % PHRASES.length)); }, 420);
-}
-showPhrase(phraseIdx);
-setInterval(()=>{ phraseIdx=(phraseIdx+1)%PHRASES.length; showPhrase(phraseIdx); }, 30000);
-
-/* ============================
-   Articles (5 with links)
-   ============================ */
-const ARTICLES = [
-  {source:'Wikipedia', title:'Meditación', extract:'Prácticas y técnicas para centrar la atención y lograr un estado de conciencia, tradiciones y estudios.', url:'https://es.wikipedia.org/wiki/Meditaci%C3%B3n'},
-  {source:'Wikipedia', title:'Atención plena', extract:'Proceso de prestar atención de forma intencional en el presente.', url:'https://es.wikipedia.org/wiki/Atenci%C3%B3n_plena'},
-  {source:'Wikipedia', title:'Neurociencia', extract:'Estudio del sistema nervioso con implicaciones en la comprensión de la meditación.', url:'https://es.wikipedia.org/wiki/Neurociencia'},
-  {source:'Wikipedia', title:'Gratitud', extract:'Concepto y beneficios psicológicos asociados a la práctica de la gratitud.', url:'https://es.wikipedia.org/wiki/Gratitud'},
-  {source:'Wikipedia', title:'Relajación (psicología)', extract:'Técnicas para reducir la tensión física y mental.', url:'https://es.wikipedia.org/wiki/Relajaci%C3%B3n_(psicolog%C3%ADa)'}
-];
-function renderArticles(){
-  const grid = document.getElementById('articlesGrid');
-  if(!grid) return;
-  grid.innerHTML = '';
-  ARTICLES.forEach(a=>{
-    const card = document.createElement('div'); card.className='article-card';
-    card.innerHTML = `<h3>${a.title}</h3><p>${a.extract}</p><div class="source">Fuente: ${a.source}</div><div style="margin-top:8px"><a class="read-btn" href="${a.url}" target="_blank" rel="noopener">Leer más</a></div>`;
-    grid.appendChild(card);
-  });
-}
-renderArticles();
-
-/* ============================
-   YouTube search helper
-   ============================ */
-function ytSearch(){
-  const q = document.getElementById('ytSearchInput').value.trim();
-  if(!q){ window.open('https://www.youtube.com', '_blank'); return; }
-  window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`, '_blank');
-}
-
-/* ============================
-   Prefetch placeholders to speed up UX
-   ============================ */
-setTimeout(()=>{ TAROT_FULL.forEach(c=>{ const i=new Image(); i.src=c.img; }); ANGEL_ORACLE.forEach(a=>{ const i=new Image(); i.src=a.img; }); }, 1000);
-
-/* ============================
-   Subscription form (demo)
-   ============================ */
-document.getElementById('subForm').addEventListener('submit', e=>{
-  e.preventDefault();
-  document.getElementById('subInfo').textContent = '¡Gracias! Te hemos suscrito (demo)';
-  document.getElementById('emailInput').value = '';
-});
-
-/* ============================
-   Init displays
-   ============================ */
-updateDisplays();
-
-</script>
-</body>
-</html>
+    .fab-btn, .fab-option {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #444;
+      color: #fff;
