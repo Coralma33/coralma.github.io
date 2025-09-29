@@ -24,7 +24,7 @@ body{
     linear-gradient(180deg,var(--bg1), var(--bg2));
   min-height:100vh;
   background-size: 200% 200%;
-  animation: aurora 30s ease-in-out infinite;
+  animation: aurora 28s ease-in-out infinite;
 }
 @keyframes aurora {
   0%{background-position:0% 50%}
@@ -38,9 +38,9 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;fl
 .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
 nav{display:flex;gap:10px;align-items:center}
 nav a{color:#cfeffb;text-decoration:none;padding:8px 10px;border-radius:9px}
-nav a:hover{background:var(--glass)}
+nav a:hover{background:var(--glass);}
 
-/* grid layout desktop */
+/* layout */
 .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:22px}
 .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:12px}
 .med-card{padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);box-shadow:0 10px 40px rgba(15,30,50,0.45)}
@@ -52,11 +52,11 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
 /* tarot / oracle */
 .deck { width:220px; height:320px; border-radius:14px; display:flex;align-items:center;justify-content:center;background:var(--card-back); color:#cfeffb; font-weight:700; cursor:pointer; position:relative; box-shadow: 0 12px 40px rgba(60,80,120,0.18); transition: transform .18s; }
 .deck:hover{ transform: translateY(-6px); }
-.reveal { width:260px; margin-top:12px; }
-.card-reveal { width:260px;height:380px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2)); padding:12px; box-shadow:0 18px 60px rgba(0,0,0,0.6); position:relative; overflow:hidden; }
-.card-reveal img { width:100%; height:auto; border-radius:10px; display:block; }
+.reveal { width:280px; margin-top:12px; }
+.card-reveal { width:280px;height:420px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2)); padding:12px; box-shadow:0 18px 60px rgba(0,0,0,0.6); position:relative; overflow:hidden; }
+.card-reveal img { width:100%; height:auto; border-radius:10px; display:block; max-height:260px; object-fit:cover }
 .card-title { font-weight:800; font-size:18px; margin-top:10px; color:#eaf9ff; text-align:center; }
-.card-desc { margin-top:8px; font-size:14px; color:#dff8ff; max-height:130px; overflow:auto; text-align:left; padding-right:8px; }
+.card-desc { margin-top:8px; font-size:14px; color:#dff8ff; max-height:120px; overflow:auto; text-align:left; padding-right:8px; }
 
 /* inverted badge */
 .inverted-badge { position:absolute; left:12px; top:12px; background:rgba(255,255,255,0.06); padding:6px 10px; border-radius:10px; font-size:13px; color:#ffd7a8; }
@@ -65,10 +65,11 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
 .glow-frame { position:absolute; inset:0; border-radius:14px; pointer-events:none; box-shadow: 0 0 40px rgba(110,198,217,0.07), inset 0 0 30px rgba(138,108,255,0.04); animation: slowPulse 4s ease-in-out infinite; }
 @keyframes slowPulse { 0%{filter:blur(2px);opacity:.85} 50%{filter:blur(10px);opacity:1} 100%{filter:blur(2px);opacity:.85} }
 
-/* playlist */
-.playlist-row{display:flex;flex-wrap:nowrap;gap:12px;overflow:hidden}
-.pl-card{min-width:220px;background:rgba(255,255,255,0.02);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+/* playlists */
+.playlist-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}
+.pl-card{width:220px;background:rgba(255,255,255,0.02);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .pl-cover{width:200px;height:112px;border-radius:8px;background:linear-gradient(90deg,#000,#222);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+.pl-title{font-size:13px;color:#dff8ff;text-decoration:none}
 
 /* articles */
 .articles-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:12px;margin-top:12px}
@@ -87,8 +88,8 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
 .social-btn{width:52px;height:52px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent);display:flex;align-items:center;justify-content:center;color:#dff8ff;text-decoration:none;box-shadow:0 8px 30px rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.03)}
 .social-btn:hover{ transform:translateY(-6px); background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); }
 
-/* donate PayPal icon small */
-.paypal-p { font-weight:900; font-size:20px; color:#00457C; background:white; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:6px; }
+/* PayPal 'P' */
+.paypal-p { font-weight:900; font-size:18px; color:#00457C; background:white; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:6px; }
 
 /* small helpers */
 .hint{font-size:13px;color:#bfeffd;margin-top:6px;text-align:center}
@@ -123,7 +124,7 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
         <div>
           <h2 id="hero-title" style="margin:0 0 6px 0">Calma y presencia — prácticas basadas en ciencia y tradición</h2>
-          <p style="margin:0;color:#cfeffb">Sonidos, meditaciones, oráculos y artículos. Haz clic en un mazo para sacar una carta; se mostrará un breve significado (Wikipedia si existe).</p>
+          <p style="margin:0;color:#cfeffb">Sonidos, meditaciones, oráculos y artículos. Haz clic en un mazo para sacar una carta; se mostrará un breve significado (usamos texto local y enlace a Wikipedia cuando existe).</p>
         </div>
         <div>
           <button class="btn-primary" onclick="document.getElementById('medit-block').scrollIntoView({behavior:'smooth'})">Iniciar Meditación</button>
@@ -156,18 +157,18 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
           <h3 style="margin-top:0">Tarot — toca solo el mazo</h3>
           <div style="display:flex;gap:20px;align-items:flex-start">
             <div>
-              <div id="tarotDeck" class="deck" title="Toca para sacar una carta">Mazo Tarot<div class="glow-frame" aria-hidden="true"></div></div>
+              <div id="tarotDeck" class="deck" title="Toca para sacar una carta" aria-label="Mazo Tarot">Mazo Tarot<div class="glow-frame" aria-hidden="true"></div></div>
               <div id="tarotHint" class="hint" style="margin-top:8px">Mostraré resumen breve y enlace a Wikipedia (si existe).</div>
             </div>
 
             <div>
-              <div id="tarotReveal" class="reveal" style="display:none">
+              <div id="tarotReveal" class="reveal" style="display:none" aria-live="polite">
                 <div class="card-reveal">
                   <div id="tarotInvertBadge" class="inverted-badge" style="display:none">Invertida</div>
-                  <img id="tarotImg" src="" alt="Carta tarot" style="display:block;border-radius:10px;max-height:220px;object-fit:cover" />
+                  <img id="tarotImg" src="" alt="Carta tarot" style="display:block;border-radius:10px;max-height:260px;object-fit:cover" />
                   <div id="tarotName" class="card-title">Nombre carta</div>
                   <div id="tarotText" class="card-desc">Significado breve...</div>
-                  <div style="margin-top:8px;text-align:center"><a id="tarotLink" href="#" target="_blank" style="color:#bfeffd;font-size:13px;text-decoration:underline">Leer más</a></div>
+                  <div style="margin-top:8px;text-align:center"><a id="tarotLink" href="#" target="_blank" style="color:#bfeffd;font-size:13px;text-decoration:underline">Leer referencia</a></div>
                 </div>
               </div>
             </div>
@@ -179,13 +180,13 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
           <h3 style="margin-top:0">Oráculo — Ángeles</h3>
           <div style="display:flex;gap:20px;align-items:flex-start">
             <div>
-              <div id="angelsDeck" class="deck" title="Toca para recibir un mensaje angelical">Mazo Ángeles<div class="glow-frame" aria-hidden="true"></div></div>
+              <div id="angelsDeck" class="deck" title="Toca para recibir un mensaje angelical" aria-label="Mazo Ángeles">Mazo Ángeles<div class="glow-frame" aria-hidden="true"></div></div>
               <div class="hint" style="margin-top:8px">Cartas angelicales con mensaje y referencia cuando exista.</div>
             </div>
             <div>
-              <div id="angelReveal" class="reveal" style="display:none">
+              <div id="angelReveal" class="reveal" style="display:none" aria-live="polite">
                 <div class="card-reveal">
-                  <img id="angelImg" src="" alt="Ángel" style="display:block;border-radius:10px;max-height:220px;object-fit:cover" />
+                  <img id="angelImg" src="" alt="Ángel" style="display:block;border-radius:10px;max-height:260px;object-fit:cover" />
                   <div id="angelName" class="card-title">Ángel</div>
                   <div id="angelText" class="card-desc">Mensaje...</div>
                   <div style="margin-top:8px;text-align:center"><a id="angelLink" href="#" target="_blank" style="color:#bfeffd;font-size:13px;text-decoration:underline">Ver fuente</a></div>
@@ -198,21 +199,8 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
         <!-- Playlists -->
         <section class="card" style="margin-top:16px">
           <h3 style="margin-top:0">Playlists (YouTube)</h3>
-          <div class="playlist-row" id="playlistRow">
-            <div class="pl-card">
-              <div class="pl-cover">Playlist A</div>
-              <a href="https://youtube.com/playlist?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS" target="_blank" style="font-size:13px;color:#dff8ff;text-decoration:none">Playlist 1</a>
-            </div>
-            <div class="pl-card">
-              <div class="pl-cover">Playlist B</div>
-              <a href="https://youtube.com/playlist?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS" target="_blank" style="font-size:13px;color:#dff8ff;text-decoration:none">Playlist 2</a>
-            </div>
-            <div class="pl-card">
-              <div class="pl-cover">Playlist C</div>
-              <a href="https://youtube.com/playlist?list=PL6FMHId50GbGGi06g4gMUzsfMNveEKNxQ" target="_blank" style="font-size:13px;color:#dff8ff;text-decoration:none">Playlist 3</a>
-            </div>
-          </div>
-          <div class="hint">Haz clic en una playlist para abrirla en YouTube.</div>
+          <div id="playlistRow" class="playlist-row" aria-live="polite"></div>
+          <div class="hint">Miniaturas generadas localmente (click abre playlist en YouTube).</div>
         </section>
 
         <!-- Artículos -->
@@ -257,22 +245,24 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
   </div>
 
   <!-- floating synchronized timer -->
-  <div id="floatingBtn" class="floating-btn" title="Arrástrame">
+  <div id="floatingBtn" class="floating-btn" title="Arrástrame" role="button" aria-label="Temporizador">
     <div id="floatingLabel" class="floating-label">Meditación</div>
     <div id="floatingTime" class="floating-time">00:00</div>
   </div>
 
-  <!-- social bar right (exact URLs you gave) -->
+  <!-- social bar right (usar exactamente los enlaces que diste) -->
   <div class="social-bar" aria-hidden="false">
     <a class="social-btn" href="https://www.instagram.com/effectno33?igsh=MjAycWE4dTFsbXpw" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram">
-      <!-- simple Instagram SVG -->
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="#fff" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 6.1a4.9 4.9 0 1 0 .001 9.8A4.9 4.9 0 0 0 12 8.1zM18.4 5.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2z"/></svg>
+      <!-- Instagram SVG -->
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 6.1a4.9 4.9 0 1 0 .001 9.8A4.9 4.9 0 0 0 12 8.1zM18.4 5.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2z" fill="#fff"/></svg>
     </a>
     <a class="social-btn" href="https://www.tiktok.com/@effect.33?_t=ZS-8zoEWdno7UL&_r=1" target="_blank" rel="noopener" title="TikTok" aria-label="TikTok">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="#fff" d="M9 3v10.5A4.5 4.5 0 1 0 13.5 18V7h3V3h-7z"/></svg>
+      <!-- TikTok SVG simplified -->
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v10.5A4.5 4.5 0 1 0 13.5 18V7h3V3h-7z" fill="#fff"/></svg>
     </a>
     <a class="social-btn" href="https://youtube.com/@effect.no33?si=1etVu0OT8KashHWN" target="_blank" rel="noopener" title="YouTube" aria-label="YouTube">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="#fff" d="M10 15l5.2-3L10 9v6zM21 8s-.2-1.4-.8-2a3.2 3.2 0 0 0-2.2-.9C15.6 5 12 5 12 5s-3.6 0-5.9.1c-.8 0-1.6.3-2.2.9A4 4 0 0 0 3 8c-.6.6-.8 2-.8 2S2 9.8 2 11.6v.8C2 14.2 2.2 15 2.2 15s.2 1.4.8 2a3.2 3.2 0 0 0 2.2.9C8.4 19 12 19 12 19s3.6 0 5.9-.1c.8 0 1.6-.3 2.2-.9.6-.6.8-2 .8-2s.2-.8.2-2.6v-.8C22 9.8 21.8 9 21.8 9s-.2-1.4-.8-2z"/></svg>
+      <!-- YouTube SVG -->
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 15l5.2-3L10 9v6zM21 8s-.2-1.4-.8-2a3.2 3.2 0 0 0-2.2-.9C15.6 5 12 5 12 5s-3.6 0-5.9.1c-.8 0-1.6.3-2.2.9A4 4 0 0 0 3 8c-.6.6-.8 2-.8 2S2 9.8 2 11.6v.8C2 14.2 2.2 15 2.2 15s.2 1.4.8 2a3.2 3.2 0 0 0 2.2.9C8.4 19 12 19 12 19s3.6 0 5.9-.1c.8 0 1.6-.3 2.2-.9.6-.6.8-2 .8-2s.2-.8.2-2.6v-.8C22 9.8 21.8 9 21.8 9s-.2-1.4-.8-2z" fill="#fff"/></svg>
     </a>
     <a class="social-btn" href="https://www.paypal.com/donate/?hosted_button_id=GW4XCFHYRTJQQ" target="_blank" rel="noopener" title="PayPal" aria-label="PayPal">
       <div class="paypal-p">P</div>
@@ -292,13 +282,18 @@ function pad(n){ return String(n).padStart(2,'0'); }
 function updateDisplays(){
   const m = Math.floor(timerSec/60), s = timerSec%60;
   const text = `${pad(m)}:${pad(s)}`;
-  $('timeDisplay').textContent = text;
+  const tdisp = $('timeDisplay');
+  if(tdisp) tdisp.textContent = text;
   $('floatingTime').textContent = text;
   if(timerSec <= 0){
     $('floatingBtn').classList.add('finished');
-    $('medCircle').textContent = 'Listo';
+    // medCircle text
+    const mcur = $('medCircle');
+    if(mcur) mcur.textContent = 'Listo';
   } else {
     $('floatingBtn').classList.remove('finished');
+    const mcur = $('medCircle');
+    if(mcur) mcur.textContent = 'Tocar';
   }
 }
 
@@ -317,7 +312,6 @@ function startTimer(){
       clearInterval(timerInterval);
       timerInterval = null;
       updateDisplays();
-      // simple bell
       try { new Audio('https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg').play().catch(()=>{}); } catch(e){}
     }
   }, 1000);
@@ -409,8 +403,8 @@ const PHRASES = [
   $('fraseBox').textContent = PHRASES[idx];
 })();
 
-/* ----------------- Articles: fetch 5 wiki topics ----------------- */
-const ARTICLE_TOPICS = ['Meditacion','Mindfulness','Neurociencia','Relajacion','Gratitud'];
+/* ----------------- Articles: fetch 5 wiki topics (ES first) ----------------- */
+const ARTICLE_TOPICS = ['Meditación','Mindfulness','Neurociencia','Relajación','Gratitud'];
 async function loadArticles(){
   try{
     const container = $('articlesList');
@@ -420,15 +414,21 @@ async function loadArticles(){
       // search Spanish wiki first
       const searchUrl = `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(t)}&format=json&origin=*`;
       const r = await fetch(searchUrl);
-      if(!r.ok) continue;
-      const j = await r.json();
-      if(j.query && j.query.search && j.query.search[0]) title = j.query.search[0].title;
+      if(r.ok){
+        const j = await r.json();
+        if(j.query && j.query.search && j.query.search[0]) title = j.query.search[0].title;
+      }
       const summaryUrl = `https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-      const rr = await fetch(summaryUrl);
-      const s = rr.ok ? await rr.json() : null;
+      let s = null;
+      try{
+        const rr = await fetch(summaryUrl);
+        if(rr.ok) s = await rr.json();
+      }catch(e){}
       const item = document.createElement('div');
       item.className = 'article-item';
-      item.innerHTML = `<h4>${s && s.title ? s.title : title}</h4><p>${s && s.extract ? s.extract.slice(0,260) + (s.extract.length>260?'...':'') : 'Resumen no disponible.'}</p><div style="margin-top:8px"><a href="${s && s.content_urls && s.content_urls.desktop ? s.content_urls.desktop.page : 'https://es.wikipedia.org/wiki/'+encodeURIComponent(title)}" target="_blank" style="color:#bfeffd;text-decoration:underline">Leer referencia</a></div>`;
+      const summaryText = s && s.extract ? s.extract.slice(0,260) + (s.extract.length>260?'...':'') : 'Resumen no disponible.';
+      const href = s && s.content_urls && s.content_urls.desktop ? s.content_urls.desktop.page : ('https://es.wikipedia.org/w/index.php?search=' + encodeURIComponent(title));
+      item.innerHTML = `<h4>${s && s.title ? s.title : title}</h4><p>${summaryText}</p><div style="margin-top:8px"><a href="${href}" target="_blank" style="color:#bfeffd;text-decoration:underline">Leer referencia</a></div>`;
       container.appendChild(item);
     }
   }catch(e){
@@ -437,7 +437,7 @@ async function loadArticles(){
 }
 loadArticles();
 
-/* ----------------- Tarot deck generation & meanings ----------------- */
+/* ----------------- Tarot deck generation (names & meanings) ----------------- */
 /* Major Arcana (Spanish names) */
 const MAJOR_ARCANA = [
   "El Loco","El Mago","La Sacerdotisa","La Emperatriz","El Emperador",
@@ -461,7 +461,7 @@ function buildFullDeck(){
 }
 const FULL_DECK = buildFullDeck();
 
-/* Local concise meanings for majors (original paraphrase, not copied). */
+/* Local concise meanings for majors (paraphrased) */
 const CARD_MEANINGS = {
   "El Loco":"Nuevos comienzos, espontaneidad y fe. Invertido: imprudencia o falta de rumbo.",
   "El Mago":"Voluntad, habilidades y manifestación. Invertido: dispersión o manipulación.",
@@ -484,27 +484,25 @@ const CARD_MEANINGS = {
   "La Luna":"Inconsciente, sueños y ambigüedad.",
   "El Sol":"Éxito, claridad y vitalidad.",
   "El Juicio":"Renacimiento, llamado y evaluación.",
-  "El Mundo":"Culminación, realización y integración."
+  "El Mundo":"Culminación, realización e integración."
 };
 
-/* Generate generic minor meanings based on suit & rank (concise, original) */
+/* Generic minors via helper */
 function minorMeaning(rank, suit){
-  // core keywords per suit
   const suitKeywords = {
-    "Copas": "emociones, relación, intuición",
-    "Oros": "lo material, seguridad, trabajo",
-    "Espadas": "mente, conflicto, claridad",
-    "Bastos": "acción, creatividad, impulso"
+    "Copas": "emociones y relaciones",
+    "Oros": "lo material y la seguridad",
+    "Espadas": "la mente y los conflictos",
+    "Bastos": "acción y creatividad"
   };
-  // rank interpretation shortcut
   const rnum = {"As":"nuevo inicio","Dos":"asociación","Tres":"crecimiento","Cuatro":"estabilidad","Cinco":"conflicto","Seis":"transición","Siete":"defensa","Ocho":"rapidez","Nueve":"preocupación","Diez":"culminación","Sota":"mensaje","Caballero":"movimiento","Reina":"madurez","Rey":"dominio"};
   const base = rnum[rank] || rank.toLowerCase();
   return `${base} en el área de ${suitKeywords[suit] || suit}.`;
 }
 
-/* wiki lookup helper (ES primero, EN fallback) */
+/* ----------------- Wikipedia helper ----------------- */
 async function wikiSummaryFor(query){
-  // try Spanish search -> summary
+  // try Spanish first
   try{
     const sUrl = `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
     let res = await fetch(sUrl);
@@ -521,7 +519,7 @@ async function wikiSummaryFor(query){
       }
     }
   }catch(e){}
-  // fallback to English
+  // fallback english
   try{
     const sUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
     let res = await fetch(sUrl);
@@ -541,7 +539,7 @@ async function wikiSummaryFor(query){
   return null;
 }
 
-/* Canvas-based image generator (programmatic card images) */
+/* Canvas-based card image generator (returns dataURL) */
 function generateCardImage(name, subtitle = '', type = 'tarot', opts = {}) {
   const w = opts.width || 900;
   const h = opts.height || 1200;
@@ -696,50 +694,60 @@ async function drawTarot(){
   deckEl.style.transform='translateY(-6px)';
   setTimeout(()=> deckEl.style.transform='translateY(0)',160);
 
-  // pick a random card from FULL_DECK
+  // pick random
   const idx = Math.floor(Math.random()*FULL_DECK.length);
   const cardName = FULL_DECK[idx];
   const inverted = Math.random() < 0.45;
 
-  // try Wikipedia (Spanish), else fallback to local meaning
-  let wiki = await wikiSummaryFor(cardName + ' (tarot)') || await wikiSummaryFor(cardName);
+  // local meaning (always available)
   let meaning = CARD_MEANINGS[cardName];
   if(!meaning){
-    // try detect minor: "X de Suit"
     const m = cardName.match(/^(.+?) de (.+)$/);
-    if(m){
-      meaning = minorMeaning(m[1], m[2]);
-    } else {
-      meaning = 'Significado general: interpretación simbólica según contexto.';
-    }
+    if(m) meaning = minorMeaning(m[1], m[2]);
+    else meaning = 'Significado general: interpretación simbólica según contexto.';
   }
 
-  // prefer wiki extract if exists (short)
-  const extracted = wiki && wiki.extract ? wiki.extract : meaning;
+  // try wiki for extra (non-blocking)
+  let wiki = null;
+  try{ wiki = await wikiSummaryFor(cardName + ' tarot') || await wikiSummaryFor(cardName); }catch(e){ wiki=null; }
 
-  // generate image programmatically (canvas) — inverted as option
-  const dataUrl = generateCardImage(cardName, extracted.slice(0,160), 'tarot', {inverted: inverted, symbol: '★'});
+  // compose displayed text: local meaning first, then wiki short (if any)
+  let displayed = meaning;
+  if(wiki && wiki.extract){
+    displayed += '\n\nReferencia (Wikipedia): ' + (wiki.extract.length > 300 ? wiki.extract.slice(0,300)+'...' : wiki.extract);
+  }
+
+  // generate image, include a short subtitle
+  const dataUrl = generateCardImage(cardName, meaning.slice(0,160), 'tarot', {inverted: inverted, symbol: '★', width: 800, height: 1100});
 
   img.src = dataUrl;
   img.style.display = 'block';
-  nameEl.textContent = cardName;
-  textEl.textContent = extracted;
-  linkEl.href = (wiki && wiki.content_urls && wiki.content_urls.desktop && wiki.content_urls.desktop.page) ? wiki.content_urls.desktop.page : ('https://es.wikipedia.org/w/index.php?search='+encodeURIComponent(cardName));
+  nameEl.textContent = cardName + (inverted ? ' (invertida)' : '');
+  textEl.textContent = displayed;
+  linkEl.href = (wiki && wiki.content_urls && wiki.content_urls.desktop && wiki.content_urls.desktop.page) ? wiki.content_urls.desktop.page : ('https://es.wikipedia.org/w/index.php?search=' + encodeURIComponent(cardName));
   invertBadge.style.display = inverted ? 'block' : 'none';
   revealBox.style.display = 'block';
   revealBox.scrollIntoView({behavior:'smooth', block:'center'});
 }
 $('tarotDeck').addEventListener('click', drawTarot);
 
-/* ----------------- Angels draw logic ----------------- */
+/* ----------------- Angels (bigger set) ----------------- */
 const ANGEL_ORACLE = [
   {name:'Arcángel Miguel', msg:'Protección, coraje y liberación del miedo.'},
   {name:'Arcángel Gabriel', msg:'Comunicación clara, mensajes y creatividad.'},
   {name:'Arcángel Rafael', msg:'Sanación, cuidado y bienestar físico.'},
-  {name:'Arcángel Uriel', msg:'Iluminación, claridad y solución práctica.'},
+  {name:'Arcángel Uriel', msg:'Iluminación, claridad y soluciones prácticas.'},
   {name:'Arcángel Chamuel', msg:'Amor, compasión y reconciliación.'},
   {name:'Arcángel Zadkiel', msg:'Perdón, transformación y misericordia.'},
-  {name:'Arcángel Jofiel', msg:'Belleza, inspiración y perspectiva positiva.'}
+  {name:'Arcángel Jofiel', msg:'Belleza, inspiración y perspectiva positiva.'},
+  {name:'Ángel de la Guarda', msg:'Apoyo cotidiano y guía silenciosa.'},
+  {name:'Arcángel Metatrón', msg:'Orden, conexión y registro akáshico.'},
+  {name:'Arcángel Raguel', msg:'Armonía en relaciones y justicia.'},
+  {name:'Arcángel Haniel', msg:'Intuición, gracia y encanto.'},
+  {name:'Arcángel Jeremiel', msg:'Soñar con propósito, revisión de vida.'},
+  {name:'Arcángel Ariel', msg:'Naturaleza, abundancia y coraje.'},
+  {name:'Arcángel Selaphiel', msg:'Paz, oración y consuelo.'},
+  {name:'Arcángel Barachiel', msg:'Bendiciones y gratitud activa.'}
 ];
 
 async function drawAngel(){
@@ -755,26 +763,94 @@ async function drawAngel(){
   nameEl.textContent = card.name;
   textEl.textContent = card.msg;
 
-  // try wiki for angel image/summary
-  const wiki = await wikiSummaryFor(card.name);
+  // try wiki for image/summary
+  let wiki = null;
+  try{ wiki = await wikiSummaryFor(card.name); }catch(e){ wiki=null; }
   if(wiki && wiki.thumbnail && wiki.thumbnail.source){
     img.src = wiki.thumbnail.source;
     img.style.display = 'block';
     linkEl.href = (wiki.content_urls && wiki.content_urls.desktop && wiki.content_urls.desktop.page) ? wiki.content_urls.desktop.page : '#';
   } else {
-    // generate an angel-style image
-    const dataUrl = generateCardImage(card.name, card.msg, 'angels', {symbol:'👼'});
+    const dataUrl = generateCardImage(card.name, card.msg, 'angels', {symbol:'👼', width:800, height:1100});
     img.src = dataUrl;
     img.style.display = 'block';
-    linkEl.href = '#';
+    linkEl.href = (wiki && wiki.content_urls && wiki.content_urls.desktop && wiki.content_urls.desktop.page) ? wiki.content_urls.desktop.page : '#';
   }
   reveal.style.display = 'block';
   reveal.scrollIntoView({behavior:'smooth', block:'center'});
 }
 $('angelsDeck').addEventListener('click', drawAngel);
 
-/* ----------------- Articles & init ----------------- */
-document.getElementById('subForm').addEventListener('submit', e=>{
+/* ----------------- Playlists: use the URLs you sent & generate thumbnails locally ----------------- */
+const PLAYLISTS = [
+  {url:'https://youtube.com/playlist?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS', title:'Playlist 1'},
+  {url:'https://youtube.com/playlist?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS', title:'Playlist 2'},
+  {url:'https://youtube.com/playlist?list=PL6FMHId50GbGGi06g4gMUzsfMNveEKNxQ', title:'Playlist 3'}
+];
+
+function makePlaylistThumb(title, w=400, h=225){
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  // bg gradient
+  const g = ctx.createLinearGradient(0,0,w,h);
+  g.addColorStop(0,'#0f1724'); g.addColorStop(1,'#1f3146');
+  ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+  // subtle aurora streak
+  const rg = ctx.createLinearGradient(0,0,w,0);
+  rg.addColorStop(0,'rgba(110,198,217,0.12)'); rg.addColorStop(0.5,'rgba(138,108,255,0.12)'); rg.addColorStop(1,'rgba(255,182,150,0.06)');
+  ctx.fillStyle = rg; ctx.fillRect(0,h*0.05,w,h*0.25);
+  // big red play triangle
+  ctx.fillStyle = '#ff0000';
+  const px = w*0.12, py = h*0.5;
+  ctx.beginPath();
+  ctx.moveTo(px, py - 32);
+  ctx.lineTo(px, py + 32);
+  ctx.lineTo(px + 56, py);
+  ctx.closePath();
+  ctx.fill();
+  // title
+  ctx.fillStyle = '#eaf9ff'; ctx.font = 'bold 16px Inter, sans-serif';
+  wrapTextSmall(ctx, title, w*0.6, h*0.45, w*0.55, 18);
+  // small label bottom
+  ctx.fillStyle = 'rgba(191,239,253,0.7)'; ctx.font = '12px Inter, sans-serif';
+  ctx.fillText('YouTube • Playlist', w*0.6, h*0.85);
+  return c.toDataURL('image/png');
+}
+function wrapTextSmall(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '', lineCount = 0;
+  ctx.textAlign = 'left';
+  for(let n=0;n<words.length;n++){
+    const testLine = line + words[n] + ' ';
+    if(ctx.measureText(testLine).width > maxWidth && n>0){
+      ctx.fillText(line.trim(), x, y + (lineCount*lineHeight));
+      line = words[n] + ' ';
+      lineCount++;
+    } else line = testLine;
+  }
+  ctx.fillText(line.trim(), x, y + (lineCount*lineHeight));
+}
+
+function renderPlaylists(){
+  const row = $('playlistRow');
+  row.innerHTML = '';
+  PLAYLISTS.forEach((p, i)=>{
+    const div = document.createElement('div'); div.className='pl-card';
+    const img = document.createElement('img');
+    img.src = makePlaylistThumb(p.title || `Playlist ${i+1}`, 400, 225);
+    img.alt = p.title || `Playlist ${i+1}`;
+    img.style.cursor = 'pointer';
+    img.addEventListener('click', ()=> window.open(p.url,'_blank'));
+    const a = document.createElement('a'); a.className='pl-title'; a.href=p.url; a.target='_blank'; a.textContent = p.title || `Playlist ${i+1}`;
+    div.appendChild(img); div.appendChild(a);
+    row.appendChild(div);
+  });
+}
+renderPlaylists();
+
+/* ----------------- Subscription form ----------------- */
+$('subForm').addEventListener('submit', e=>{
   e.preventDefault();
   $('subInfo').textContent = '¡Gracias! Te hemos suscrito (demo)';
   $('emailInput').value = '';
@@ -782,8 +858,6 @@ document.getElementById('subForm').addEventListener('submit', e=>{
 
 /* Prevent selection while dragging */
 document.addEventListener('touchmove', function(e){ if(isDragging) e.preventDefault(); }, {passive:false});
-
-/* End of script */
 </script>
 </body>
 </html>
