@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>CorAlma — Encuentra tu calma</title>
-<meta name="description" content="Meditaciones, sonidos, tarot interactivo, frases diarias, playlists y artículos." />
+<title>CorAlma — Tarot completo integrado</title>
+<meta name="description" content="CorAlma — Tarot interactivo con 78 cartas, meditaciones, playlists, frases diarias y artículos." />
 <style>
 :root{
   --bg1:#020414; --bg2:#041428;
@@ -12,7 +12,6 @@
   --glass: rgba(255,255,255,0.04);
   --muted:#9fd8ea; --text:#e6f9ff;
   --finished:#ff6b6b;
-  --card-bg: rgba(255,255,255,0.02);
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; -webkit-font-smoothing:antialiased}
@@ -26,9 +25,6 @@ body{
   overflow-x:hidden;
   position:relative;
 }
-
-/* Particle canvas behind everything */
-#particleCanvas{position:fixed;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.12}
 
 /* container */
 .container{max-width:1180px;margin:24px auto;padding:18px;position:relative;z-index:1}
@@ -73,46 +69,34 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
 .youtube-thumb .yt-title{font-size:12px;padding:6px;color:#eaf9ff}
 .youtube-controls{display:flex;gap:6px;justify-content:center;padding-top:6px}
 
-/* tarot */
-#tarotSection{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
-#mazo{width:180px;height:260px;border-radius:10px;background-image:linear-gradient(180deg,#2a1f44,#1b2633);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(0,0,0,0.5);cursor:pointer;border:4px solid rgba(255,255,255,0.03);position:relative}
-#mazo:hover{transform:translateY(-4px);transition:transform .18s}
-#cardWrap{min-width:240px;min-height:340px;display:flex;align-items:center;justify-content:center;position:relative}
-#cardReveal{width:240px;height:340px;border-radius:10px;object-fit:cover;box-shadow:0 18px 50px rgba(0,0,0,0.6);display:none;backface-visibility:hidden;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.8,.2,1), opacity .6s}
-.card-inverted{transform: rotate(180deg) scale(1);}
+/* tarot gallery (thumbnails style youtube) */
+.tarot-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-top:12px}
+.tarot-thumb{background:#081021;border-radius:10px;padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:8px;align-items:center;transition:transform .18s, box-shadow .18s}
+.tarot-thumb:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+.tarot-thumb img{width:100%;height:150px;object-fit:cover;border-radius:6px}
+.tarot-thumb .t-title{font-size:13px;text-align:center;color:#eaf9ff}
 
-/* glow animations for energy — fade-in then pulse forever */
+/* revealed card area */
+#cardReveal{width:260px;height:380px;border-radius:10px;object-fit:cover;box-shadow:0 18px 50px rgba(0,0,0,0.6);display:block;backface-visibility:hidden;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.8,.2,1), opacity .6s}
+.card-inverted{transform: rotate(180deg)}
+
+/* glow animations for energy */
 @keyframes glowPulse {
-  0% { box-shadow: 0 0 10px rgba(0,0,0,0); transform: scale(1); }
-  10% { box-shadow: 0 0 14px rgba(0,0,0,0); transform: scale(1.01); }
-  50% { box-shadow: 0 0 28px var(--glowColor); transform: scale(1.02); }
-  100% { box-shadow: 0 0 18px rgba(0,0,0,0); transform: scale(1); }
+  0% { box-shadow: 0 0 0 rgba(0,0,0,0); transform: scale(1); }
+  20% { box-shadow: 0 0 14px var(--glowColor); transform: scale(1.01); }
+  60% { box-shadow: 0 0 34px var(--glowColor); transform: scale(1.02); }
+  100% { box-shadow: 0 0 14px var(--glowColor); transform: scale(1); }
 }
-.glow-green{ --glowColor: rgba(98, 255, 150, 0.9); animation: glowPulse 2.6s ease-in-out infinite; }
-.glow-yellow{ --glowColor: rgba(255, 222, 100, 0.95); animation: glowPulse 2.6s ease-in-out infinite; }
+.glow-green{ --glowColor: rgba(98, 255, 150, 0.85); animation: glowPulse 2.6s ease-in-out infinite; }
+.glow-yellow{ --glowColor: rgba(255, 222, 100, 0.9); animation: glowPulse 2.6s ease-in-out infinite; }
 .glow-red{ --glowColor: rgba(255,90,90,0.95); animation: glowPulse 2.6s ease-in-out infinite; }
-
-/* initial fade-in for glow */
-.glow-fade-in { animation-name: glowPulse; animation-duration: 2.6s; animation-fill-mode: both; }
 
 /* history thumbs */
 #history{display:flex;gap:8px;align-items:center;margin-top:10px}
-.hist-thumb{width:48px;height:70px;border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+.hist-thumb{width:48px;height:72px;border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
 .hist-thumb img{width:100%;height:100%;object-fit:cover}
 
-/* deck grid (optional) */
-#deckGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:6px;padding:8px;background:rgba(0,0,0,0.12);border-radius:8px;max-height:300px;overflow:auto;margin-top:12px;display:none}
-.card-mini{width:100%;height:84px;border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
-.card-mini img{width:100%;height:100%;object-fit:cover;display:block}
-
-/* phrase box */
-.phrase-box{background:var(--card-bg);padding:14px;border-radius:10px;color:#dff8ff;font-size:15px;min-height:72px;display:flex;align-items:center;justify-content:center;text-align:center;transition:opacity .6s}
-
-/* playlists layout */
-.playlists{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
-.playlists iframe{width:100%;height:200px;border-radius:8px;border:0;}
-
-/* social bar (exact as requested — right side with icons + PayPal) */
+/* social bar (right) EXACT as requested */
 .social-bar {
   position: fixed;
   top: 45%;
@@ -134,22 +118,16 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
 .floating-btn{position:fixed;right:20px;bottom:20px;width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;cursor:move;z-index:2000;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:background .25s}
 .floating-btn.finished{background:var(--finished); color:#fff;}
 
-/* responsive tweaks */
+/* responsive */
 @media(max-width:980px){
   .grid{grid-template-columns:1fr}
-  .articles-grid{grid-template-columns:1fr}
-  #cardReveal{width:180px;height:260px}
-  #mazo{width:140px;height:200px}
-  #tarotSection{flex-direction:column;align-items:center}
+  .tarot-thumb img{height:140px}
   .social-bar{top:auto;bottom:10px;right:50%;transform:translateX(50%);flex-direction:row;border-radius:12px}
 }
 </style>
 </head>
 <body>
-  <!-- particle background canvas -->
-  <canvas id="particleCanvas"></canvas>
-
-  <!-- social bar (DO NOT change links; kept as requested) -->
+  <!-- social bar (unchanged links) -->
   <div class="social-bar" aria-hidden="false">
     <a href="https://www.instagram.com/effectno33?igsh=MjAycWE4dTFsbXpw" target="_blank" title="Instagram"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" style="width:24px;height:24px"></a>
     <a href="https://www.tiktok.com/@effect.33?_t=ZS-8zoEWdno7UL&_r=1" target="_blank" title="TikTok"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok" style="width:24px;height:24px"></a>
@@ -179,7 +157,7 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
     <section class="hero card med-card" aria-labelledby="hero-title">
       <div class="hero-left">
         <h2 id="hero-title">Calma y presencia — prácticas basadas en ciencia y tradición</h2>
-        <p>Meditaciones, tarot interactivo con interpretaciones desde Wikipedia, playlists y artículos con referencias.</p>
+        <p>Meditaciones, tarot interactivo con interpretaciones integradas, playlists y artículos con referencias.</p>
         <div class="cta"><button class="btn-primary" onclick="document.getElementById('medit-block').scrollIntoView({behavior:'smooth'})">Iniciar Meditación</button></div>
       </div>
     </section>
@@ -190,7 +168,6 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
         <section id="medit-block" class="card med-card" aria-labelledby="medit-title">
           <h3 id="medit-title">Meditación interactiva</h3>
           <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-            <!-- removed sound selector per your request -->
             <div class="selector-row" style="gap:8px">
               <button class="btn-primary" onclick="setTimer(300)">5 min</button>
               <button class="btn-primary" onclick="setTimer(600)">10 min</button>
@@ -208,12 +185,9 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
             <button id="stopBtn" class="btn-primary" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">Detener</button>
             <label style="margin-left:8px;font-size:13px"><input id="audioOnlyToggle" type="checkbox"> Solo audio</label>
           </div>
-
-          <div id="audioNotice" class="notice" style="display:none"></div>
-          <audio id="natureAudio" preload="none" controls style="display:none"></audio>
         </section>
 
-        <!-- Artículos (solo 5 con link) -->
+        <!-- Artículos (5 con link) -->
         <section class="card" style="margin-top:16px" id="art">
           <h3 style="margin-top:0">Artículos</h3>
           <div class="articles-grid" id="articlesGrid" role="list"></div>
@@ -221,47 +195,44 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
 
         <!-- Tarot -->
         <section id="tarot" class="card" style="margin-top:16px">
-          <h3>Tarot — Toca el mazo</h3>
-          <div id="tarotSection">
+          <h3>Tarot — Galería / Toca el mazo</h3>
+          <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
             <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
-              <div id="mazo" title="Toca el mazo para sacar una carta" aria-label="Mazo de tarot">
-                <div style="color:#fff;text-align:center;font-weight:700">MAZO</div>
+              <div id="mazo" style="width:180px;height:260px;border-radius:10px;background:linear-gradient(180deg,#2a1f44,#1b2633);display:flex;align-items:center;justify-content:center;cursor:pointer">
+                <div style="color:#fff;font-weight:700">MAZO</div>
               </div>
-              <button id="toggleDeckBtn" class="btn-primary" style="font-size:13px;padding:6px 8px">Ver mazo completo</button>
+              <button id="toggleDeckBtn" class="btn-primary" style="font-size:13px;padding:6px 8px">Ver mazo (galería)</button>
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
-              <div id="cardWrap">
-                <div id="cardLoader" class="loader" style="display:none"></div>
-                <img id="cardReveal" alt="Carta revelada" />
+            <div style="flex:1;min-width:320px">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div id="cardWrap" style="min-width:260px">
+                  <img id="cardReveal" src="" alt="Carta revelada" style="display:none" />
+                </div>
+                <div style="flex:1">
+                  <div id="tarotText" style="color:#dff8ff">Haz click en una miniatura o toca el mazo para revelar una carta. La descripción principal está integrada y al final encontrarás un enlace para leer más en Wikipedia.</div>
+                </div>
               </div>
-
-              <div id="tarotText" aria-live="polite">Toca el mazo para revelar una carta. Interpretación desde Wikipedia (texto en español cuando esté disponible).</div>
-
-              <div id="history" aria-hidden="false"></div>
+              <div id="history" style="margin-top:12px"></div>
             </div>
           </div>
 
-          <!-- Deck grid (hidden by default, full deck clickable) -->
-          <div id="deckGrid"></div>
+          <div id="deckGrid" class="tarot-gallery" style="margin-top:16px"></div>
         </section>
 
         <!-- YouTube playlists -->
         <section id="music" class="card" style="margin-top:16px">
-          <h3>Recomendaciones / Playlists (YouTube)</h3>
+          <h3>Playlists (YouTube)</h3>
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
             <input id="ytSearchInput" type="text" placeholder="Buscar en YouTube..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dff8ff" list="ytSuggestions">
             <datalist id="ytSuggestions">
               <option value="relajación"></option>
               <option value="meditación guiada"></option>
               <option value="sonidos de la naturaleza"></option>
-              <option value="concentración"></option>
-              <option value="respiración"></option>
             </datalist>
             <button class="btn-primary" onclick="ytSearch()">Buscar</button>
           </div>
-          <div class="playlists">
-            <!-- the three playlists you provided -->
+          <div class="playlists" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
             <iframe src="https://www.youtube.com/embed/videoseries?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             <iframe src="https://www.youtube.com/embed/videoseries?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             <iframe src="https://www.youtube.com/embed/videoseries?list=PL6FMHId50GbGGi06g4gMUzsfMNveEKNxQ" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -272,7 +243,7 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
       <aside>
         <div class="card">
           <h4 style="margin-top:0">Frases diarias</h4>
-          <div id="phraseBox" class="phrase-box"></div>
+          <div id="phraseBox" style="background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;min-height:72px;display:flex;align-items:center;justify-content:center;text-align:center;color:#dff8ff"></div>
         </div>
 
         <div class="card" id="reg" style="margin-top:12px">
@@ -304,91 +275,250 @@ select,input,button{background:transparent;color:#dff8ff;padding:8px;border-radi
   </div>
 
 <script>
-/* ----------------- Particle background (light constelation) ----------------- */
-(function initParticles(){
-  const canvas = document.getElementById('particleCanvas');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let w = canvas.width = innerWidth;
-  let h = canvas.height = innerHeight;
-  window.addEventListener('resize', ()=>{ w = canvas.width = innerWidth; h = canvas.height = innerHeight; init(); });
+/* ============================
+   CONFIG / DATA: mazo completo
+   - Cada carta: name, img, desc (es), wiki
+   - Por ahora img usa placeholders para garantizar estabilidad.
+   - Si quieres reemplazar por imágenes reales:
+      - opción A: subir a /cartas/ y cambiar IMG_BASE
+      - opción B: dame OK y lo enlazo a Wikimedia
+   ============================ */
 
-  const particles = [];
-  function rand(min,max){ return Math.random()*(max-min)+min; }
-  function init(){
-    particles.length = 0;
-    const n = Math.max(40, Math.floor((w*h)/140000));
-    for(let i=0;i<n;i++){
-      particles.push({x:rand(0,w), y:rand(0,h), vx:rand(-0.2,0.2), vy:rand(-0.05,0.05), r:rand(0.3,1.6), a:rand(0.05,0.35)});
-    }
-  }
-  function draw(){
-    ctx.clearRect(0,0,w,h);
-    for(let p of particles){
-      p.x += p.vx; p.y += p.vy;
-      if(p.x<0) p.x = w; if(p.x>w) p.x=0; if(p.y<0) p.y=h; if(p.y>h) p.y=0;
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle = `rgba(255,255,255,${p.a})`; ctx.fill();
-    }
-    // connect some
-    for(let i=0;i<particles.length;i++){
-      for(let j=i+1;j<particles.length;j++){
-        const p1=particles[i], p2=particles[j];
-        const dx=p1.x-p2.x, dy=p1.y-p2.y, d=Math.sqrt(dx*dx+dy*dy);
-        if(d<120){
-          ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y);
-          ctx.strokeStyle = `rgba(110,198,217,${0.02 + (0.12*(1 - d/120))})`; ctx.lineWidth=0.6; ctx.stroke();
-        }
-      }
-    }
-    requestAnimationFrame(draw);
-  }
-  init(); draw();
-})();
+const IMG_PLACEHOLDER = (label, w=240, h=340) => `https://via.placeholder.com/${w}x${h}.png?text=${encodeURIComponent(label)}`;
 
-/* ----------------- Meditation timer & sync ----------------- */
+/* TAROT_FULL: 78 cartas: (22 mayores + 56 menores) */
+/* Los textos son breves para cada carta; puedes editarlos después si quieres más detalle */
+const TAROT_FULL = [
+  /* Arcanos Mayores (22) */
+  {name:"0 - El Loco", img: IMG_PLACEHOLDER('El Loco'), desc:"Inicios, libertad, salto al vacío con fe. Invierte: imprudencia o falta de dirección.", wiki:"https://es.wikipedia.org/wiki/Loco_(tarot)"},
+  {name:"I - El Mago", img: IMG_PLACEHOLDER('El Mago'), desc:"Habilidad, manifestación, voluntad. Invierte: manipulación, distracción.", wiki:"https://es.wikipedia.org/wiki/Mago_(tarot)"},
+  {name:"II - La Sacerdotisa", img: IMG_PLACEHOLDER('La Sacerdotisa'), desc:"Intuición, misterio, sabiduría interior. Invierte: bloqueo intuitivo, secretos.", wiki:"https://es.wikipedia.org/wiki/Sacerdotisa_(tarot)"},
+  {name:"III - La Emperatriz", img: IMG_PLACEHOLDER('La Emperatriz'), desc:"Creatividad, abundancia, fertilidad. Invierte: bloqueo creativo o dependencia.", wiki:"https://es.wikipedia.org/wiki/Emperatriz_(tarot)"},
+  {name:"IV - El Emperador", img: IMG_PLACEHOLDER('El Emperador'), desc:"Estructura, autoridad, protección. Invierte: rigidez, abuso de poder.", wiki:"https://es.wikipedia.org/wiki/Emperador_(tarot)"},
+  {name:"V - El Sumo Sacerdote", img: IMG_PLACEHOLDER('El Sumo Sacerdote'), desc:"Tradición, enseñanza, guía espiritual. Invierte: dogmatismo, desafío a la norma.", wiki:"https://es.wikipedia.org/wiki/Sumo_Sacerdote_(tarot)"},
+  {name:"VI - Los Amantes", img: IMG_PLACEHOLDER('Los Amantes'), desc:"Decisiones del corazón, unión, valores compartidos. Invierte: conflicto, indecisión amorosa.", wiki:"https://es.wikipedia.org/wiki/Amantes_(tarot)"},
+  {name:"VII - El Carro", img: IMG_PLACEHOLDER('El Carro'), desc:"Voluntad, avance, victoria mediante control. Invierte: pérdida de control, obstáculo.", wiki:"https://es.wikipedia.org/wiki/Carro_(tarot)"},
+  {name:"VIII - La Justicia", img: IMG_PLACEHOLDER('La Justicia'), desc:"Equilibrio, ley, responsabilidad. Invierte: injusticia, sesgo.", wiki:"https://es.wikipedia.org/wiki/Justicia_(tarot)"},
+  {name:"IX - El Ermitaño", img: IMG_PLACEHOLDER('El Ermitaño'), desc:"Búsqueda interior, retiro, sabiduría. Invierte: soledad excesiva, aislamiento.", wiki:"https://es.wikipedia.org/wiki/Ermita%C3%B1o_(tarot)"},
+  {name:"X - La Rueda de la Fortuna", img: IMG_PLACEHOLDER('La Rueda'), desc:"Ciclo, cambio, destino. Invierte: resistencia al cambio.", wiki:"https://es.wikipedia.org/wiki/Rueda_de_la_Fortuna_(tarot)"},
+  {name:"XI - La Fuerza", img: IMG_PLACEHOLDER('La Fuerza'), desc:"Coraje, calma interior, dominio de impulsos. Invierte: dudas, debilidad.", wiki:"https://es.wikipedia.org/wiki/Fuerza_(tarot)"},
+  {name:"XII - El Colgado", img: IMG_PLACEHOLDER('El Colgado'), desc:"Entrega, cambio de perspectiva, pausa. Invierte: inmovilidad, sacrificio inútil.", wiki:"https://es.wikipedia.org/wiki/Colgado_(tarot)"},
+  {name:"XIII - La Muerte", img: IMG_PLACEHOLDER('La Muerte'), desc:"Transformación, cierre necesario. Invierte: resistencia al cambio.", wiki:"https://es.wikipedia.org/wiki/Muerte_(tarot)"},
+  {name:"XIV - La Templanza", img: IMG_PLACEHOLDER('La Templanza'), desc:"Equilibrio, integración, moderación. Invierte: extremos, desarmonía.", wiki:"https://es.wikipedia.org/wiki/Templanza_(tarot)"},
+  {name:"XV - El Diablo", img: IMG_PLACEHOLDER('El Diablo'), desc:"Ataduras, materialismo, tentación. Invierte: liberación o enfrentamiento al miedo.", wiki:"https://es.wikipedia.org/wiki/Diablo_(tarot)"},
+  {name:"XVI - La Torre", img: IMG_PLACEHOLDER('La Torre'), desc:"Crisis súbita, derrumbe de estructuras falsas. Invierte: evitación del cambio radical.", wiki:"https://es.wikipedia.org/wiki/Torre_(tarot)"},
+  {name:"XVII - La Estrella", img: IMG_PLACEHOLDER('La Estrella'), desc:"Esperanza, guía espiritual, calma renovadora. Invierte: pérdida de fe momentánea.", wiki:"https://es.wikipedia.org/wiki/Estrella_(tarot)"},
+  {name:"XVIII - La Luna", img: IMG_PLACEHOLDER('La Luna'), desc:"Inconsciente, sueños, confusión. Invierte: claridad progresiva.", wiki:"https://es.wikipedia.org/wiki/Luna_(tarot)"},
+  {name:"XIX - El Sol", img: IMG_PLACEHOLDER('El Sol'), desc:"Éxito, vitalidad, verdad. Invierte: falsa felicidad, exceso.", wiki:"https://es.wikipedia.org/wiki/Sol_(tarot)"},
+  {name:"XX - El Juicio", img: IMG_PLACEHOLDER('El Juicio'), desc:"Renacimiento, evaluación, llamada interna. Invierte: autocondena.", wiki:"https://es.wikipedia.org/wiki/Juicio_(tarot)"},
+  {name:"XXI - El Mundo", img: IMG_PLACEHOLDER('El Mundo'), desc:"Integración, logro, cierre de ciclo. Invierte: metas incompletas.", wiki:"https://es.wikipedia.org/wiki/Mundo_(tarot)"},
+
+  /* Arcanos Menores: Bastos (Wands) - Copas (Cups) - Espadas (Swords) - Oros (Pentacles)
+     Para mantener razonable el tamaño del código incluimos cada carta con texto breve. */
+  /* Bastos (14) */
+  {name:"As de Bastos", img: IMG_PLACEHOLDER('As de Bastos'), desc:"Nueva inspiración, chispa creativa.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Dos de Bastos", img: IMG_PLACEHOLDER('2 de Bastos'), desc:"Planificación, decisión inicial.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Tres de Bastos", img: IMG_PLACEHOLDER('3 de Bastos'), desc:"Expansión, visión a futuro.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Cuatro de Bastos", img: IMG_PLACEHOLDER('4 de Bastos'), desc:"Celebración, estabilidad en avances.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Cinco de Bastos", img: IMG_PLACEHOLDER('5 de Bastos'), desc:"Competencia, fricción creativa.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Seis de Bastos", img: IMG_PLACEHOLDER('6 de Bastos'), desc:"Reconocimiento, triunfo público.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Siete de Bastos", img: IMG_PLACEHOLDER('7 de Bastos'), desc:"Defensa de posición, coraje.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Ocho de Bastos", img: IMG_PLACEHOLDER('8 de Bastos'), desc:"Movimiento rápido, noticias.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Nueve de Bastos", img: IMG_PLACEHOLDER('9 de Bastos'), desc:"Perseverancia, última resistencia.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Diez de Bastos", img: IMG_PLACEHOLDER('10 de Bastos'), desc:"Carga, responsabilidad excesiva.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Paje de Bastos", img: IMG_PLACEHOLDER('Paje de Bastos'), desc:"Mensaje creativo, curiosidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Caballero de Bastos", img: IMG_PLACEHOLDER('Caballero de Bastos'), desc:"Impulso, pasión en acción.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Reina de Bastos", img: IMG_PLACEHOLDER('Reina de Bastos'), desc:"Confianza, liderazgo carismático.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Rey de Bastos", img: IMG_PLACEHOLDER('Rey de Bastos'), desc:"Visión, autoridad creativa.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+
+  /* Copas (14) */
+  {name:"As de Copas", img: IMG_PLACEHOLDER('As de Copas'), desc:"Nuevo amor, apertura emocional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Dos de Copas", img: IMG_PLACEHOLDER('2 de Copas'), desc:"Alianza, relación significativa.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Tres de Copas", img: IMG_PLACEHOLDER('3 de Copas'), desc:"Celebración, comunidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Cuatro de Copas", img: IMG_PLACEHOLDER('4 de Copas'), desc:"Descontento, meditación sobre opciones.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Cinco de Copas", img: IMG_PLACEHOLDER('5 de Copas'), desc:"Pérdida, duelo y aprendizaje.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Seis de Copas", img: IMG_PLACEHOLDER('6 de Copas'), desc:"Recuerdos, nostalgia cálida.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Siete de Copas", img: IMG_PLACEHOLDER('7 de Copas'), desc:"Ilusiones, múltiples opciones.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Ocho de Copas", img: IMG_PLACEHOLDER('8 de Copas'), desc:"Dejar atrás, búsqueda interior.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Nueve de Copas", img: IMG_PLACEHOLDER('9 de Copas'), desc:"Satisfacción, deseos cumplidos.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Diez de Copas", img: IMG_PLACEHOLDER('10 de Copas'), desc:"Felicidad familiar, plenitud emocional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Paje de Copas", img: IMG_PLACEHOLDER('Paje de Copas'), desc:"Sensibilidad, iniciativa emocional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Caballero de Copas", img: IMG_PLACEHOLDER('Caballero de Copas'), desc:"Romanticismo, propuesta sentimental.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Reina de Copas", img: IMG_PLACEHOLDER('Reina de Copas'), desc:"Empatía, cuidado emocional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Rey de Copas", img: IMG_PLACEHOLDER('Rey de Copas'), desc:"Sabiduría emocional, equilibrio afectivo.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+
+  /* Espadas (14) */
+  {name:"As de Espadas", img: IMG_PLACEHOLDER('As de Espadas'), desc:"Claridad mental, verdad emergente.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Dos de Espadas", img: IMG_PLACEHOLDER('2 de Espadas'), desc:"Bloqueo, decisión difícil.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Tres de Espadas", img: IMG_PLACEHOLDER('3 de Espadas'), desc:"Dolor, corazón herido.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Cuatro de Espadas", img: IMG_PLACEHOLDER('4 de Espadas'), desc:"Descanso necesario, recuperación.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Cinco de Espadas", img: IMG_PLACEHOLDER('5 de Espadas'), desc:"Derrota, conflicto ético.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Seis de Espadas", img: IMG_PLACEHOLDER('6 de Espadas'), desc:"Tránsito a mejores aguas, viaje interior.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Siete de Espadas", img: IMG_PLACEHOLDER('7 de Espadas'), desc:"Astucia, ocultamiento.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Ocho de Espadas", img: IMG_PLACEHOLDER('8 de Espadas'), desc:"Limitación mental, ansiedad percibida.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Nueve de Espadas", img: IMG_PLACEHOLDER('9 de Espadas'), desc:"Preocupaciones nocturnas, insomnio mental.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Diez de Espadas", img: IMG_PLACEHOLDER('10 de Espadas'), desc:"Final doloroso, punto de quiebre.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Paje de Espadas", img: IMG_PLACEHOLDER('Paje de Espadas'), desc:"Curiosidad intelectual, vigilancia.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Caballero de Espadas", img: IMG_PLACEHOLDER('Caballero de Espadas'), desc:"Acción impulsiva, decisión rápida.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Reina de Espadas", img: IMG_PLACEHOLDER('Reina de Espadas'), desc:"Claridad incisiva, comunicación franca.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Rey de Espadas", img: IMG_PLACEHOLDER('Rey de Espadas'), desc:"Justicia mental, juicio objetivo.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+
+  /* Oros (14) */
+  {name:"As de Oros", img: IMG_PLACEHOLDER('As de Oros'), desc:"Oportunidad material, semilla de prosperidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Dos de Oros", img: IMG_PLACEHOLDER('2 de Oros'), desc:"Equilibrio práctico, manejo de recursos.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Tres de Oros", img: IMG_PLACEHOLDER('3 de Oros'), desc:"Trabajo conjunto, reconocimiento profesional.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Cuatro de Oros", img: IMG_PLACEHOLDER('4 de Oros'), desc:"Apego a lo material, seguridad rígida.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Cinco de Oros", img: IMG_PLACEHOLDER('5 de Oros'), desc:"Escasez, sensación de estar afuera.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Seis de Oros", img: IMG_PLACEHOLDER('6 de Oros'), desc:"Generosidad, intercambio justo.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Siete de Oros", img: IMG_PLACEHOLDER('7 de Oros'), desc:"Evaluación de frutos, paciencia productiva.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Ocho de Oros", img: IMG_PLACEHOLDER('8 de Oros'), desc:"Perfeccionamiento, disciplina en oficio.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Nueve de Oros", img: IMG_PLACEHOLDER('9 de Oros'), desc:"Autonomía y cosecha de esfuerzo.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Diez de Oros", img: IMG_PLACEHOLDER('10 de Oros'), desc:"Legado, estabilidad familiar y riqueza.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Paje de Oros", img: IMG_PLACEHOLDER('Paje de Oros'), desc:"Oferta práctica, aprendizaje material.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Caballero de Oros", img: IMG_PLACEHOLDER('Caballero de Oros'), desc:"Trabajo constante, fiabilidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Reina de Oros", img: IMG_PLACEHOLDER('Reina de Oros'), desc:"Cuidado práctico, abundancia doméstica.", wiki:"https://es.wikipedia.org/wiki/Tarot"},
+  {name:"Rey de Oros", img: IMG_PLACEHOLDER('Rey de Oros'), desc:"Seguridad, éxito material y estabilidad.", wiki:"https://es.wikipedia.org/wiki/Tarot"}
+];
+
+
+/* ============================
+   Inicializaciones UI
+   ============================ */
+
+/* Render deck gallery (miniaturas) */
+const deckGrid = document.getElementById('deckGrid');
+function renderGallery(){
+  TAROT_FULL.forEach((c, idx) => {
+    const div = document.createElement('div');
+    div.className = 'tarot-thumb';
+    div.dataset.index = idx;
+    div.innerHTML = `
+      <img src="${c.img}" alt="${c.name}">
+      <div class="t-title">${c.name}</div>
+    `;
+    div.addEventListener('click', ()=> revealFromIndex(idx));
+    deckGrid.appendChild(div);
+  });
+}
+renderGallery();
+
+/* toggle deck button to show/hide gallery */
+document.getElementById('toggleDeckBtn').addEventListener('click', ()=>{
+  const dg = document.getElementById('deckGrid');
+  if(dg.style.display === 'grid' || dg.style.display === '') { dg.style.display = 'none'; document.getElementById('toggleDeckBtn').textContent = 'Ver mazo (galería)'; }
+  else { dg.style.display = 'grid'; document.getElementById('toggleDeckBtn').textContent = 'Ocultar mazo'; }
+});
+
+/* Show card from gallery (index) */
+function revealFromIndex(idx){
+  const card = TAROT_FULL[idx];
+  const inverted = Math.random() < 0.5;
+  showRevealedCard(card, inverted);
+}
+
+/* Mazo aleatorio al tocar */
+document.getElementById('mazo').addEventListener('click', ()=>{
+  const idx = Math.floor(Math.random()*TAROT_FULL.length);
+  const inverted = Math.random() < 0.5;
+  showRevealedCard(TAROT_FULL[idx], inverted);
+});
+
+/* show revealed card: updates image, text, glow, history */
+function showRevealedCard(cardObj, inverted=false){
+  const cardReveal = document.getElementById('cardReveal');
+  const tarotText = document.getElementById('tarotText');
+  if(!cardReveal || !tarotText) return;
+
+  // set image
+  cardReveal.src = cardObj.img;
+  cardReveal.style.display = 'block';
+  cardReveal.style.opacity = 0;
+  setTimeout(()=> cardReveal.style.opacity = 1, 80);
+
+  // invert class
+  if(inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
+
+  // energy mapping for glow color
+  const name = cardObj.name;
+  const energy = energyForCard(name);
+  cardReveal.classList.remove('glow-green','glow-yellow','glow-red');
+  if(energy === 'green') cardReveal.classList.add('glow-green');
+  else if(energy === 'red') cardReveal.classList.add('glow-red');
+  else cardReveal.classList.add('glow-yellow');
+
+  // set text (local) + wikipedia link if available
+  tarotText.innerHTML = `<strong style="font-size:16px">${cardObj.name}${inverted? ' — (invertida)':''}</strong>
+    <p style="margin-top:8px;color:#dff8ff">${cardObj.desc}</p>
+    ${cardObj.wiki? `<div style="margin-top:8px;font-size:13px;color:#9fd8ea">Leer más: <a href="${cardObj.wiki}" target="_blank" style="color:#bfeffd">${cardObj.wiki}</a></div>` : ''}`;
+
+  // push to history (keep last 5)
+  pushHistory({img:cardObj.img, name:cardObj.name, inverted, desc:cardObj.desc, wiki:cardObj.wiki});
+}
+
+/* simple energy classifier */
+function energyForCard(name){
+  const positive = ["El Sol","La Estrella","El Mundo","As de Copas","Diez de Oros","Nueve de Oros"];
+  const negative = ["La Torre","La Muerte","El Diablo","Diez de Espadas","Tres de Espadas"];
+  if(positive.some(p => name.includes(p))) return 'green';
+  if(negative.some(p => name.includes(p))) return 'red';
+  return 'yellow';
+}
+
+/* History handling (localStorage) */
+function pushHistory(entry){
+  try {
+    const KEY = 'coralma_tarot_hist';
+    const cur = JSON.parse(localStorage.getItem(KEY) || '[]');
+    cur.unshift({img:entry.img,name:entry.name,inverted:entry.inverted,desc:entry.desc,wiki:entry.wiki,time:Date.now()});
+    while(cur.length>5) cur.pop();
+    localStorage.setItem(KEY, JSON.stringify(cur));
+    renderHistory();
+  } catch(e){}
+}
+function getHistory(){ try{ return JSON.parse(localStorage.getItem('coralma_tarot_hist')||'[]'); }catch(e){return [];} }
+function renderHistory(){
+  const container = document.getElementById('history');
+  container.innerHTML = '';
+  const hist = getHistory();
+  hist.forEach(h => {
+    const d = document.createElement('div'); d.className='hist-thumb';
+    const img = document.createElement('img'); img.src=h.img; img.alt=h.name;
+    d.appendChild(img);
+    d.title = h.name + (h.inverted? ' (invertida)':'');
+    d.addEventListener('click', ()=> {
+      // show details from history
+      const cardReveal = document.getElementById('cardReveal'); cardReveal.src = h.img; cardReveal.style.display='block';
+      if(h.inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
+      const t = document.getElementById('tarotText');
+      t.innerHTML = `<strong>${h.name}${h.inverted? ' — (invertida)':''}</strong><p style="margin-top:8px">${h.desc}</p>${h.wiki? `<div style="margin-top:8px;font-size:12px;color:#9fd8ea">Fuente: <a href="${h.wiki}" target="_blank" style="color:#bfeffd">${h.wiki}</a></div>`: ''}`;
+    });
+    container.appendChild(d);
+  });
+}
+renderHistory();
+
+/* ---------- Meditation timer & floating sync ---------- */
 let timerSec = 300;
 let timerInterval = null;
 function pad(n){ return String(n).padStart(2,'0'); }
 function updateDisplays(){
   const m = Math.floor(timerSec/60), s = timerSec%60;
   const text = `${pad(m)}:${pad(s)}`;
-  const td = document.querySelector('.time-display #timeDisplay');
-  // not present sometimes; update our explicit
   const timeSpan = document.getElementById('timeDisplay');
   if(timeSpan) timeSpan.textContent = text;
   document.getElementById('floatingTime').textContent = text;
-  // style when finished
-  if(timerSec <= 0){
-    document.getElementById('floatingBtn').classList.add('finished');
-    const mc = document.getElementById('medCircle'); if(mc) mc.style.border = '4px solid rgba(255,107,107,0.85)';
-  } else {
-    document.getElementById('floatingBtn').classList.remove('finished');
-    const mc = document.getElementById('medCircle'); if(mc) mc.style.border = '0';
-  }
+  if(timerSec <= 0){ document.getElementById('floatingBtn').classList.add('finished'); const mc=document.getElementById('medCircle'); if(mc) mc.style.border='4px solid rgba(255,107,107,0.85)'; }
+  else { document.getElementById('floatingBtn').classList.remove('finished'); const mc=document.getElementById('medCircle'); if(mc) mc.style.border='0'; }
 }
-function setTimer(sec){
-  timerSec = sec;
-  updateDisplays();
-}
-function startTimer(){
-  if(timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(()=>{
-    if(timerSec > 0){ timerSec--; updateDisplays(); }
-    else { clearInterval(timerInterval); timerInterval=null; updateDisplays(); try{ new Audio('https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg').play(); }catch(e){} }
-  },1000);
-}
+function setTimer(sec){ timerSec = sec; updateDisplays(); }
+function startTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval = setInterval(()=>{ if(timerSec>0){ timerSec--; updateDisplays(); } else { clearInterval(timerInterval); timerInterval=null; updateDisplays(); try{ new Audio('https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg').play(); }catch(e){} } },1000); }
 function stopTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; updateDisplays(); }
 
-/* UI bindings meditation */
-document.getElementById('startBtn').addEventListener('click', ()=> { startTimer(); });
-document.getElementById('stopBtn').addEventListener('click', ()=> { stopTimer(); });
+document.getElementById('startBtn').addEventListener('click', ()=> startTimer());
+document.getElementById('stopBtn').addEventListener('click', ()=> stopTimer());
+document.getElementById('medCircle').addEventListener('click', ()=> { if(timerInterval) stopTimer(); else startTimer(); });
 
-document.getElementById('medCircle').addEventListener('click', ()=> {
-  if(timerInterval) stopTimer(); else startTimer();
-});
-
-/* floating drag + click toggle */
+/* floating drag */
 let isDragging=false, offsetX=0, offsetY=0;
 const floating = document.getElementById('floatingBtn');
 floating.addEventListener('mousedown', e=>{ isDragging=true; offsetX=e.clientX-floating.offsetLeft; offsetY=e.clientY-floating.offsetTop; e.preventDefault(); });
@@ -445,10 +575,10 @@ setInterval(()=>{ phraseIdx = (phraseIdx + 1) % PHRASES.length; showPhrase(phras
 /* ---------- Articles: 5 with references ---------- */
 const ARTICLES = [
   {source:'Wikipedia', title:'Meditación', extract:'Prácticas y técnicas para centrar la atención y lograr un estado de conciencia, tradiciones y estudios.', url:'https://es.wikipedia.org/wiki/Meditaci%C3%B3n'},
-  {source:'Wikipedia', title:'Atención plena', extract:'(Mindfulness) — proceso de prestar atención de forma intencional en el presente.', url:'https://es.wikipedia.org/wiki/Atenci%C3%B3n_plena'},
+  {source:'Wikipedia', title:'Atención plena', extract:'Proceso de prestar atención de forma intencional en el presente.', url:'https://es.wikipedia.org/wiki/Atenci%C3%B3n_plena'},
   {source:'Wikipedia', title:'Neurociencia', extract:'Estudio del sistema nervioso con implicaciones en la comprensión de la meditación.', url:'https://es.wikipedia.org/wiki/Neurociencia'},
   {source:'Wikipedia', title:'Gratitud', extract:'Concepto y beneficios psicológicos asociados a la práctica de la gratitud.', url:'https://es.wikipedia.org/wiki/Gratitud'},
-  {source:'Wikipedia', title:'Relajación (psicología)', extract:'Técnicas para reducir la tensión física y mental.', url:'https://es.wikipedia.org/wiki/Relajaci%C3%B3n'}
+  {source:'Wikipedia', title:'Relajación (psicología)', extract:'Técnicas para reducir la tensión física y mental.', url:'https://es.wikipedia.org/wiki/Relajaci%C3%B3n_(psicolog%C3%ADa)'}
 ];
 function renderArticles(){
   const grid = document.getElementById('articlesGrid');
@@ -465,184 +595,16 @@ renderArticles();
 /* ---------- YouTube search ---------- */
 function ytSearch(){
   const q = document.getElementById('ytSearchInput').value.trim();
-  if(!q) { loadDailyRecs(); return; }
+  if(!q) { window.open('https://www.youtube.com', '_blank'); return; }
   window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`, '_blank');
 }
 
-/* ---------- TAROT: single card, wikipedia fetch, glow energy frame, history ---------- */
-/* Use a stable set of major arcana (Spanish names) + sample minors optional (kept maj + few minors to keep it light) */
-const TAROT_POOL = [
-  {name:'El loco', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/00_the_fool.jpg', wikiTitle:'El loco (tarot)'},
-  {name:'El mago', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/01_the_magician.jpg', wikiTitle:'Mago (Tarot)'},
-  {name:'La sacerdotisa', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/02_the_high_priestess.jpg', wikiTitle:'Sacerdotisa (tarot)'},
-  {name:'La emperatriz', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/03_the_empress.jpg', wikiTitle:'Emperatriz (tarot)'},
-  {name:'El emperador', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/04_the_emperor.jpg', wikiTitle:'Emperador (tarot)'},
-  {name:'Los amantes', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/06_the_lovers.jpg', wikiTitle:'Amor (tarot)'},
-  {name:'La estrella', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/17_the_star.jpg', wikiTitle:'Estrella (tarot)'},
-  {name:'La luna', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/18_the_moon.jpg', wikiTitle:'Luna (tarot)'},
-  {name:'El sol', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/19_the_sun.jpg', wikiTitle:'Sol (tarot)'},
-  {name:'La muerte', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/13_death.jpg', wikiTitle:'Muerte (tarot)'},
-  {name:'La torre', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/16_the_tower.jpg', wikiTitle:'Torre (tarot)'},
-  {name:'El juicio', img:'https://raw.githubusercontent.com/ekelen/tarot-api/master/images/rws_major/20_judgement.jpg', wikiTitle:'Juicio (tarot)'},
-  /* you can expand to full deck later */
-];
+/* ===========
+   End
+   =========== */
 
-/* choose orientation + card */
-function pickCard(){
-  const idx = Math.floor(Math.random() * TAROT_POOL.length);
-  const chosen = TAROT_POOL[idx];
-  const inverted = Math.random() < 0.5;
-  return {chosen, inverted};
-}
-
-/* small energy classifier to decide glow color (green/yellow/red) */
-function energyForCard(name){
-  // simple mapping; adjust as needed
-  const high = ['El sol','La estrella','Los amantes'];
-  const low = ['La muerte','La torre'];
-  if(high.includes(name)) return 'green';
-  if(low.includes(name)) return 'red';
-  return 'yellow';
-}
-
-/* cache wiki summaries in sessionStorage */
-async function fetchWikiSummary(title){
-  if(!title) return {text:'No hay descripción disponible.', source:''};
-  const cacheKey = 'wiki_'+title.replace(/\s+/g,'_');
-  const cached = sessionStorage.getItem(cacheKey);
-  if(cached) return JSON.parse(cached);
-  try{
-    // try Spanish wiki first
-    const esUrl = `https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-    const res = await fetch(esUrl);
-    if(res.ok){
-      const j = await res.json();
-      const out = {text: j.extract || 'No hay extracto en Wikipedia en español.', source: j.content_urls?.desktop?.page || ''};
-      sessionStorage.setItem(cacheKey, JSON.stringify(out));
-      return out;
-    } else {
-      // fallback: try english wiki by name
-      const enUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-      const r2 = await fetch(enUrl);
-      if(r2.ok){ const j2 = await r2.json(); const out2 = {text:j2.extract || '', source:j2.content_urls?.desktop?.page||''}; sessionStorage.setItem(cacheKey, JSON.stringify(out2)); return out2; }
-    }
-  }catch(e){}
-  return {text:'No se pudo recuperar la interpretación en este momento.', source:''};
-}
-
-/* persist + history (localStorage) */
-function pushHistory(entry){
-  try{
-    const key = 'coralma_tarot_hist';
-    const cur = JSON.parse(localStorage.getItem(key) || '[]');
-    cur.unshift(entry);
-    while(cur.length>5) cur.pop();
-    localStorage.setItem(key, JSON.stringify(cur));
-    renderHistory();
-  }catch(e){}
-}
-function getHistory(){ try{ return JSON.parse(localStorage.getItem('coralma_tarot_hist')||'[]'); }catch(e){return [];} }
-function renderHistory(){
-  const container = document.getElementById('history');
-  container.innerHTML = '';
-  const hist = getHistory();
-  hist.forEach(h=> {
-    const d = document.createElement('div'); d.className='hist-thumb';
-    const img = document.createElement('img'); img.src=h.img; img.alt=h.name;
-    d.appendChild(img);
-    d.title = h.name + (h.inverted? ' (invertida)':'');
-    d.addEventListener('click', ()=> showCardFromHistory(h));
-    container.appendChild(d);
-  });
-}
-function showCardFromHistory(h){
-  const cardReveal = document.getElementById('cardReveal');
-  const tarotText = document.getElementById('tarotText');
-  if(!cardReveal || !tarotText) return;
-  document.getElementById('cardLoader').style.display='none';
-  cardReveal.style.display='block'; cardReveal.src = h.img;
-  if(h.inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
-  // apply glow class permanently
-  cardReveal.classList.remove('glow-green','glow-yellow','glow-red');
-  const color = energyForCard(h.name);
-  if(color==='green') cardReveal.classList.add('glow-green');
-  else if(color==='red') cardReveal.classList.add('glow-red');
-  else cardReveal.classList.add('glow-yellow');
-  tarotText.innerHTML = `<strong>${h.name}${h.inverted? ' (invertida)': ''}</strong><p style="margin-top:8px">${h.text}</p>${h.source? `<div style="margin-top:8px;font-size:12px;color:#9fd8ea">Fuente: <a href="${h.source}" target="_blank" style="color:#bfeffd">${h.source}</a></div>`: ''}`;
-}
-
-/* reveal card action */
-document.getElementById('mazo').addEventListener('click', ()=> revealCardAction(false));
-async function revealCardAction(pickManual){
-  const cardReveal = document.getElementById('cardReveal');
-  const tarotText = document.getElementById('tarotText');
-  const cardLoader = document.getElementById('cardLoader');
-  if(!cardReveal || !tarotText || !cardLoader) return;
-  cardLoader.style.display = 'block'; cardReveal.style.display = 'none';
-  let cardObj;
-  if(pickManual && pickManual.img){ cardObj = {chosen: pickManual, inverted: Math.random() < 0.5}; }
-  else cardObj = pickCard();
-  // show image
-  cardReveal.src = cardObj.chosen.img;
-  // fetch wiki summary (prefer Spanish titles)
-  const wikiTitle = cardObj.chosen.wikiTitle || cardObj.chosen.name;
-  const res = await fetchWikiSummary(wikiTitle);
-  // fade-in image
-  cardLoader.style.display = 'none'; cardReveal.style.display = 'block'; cardReveal.style.opacity = 0;
-  setTimeout(()=> cardReveal.style.opacity = 1, 80);
-  // inverted class
-  if(cardObj.inverted) cardReveal.classList.add('card-inverted'); else cardReveal.classList.remove('card-inverted');
-  // apply glow color & fade-in effect (glow class left on permanently)
-  cardReveal.classList.remove('glow-green','glow-yellow','glow-red');
-  const energy = energyForCard(cardObj.chosen.name);
-  if(energy==='green') { cardReveal.classList.add('glow-green'); }
-  else if(energy==='red'){ cardReveal.classList.add('glow-red'); }
-  else { cardReveal.classList.add('glow-yellow'); }
-  // write text
-  tarotText.innerHTML = `<strong>${cardObj.chosen.name}${cardObj.inverted? ' (invertida)':''}</strong><p style="margin-top:8px">${res.text || 'No hay extracto disponible.'}</p>${res.source? `<div style="margin-top:8px;font-size:12px;color:#9fd8ea">Fuente: <a href="${res.source}" target="_blank" style="color:#bfeffd">${res.source}</a></div>` : ''}`;
-  // persist
-  const entry = {img: cardObj.chosen.img, name: cardObj.chosen.name, inverted: cardObj.inverted, text: res.text, source: res.source, time: Date.now()};
-  pushHistory(entry);
-  try{ localStorage.setItem('coralma_last_card', JSON.stringify(entry)); }catch(e){}
-}
-
-/* deckGrid toggle + render full deck (using TAROT_POOL here; you can extend to 78) */
-const deckGrid = document.getElementById('deckGrid');
-document.getElementById('toggleDeckBtn').addEventListener('click', ()=>{
-  if(deckGrid.style.display === 'none' || deckGrid.style.display === ''){ deckGrid.style.display='grid'; document.getElementById('toggleDeckBtn').textContent='Ocultar mazo'; if(deckGrid.childElementCount===0) renderDeck(); }
-  else { deckGrid.style.display='none'; document.getElementById('toggleDeckBtn').textContent='Ver mazo completo'; }
-});
-function renderDeck(){
-  TAROT_POOL.forEach(c=>{
-    const d = document.createElement('div'); d.className='card-mini';
-    const img = document.createElement('img'); img.src = c.img; img.alt = c.name;
-    d.appendChild(img);
-    d.addEventListener('click', ()=> revealCardAction(c));
-    deckGrid.appendChild(d);
-  });
-}
-
-/* on load, render history & persisted card if any */
-(function initTarot(){
-  renderHistory();
-  const last = localStorage.getItem('coralma_last_card');
-  if(last){
-    try{
-      const p = JSON.parse(last);
-      if(p) setTimeout(()=> showCardFromHistory(p), 60);
-    }catch(e){}
-  }
-})();
-
-/* ---------- Misc: subscription, init ---------- */
-document.getElementById('subForm').addEventListener('submit', e=>{ e.preventDefault(); document.getElementById('subInfo').textContent = '¡Gracias! Te hemos suscrito (demo)'; document.getElementById('emailInput').value=''; });
-
-/* init displays */
-function updateTimeDisplayInitial(){ updateDisplays(); }
-updateTimeDisplayInitial();
-
-/* prefetch tarot thumb images to reduce delay */
-setTimeout(()=>{ TAROT_POOL.forEach(c=>{ const i=new Image(); i.src=c.img; }); },1500);
+/* Small prefetch of placeholder images to speed up UI */
+setTimeout(()=>{ TAROT_FULL.forEach(c => { const i=new Image(); i.src=c.img; }); }, 800);
 
 </script>
 </body>
