@@ -1,189 +1,573 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oráculo y Tarot</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(270deg, #0f0c29, #302b63, #24243e);
-      background-size: 600% 600%;
-      animation: aurora 20s ease infinite;
-      color: #fff;
-      overflow-x: hidden;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CorAlma — Encuentra tu calma (Mobile first)</title>
+<meta name="description" content="Oráculo, Tarot, meditaciones y playlists — versión móvil mantenida en la estructura que pediste." />
+<style>
+  /* --------- Variables / base (mobile-first) --------- */
+  :root{
+    --bg1:#020414; --bg2:#041428;
+    --accent1:#6ec6d9; --accent2:#8a6cff;
+    --glass: rgba(255,255,255,0.04);
+    --muted:#9fd8ea; --text:#e6f9ff;
+    --finished:#ff6b6b;
+    --card-back: linear-gradient(135deg,#07192a,#1a1133);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; -webkit-font-smoothing:antialiased}
+  body{
+    color:var(--text);
+    background:
+      radial-gradient(circle at 10% 20%, rgba(138,108,255,0.06), transparent 6%),
+      radial-gradient(circle at 90% 80%, rgba(110,198,217,0.04), transparent 10%),
+      linear-gradient(180deg,var(--bg1), var(--bg2));
+    min-height:100vh;
+  }
+  /* Aurora subtle animation (soft) */
+  @keyframes aurora {
+    0%{ background-position:0% 50% }
+    50%{ background-position:100% 50% }
+    100%{ background-position:0% 50% }
+  }
+  body { background-size: 200% 200%; animation: aurora 30s ease-in-out infinite; }
 
-    @keyframes aurora {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+  /* Container & header (compact for mobile) */
+  .container{max-width:720px;margin:0 auto;padding:18px}
+  header{display:flex;align-items:center;gap:10px;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021018}
+  h1{font-size:18px;margin:0}
+  .subtitle{font-size:12px;color:#bfeffd;margin-top:4px}
 
-    h1, h2 {
-      text-align: center;
-      margin: 20px 0;
-    }
+  /* Sections stacked (mobile) */
+  section{margin-top:14px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:14px;border-radius:12px}
+  .med-card{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 
-    .section {
-      margin: 40px auto;
-      max-width: 800px;
-      text-align: center;
-      padding: 20px;
-    }
+  /* Tarot / Oracle card frame */
+  .card-frame {display:flex;flex-direction:column;gap:12px;align-items:center}
+  .deck {
+    width:160px;height:260px;border-radius:12px;background:var(--card-back);display:flex;align-items:center;justify-content:center;color:var(--text);
+    box-shadow:0 12px 40px rgba(60,80,120,0.18);
+    position:relative;overflow:hidden;cursor:pointer;user-select:none;
+    transform-origin:center; transition:transform .35s;
+  }
+  .deck .back-label{font-weight:700;font-size:14px;color:#cfeffb;pointer-events:none}
+  .deck:active{transform:scale(.98)}
+  .card-reveal {
+    width:160px;height:260px;border-radius:12px;background:#021018;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:10px;
+    transform-origin:center; transition:transform .6s;
+  }
+  .card-img{width:140px;height:200px;object-fit:cover;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,0.45)}
+  .card-title{margin-top:8px;font-weight:700;font-size:14px;text-align:center}
+  .card-desc{font-size:12px;color:#dff8ff;margin-top:8px;max-height:120px;overflow:auto;padding-right:6px;text-align:left}
 
-    /* ==== CARTAS ==== */
-    .card-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 20px;
-    }
+  /* Glow/frame animation (soft, permanent) */
+  .glow-frame {
+    position:absolute;inset:0;border-radius:12px;pointer-events:none;
+    box-shadow:0 0 30px rgba(110,198,217,0.12), inset 0 0 30px rgba(138,108,255,0.06);
+    animation: slowPulse 4s ease-in-out infinite;
+  }
+  @keyframes slowPulse {
+    0%{filter:blur(2px);opacity:.8}
+    50%{filter:blur(10px);opacity:1}
+    100%{filter:blur(2px);opacity:.8}
+  }
 
-    .card {
-      width: 200px;
-      height: 320px;
-      border-radius: 15px;
-      background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s;
-    }
+  /* inverted label */
+  .inverted-badge {position:absolute;top:8px;left:8px;background:rgba(255,255,255,0.06);padding:4px 8px;border-radius:8px;font-size:12px}
 
-    .card img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 12px;
-    }
+  /* Meditación (simple) */
+  .selector-row{display:flex;gap:10px;align-items:center;justify-content:center}
+  .btn {background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#021018;padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+  .med-circle{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 12px 30px rgba(60,80,120,0.18)}
+  .time-small{font-weight:700;margin-top:8px}
 
-    .card:hover {
-      transform: scale(1.05);
-    }
+  /* Frases diarias */
+  .frase-box{font-size:16px;background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;text-align:center}
 
-    .glow {
-      position: absolute;
-      inset: 0;
-      border-radius: 15px;
-      box-shadow: 0 0 30px rgba(0,255,200,0.7);
-      animation: pulse 3s infinite ease-in-out;
-      pointer-events: none;
-    }
+  /* Playlists (simple cards) */
+  .playlist-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+  .pl-card{min-width:220px;background:rgba(255,255,255,0.02);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+  .pl-cover{width:200px;height:112px;border-radius:8px;background:linear-gradient(90deg,#000,#222);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
 
-    @keyframes pulse {
-      0% { box-shadow: 0 0 10px rgba(0,255,200,0.4); }
-      50% { box-shadow: 0 0 40px rgba(0,255,200,0.9); }
-      100% { box-shadow: 0 0 10px rgba(0,255,200,0.4); }
-    }
+  /* Articles list (5 items) */
+  .articles{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .article-item{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;font-size:14px}
+  .article-item a{color:#dff8ff;text-decoration:none}
 
-    /* ==== FRASES ==== */
-    .frase-box {
-      font-size: 1.2em;
-      background: rgba(255,255,255,0.1);
-      padding: 20px;
-      border-radius: 15px;
-      margin-top: 20px;
-    }
+  /* Floating timer button (draggable) */
+  .floating-btn{position:fixed;right:16px;bottom:84px;width:92px;height:92px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;font-weight:700;cursor:grab;z-index:2000;box-shadow:0 12px 40px rgba(60,80,120,0.18);transition:background .25s}
+  .floating-btn.finished{background:var(--finished); color:#fff;}
+  .floating-label{font-size:12px}
+  .floating-time{font-size:13px;margin-top:6px}
 
-    /* ==== PLAYLIST ==== */
-    .playlist {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
+  /* FAB (mobile) for social + donate */
+  .fab-container{position:fixed;right:16px;bottom:16px;z-index:2100;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+  .fab-main{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#021018;border:0;box-shadow:0 8px 20px rgba(0,0,0,0.3);cursor:pointer;font-size:22px}
+  .fab-options{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+  .fab-option{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.08);color:#fff;text-decoration:none}
 
-    .playlist a img {
-      border-radius: 12px;
-      width: 200px;
-      height: 120px;
-      object-fit: cover;
-      transition: transform 0.3s;
-    }
+  /* Hide desktop right bar (mobile-only deliverable) */
+  .social-bar-desktop { display:none; }
 
-    .playlist a img:hover {
-      transform: scale(1.05);
-    }
+  /* Responsive: larger screens will still show page but simplified */
+  @media(min-width:740px){
+    .container{max-width:980px}
+    /* show desktop bar as well for larger screens but primary layout remains mobile-friendly */
+    .social-bar-desktop { display:flex; position:fixed; top:50%; right:18px; transform:translateY(-50%); flex-direction:column; gap:12px; z-index:2000 }
+    .fab-container { display:none }
+    .deck{width:200px;height:320px}
+    .card-reveal{width:200px;height:320px}
+    .card-img{width:180px;height:250px}
+    .floating-btn{right:20px;bottom:20px}
+  }
 
-    /* ==== ARTÍCULOS ==== */
-    .articles {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
+  /* small text help */
+  .hint{font-size:12px;color:#bfeffd;margin-top:6px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">CA</div>
+        <div>
+          <h1>CorAlma</h1>
+          <div class="subtitle">Encuentra tu calma en el universo interior</div>
+        </div>
+      </div>
+    </header>
 
-    .articles a {
-      text-decoration: none;
-      color: #fff;
-      background: rgba(255,255,255,0.1);
-      padding: 15px;
-      border-radius: 12px;
-      transition: 0.3s;
-    }
+    <!-- HERO -->
+    <section class="card">
+      <h2 style="margin:0;font-size:16px">Calma y presencias — versión móvil</h2>
+      <p style="margin:8px 0 0 0;font-size:13px;color:#cfeffb">Meditaciones breves, oráculo y tarot. Toca el mazo para sacar una carta. Todo pensado para móvil.</p>
+    </section>
 
-    .articles a:hover {
-      background: rgba(255,255,255,0.25);
-    }
+    <!-- TAROT -->
+    <section id="tarot" class="card med-card" aria-labelledby="tarot-title">
+      <h3 id="tarot-title" style="margin:0 0 6px 0">Tarot — toca el mazo</h3>
+      <div class="card-frame">
+        <div id="tarotDeck" class="deck" title="Toca para sacar una carta">
+          <div class="back-label">Mazo Tarot</div>
+          <div class="glow-frame" aria-hidden="true"></div>
+        </div>
 
-    /* ==== SOCIAL BAR DESKTOP ==== */
-    .social-bar {
-      position: fixed;
-      top: 50%;
-      right: 15px;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      z-index: 1000;
-    }
+        <div id="tarotReveal" style="display:none;width:100%;max-width:220px">
+          <div class="card-reveal" id="tarotCardBox">
+            <div id="invertedBadge" class="inverted-badge" style="display:none">Invertida</div>
+            <img id="tarotImg" class="card-img" src="" alt="Carta" style="display:block" />
+            <div id="tarotName" class="card-title">Nombre carta</div>
+            <div id="tarotText" class="card-desc">Descripción...</div>
+            <div style="margin-top:8px"><a id="tarotLink" href="#" target="_blank" style="color:#bfeffd;font-size:12px;text-decoration:underline">Leer más</a></div>
+          </div>
+        </div>
 
-    .social-bar a {
-      width: 45px;
-      height: 45px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
-      text-decoration: none;
-      transition: 0.3s;
-    }
+        <div id="tarotHint" class="hint">Se mostrará la referencia de Wikipedia si está disponible.</div>
+      </div>
+    </section>
 
-    .social-bar a:hover {
-      background: rgba(255, 255, 255, 0.35);
-      transform: scale(1.1);
-    }
+    <!-- ORÁCULO (ÁNGELES) -->
+    <section id="angels" class="card" aria-labelledby="angels-title">
+      <h3 id="angels-title" style="margin:0 0 6px 0">Oráculo — Ángeles</h3>
+      <div class="card-frame">
+        <div id="angelsDeck" class="deck" title="Toca para recibir un mensaje angelical">
+          <div class="back-label">Mazo Ángeles</div>
+          <div class="glow-frame" aria-hidden="true"></div>
+        </div>
 
-    .social-bar svg {
-      width: 22px;
-      height: 22px;
-      fill: #fff;
-    }
+        <div id="angelReveal" style="display:none;width:100%;max-width:220px">
+          <div class="card-reveal">
+            <img id="angelImg" class="card-img" src="" alt="Ángel" style="display:block" />
+            <div id="angelName" class="card-title">Ángel</div>
+            <div id="angelText" class="card-desc">Mensaje angelical...</div>
+            <div style="margin-top:8px"><a id="angelLink" href="#" target="_blank" style="color:#bfeffd;font-size:12px;text-decoration:underline">Ver fuente</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    /* ==== FAB MÓVIL ==== */
-    .fab-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1001;
-      display: none;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 12px;
-    }
+    <!-- MEDITACIÓN INTERACTIVA -->
+    <section id="medit" class="card med-card" aria-labelledby="medit-title">
+      <h3 id="medit-title" style="margin:0 0 6px 0">Meditación interactiva</h3>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:10px">
+        <button class="btn" onclick="setTimer(300)">5 min</button>
+        <button class="btn" onclick="setTimer(600)">10 min</button>
+        <button class="btn" onclick="setTimer(900)">15 min</button>
+      </div>
 
-    .fab-btn, .fab-option {
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      border: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #444;
-      color: #fff;
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <div id="medCircle" class="med-circle" role="button" tabindex="0">Tocar para iniciar</div>
+        <div id="timeDisplay" class="time-small">00:00</div>
+        <div class="hint">La bolita flotante mostrará el temporizador sincronizado.</div>
+      </div>
+    </section>
+
+    <!-- FRASES DIARIAS -->
+    <section id="phrases" class="card">
+      <h3 style="margin:0 0 6px 0">Frases Diarias</h3>
+      <div id="fraseBox" class="frase-box">Cargando frase...</div>
+    </section>
+
+    <!-- PLAYLISTS -->
+    <section id="music" class="card">
+      <h3 style="margin:0 0 6px 0">Playlists (YouTube)</h3>
+      <div class="playlist-row" id="playlistRow">
+        <!-- Each playlist as a card -->
+        <div class="pl-card">
+          <div class="pl-cover">Playlist 1</div>
+          <a href="https://youtube.com/playlist?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS" target="_blank" style="font-size:13px;color:#dff8ff;text-decoration:none">Meditación / Relajación — Playlist A</a>
+        </div>
+        <div class="pl-card">
+          <div class="pl-cover">Playlist 2</div>
+          <a href="https://youtube.com/playlist?list=PL6FMHId50GbE14ydduaNffH9ZCwpIOKpS" target="_blank" style="font-size:13px;color:#dff8ff;text-decoration:none">Ambientes — Playlist B</a>
+        </div>
+        <div class="pl-card">
+          <div class="pl-cover">Playlist 3</div>
+          <a href="https://youtube.com/playlist?list=PL6FMHId50GbGGi06g4gMUzsfMNveEKNxQ" target="_blank" style="font-size:13px;color:#dff8ff;text-decoration:none">Sonidos profundos — Playlist C</a>
+        </div>
+      </div>
+      <div class="hint">Pulsa una playlist para abrir YouTube.</div>
+    </section>
+
+    <!-- ARTÍCULOS (5 con referencia) -->
+    <section id="articles" class="card">
+      <h3 style="margin:0 0 6px 0">Artículos recomendados</h3>
+      <div id="articlesList" class="articles">
+        <div class="article-item">Cargando artículos...</div>
+      </div>
+    </section>
+
+    <!-- DONACIONES (mantén como está) -->
+    <section class="card" style="margin-top:12px">
+      <h3 style="margin:0 0 6px 0">Donaciones</h3>
+      <p style="margin:0 0 8px 0;color:#cfeef7">Si valoras este proyecto, apóyalo.</p>
+      <a class="btn" id="paypalBtn" href="https://www.paypal.com/donate/?hosted_button_id=GW4XCFHYRTJQQ" target="_blank" rel="noopener">Donar con PayPal</a>
+    </section>
+
+    <footer style="margin:18px 0 40px 0;text-align:center;color:#9fd8ea;font-size:13px">
+      Contacto: <a href="mailto:almacoralma@gmail.com" style="color:#bfeffd;text-decoration:underline">almacoralma@gmail.com</a>
+    </footer>
+  </div>
+
+  <!-- FLOATING TIMER (sync) -->
+  <div id="floatingBtn" class="floating-btn" title="Arrástrame">
+    <div id="floatingLabel" class="floating-label">Meditación</div>
+    <div id="floatingTime" class="floating-time">00:00</div>
+  </div>
+
+  <!-- FAB social (mobile) -->
+  <div class="fab-container" aria-hidden="false">
+    <div class="fab-options" id="fabOptions" style="display:none">
+      <!-- Exact social buttons (kept URLs exactly as you gave) -->
+      <a class="fab-option" href="https://www.instagram.com/effectno33?igsh=MjAycWE4dTFsbXpw" target="_blank" title="Instagram" rel="noopener" aria-label="Instagram">
+        <!-- Instagram SVG -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="#fff" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 6.1a4.9 4.9 0 1 0 .001 9.8A4.9 4.9 0 0 0 12 8.1zM18.4 5.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2z"/></svg>
+      </a>
+      <a class="fab-option" href="https://www.tiktok.com/@effect.33?_t=ZS-8zoEWdno7UL&_r=1" target="_blank" title="TikTok" rel="noopener" aria-label="TikTok">
+        <!-- TikTok SVG (simplified) -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="#fff" d="M9 3v10.5A4.5 4.5 0 1 0 13.5 18V7h3V3h-7z"/></svg>
+      </a>
+      <a class="fab-option" href="https://youtube.com/@effect.no33?si=1etVu0OT8KashHWN" target="_blank" title="YouTube" rel="noopener" aria-label="YouTube">
+        <!-- YouTube SVG -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="#fff" d="M10 15l5.2-3L10 9v6zM21 8s-.2-1.4-.8-2a3.2 3.2 0 0 0-2.2-.9C15.6 5 12 5 12 5s-3.6 0-5.9.1c-.8 0-1.6.3-2.2.9A4 4 0 0 0 3 8c-.6.6-.8 2-.8 2S2 9.8 2 11.6v.8C2 14.2 2.2 15 2.2 15s.2 1.4.8 2a3.2 3.2 0 0 0 2.2.9C8.4 19 12 19 12 19s3.6 0 5.9-.1c.8 0 1.6-.3 2.2-.9.6-.6.8-2 .8-2s.2-.8.2-2.6v-.8C22 9.8 21.8 9 21.8 9s-.2-1.4-.8-2z"/></svg>
+      </a>
+      <a class="fab-option" href="https://www.paypal.com/donate/?hosted_button_id=GW4XCFHYRTJQQ" target="_blank" title="PayPal" rel="noopener" aria-label="PayPal">
+        <!-- PayPal P (simplified) -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="#fff" d="M7 22c0 0 1.2.5 3.6.5 5 0 6.4-3.5 6.9-5.5h-3.1c-.4 1.2-1.6 3.2-3.9 3.2-2.1 0-3.5-.3-3.5-.3V22zM15 3H9L7.6 11.2H11c1.8 0 2.6-.6 3.6-.6 1.5 0 2.7 1 2 3.6-.5 1.6-1.8 4.1-5.3 4.1H9l-.5 3.8H13c5.6 0 7-3.5 7-6.3C19.5 6 16.8 3 15 3z"/></svg>
+      </a>
+    </div>
+    <button class="fab-main" id="fabMain" aria-label="Abrir redes">＋</button>
+  </div>
+
+<script>
+/* -------------- Utility -------------- */
+const $ = id => document.getElementById(id);
+
+/* --------- Floating FAB logic --------- */
+const fabMain = document.getElementById('fabMain');
+const fabOptions = document.getElementById('fabOptions');
+fabMain.addEventListener('click', ()=> {
+  fabOptions.style.display = fabOptions.style.display === 'flex' ? 'none' : 'flex';
+  if(fabOptions.style.display === 'flex') fabOptions.style.flexDirection = 'column';
+});
+
+/* --------- Floating timer (drag + sync) --------- */
+const floatingBtn = $('floatingBtn');
+let isDragging = false, offX=0, offY=0;
+floatingBtn.addEventListener('mousedown', e => { isDragging=true; offX = e.clientX - floatingBtn.offsetLeft; offY = e.clientY - floatingBtn.offsetTop; floatingBtn.style.cursor='grabbing'; });
+document.addEventListener('mousemove', e => {
+  if(!isDragging) return;
+  floatingBtn.style.left = (e.clientX - offX) + 'px';
+  floatingBtn.style.top = (e.clientY - offY) + 'px';
+});
+document.addEventListener('mouseup', ()=>{ isDragging=false; floatingBtn.style.cursor='grab'; });
+/* touch */
+floatingBtn.addEventListener('touchstart', e=>{ isDragging=true; const t=e.touches[0]; offX = t.clientX - floatingBtn.offsetLeft; offY = t.clientY - floatingBtn.offsetTop; });
+document.addEventListener('touchmove', e=>{ if(!isDragging) return; const t=e.touches[0]; floatingBtn.style.left=(t.clientX-offX)+'px'; floatingBtn.style.top=(t.clientY-offY)+'px'; });
+document.addEventListener('touchend', ()=> isDragging=false);
+
+/* -------------- Meditation timer (mobile-first) -------------- */
+let timerSec = 300, timerInterval = null;
+function pad(n){ return String(n).padStart(2,'0'); }
+function updateDisplays(){
+  const m=Math.floor(timerSec/60), s=timerSec%60, text = `${pad(m)}:${pad(s)}`;
+  $('timeDisplay').textContent = text;
+  $('floatingTime').textContent = text;
+  if(timerSec <= 0){ floatingBtn.classList.add('finished'); $('medCircle').textContent='Listo'; }
+  else { floatingBtn.classList.remove('finished'); $('medCircle').textContent='Tocar para iniciar'; }
+}
+function setTimer(sec){ timerSec = sec; updateDisplays(); }
+function startTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{ if(timerSec>0){ timerSec--; updateDisplays(); } else { clearInterval(timerInterval); timerInterval=null; updateDisplays(); } },1000);
+}
+function stopTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; updateDisplays(); }
+$('medCircle').addEventListener('click', ()=> {
+  if(timerInterval) stopTimer(); else startTimer();
+});
+updateDisplays();
+
+/* -------------- Frases Diarias (30) -------------- */
+const PHRASES = [
+  "Respira profundo; todo está bien ahora.",
+  "Deja que el silencio te muestre lo esencial.",
+  "Hoy es un paso más en tu camino.",
+  "La calma se construye con pequeñas pausas.",
+  "Siente el presente sin juzgarlo.",
+  "Confía en tu ritmo interior.",
+  "Una sonrisa cambia la vibración del día.",
+  "Suéltalo; no necesitas mantenerlo todo.",
+  "Eres suficiente tal como eres.",
+  "Escucha lo que tu cuerpo susurra.",
+  "Permítete descansar sin culpa.",
+  "La gratitud hace crecer lo que aprecias.",
+  "Un pensamiento amable hacia ti, ahora.",
+  "Cada inhalación trae claridad.",
+  "Cultiva paciencia; todo tiene su tiempo.",
+  "Abraza la incertidumbre con curiosidad.",
+  "Tu corazón sabe más de lo que imagine tu mente.",
+  "Pequeños actos de cuidado, gran efecto.",
+  "La naturaleza te recuerda tu origen.",
+  "Hoy elige lo que nutre tu paz.",
+  "Acepta lo que no puedes cambiar, transforma lo que sí.",
+  "Observa sin reaccionar.",
+  "Tu respiración es un ancla siempre disponible.",
+  "Permite que la compasión te guíe.",
+  "Regala silencio a tu mente.",
+  "Siente tus pies en el suelo; estás aquí.",
+  "Nadie espera que seas perfecto.",
+  "Renueva tu energía con un gesto amable.",
+  "Tu pausa de hoy es tu impulso de mañana.",
+  "La serenidad se construye instante a instante."
+];
+(function showDailyPhrase(){
+  const idx = (new Date().getDate() + new Date().getMonth()) % PHRASES.length;
+  $('fraseBox').textContent = PHRASES[idx];
+})();
+
+/* -------------- Articles: fetch 5 wiki topics and show links -------------- */
+const ARTICLE_TOPICS = ['Meditation','Mindfulness','Neuroscience','Relaxation','Stress_management'];
+async function loadArticles(){
+  try{
+    const list = [];
+    for(const t of ARTICLE_TOPICS){
+      const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t)}`;
+      const r = await fetch(url);
+      if(!r.ok) continue;
+      const j = await r.json();
+      list.push({title:j.title, extract:j.extract ? j.extract.slice(0,220)+'...' : '', link: (j.content_urls && j.content_urls.desktop && j.content_urls.desktop.page) || `https://en.wikipedia.org/wiki/${encodeURIComponent(t)}`});
+    }
+    const container = $('articlesList'); container.innerHTML='';
+    list.slice(0,5).forEach(a=>{
+      const el = document.createElement('div'); el.className='article-item';
+      el.innerHTML = `<a href="${a.link}" target="_blank" rel="noopener">${a.title}</a><div style="font-size:13px;color:#cfeef7;margin-top:6px">${a.extract}</div>`;
+      container.appendChild(el);
+    });
+    if(list.length===0) container.innerHTML='<div class="article-item">No se pudieron cargar artículos.</div>';
+  }catch(e){
+    $('articlesList').innerHTML='<div class="article-item">Error cargando artículos.</div>';
+  }
+}
+loadArticles();
+
+/* -------------- Playlists: highlight random daily (simple) -------------- */
+(function highlightPlaylist(){
+  const cards = document.querySelectorAll('.pl-card');
+  if(!cards.length) return;
+  const seed = Number(new Date().toISOString().slice(0,10).replace(/-/g,'')) % cards.length;
+  cards.forEach((c,i)=> c.style.opacity = (i===seed? '1' : '0.8'));
+})();
+
+/* -------------- TAROT: draw single card (try public RWS API, fallback to wiki-search) -------------- */
+const TAROT_DECK_LOCAL = [
+  // Major Arcana (short list fallback)
+  "The Fool","The Magician","The High Priestess","The Empress","The Emperor","The Hierophant",
+  "The Lovers","The Chariot","Strength","The Hermit","Wheel of Fortune","Justice",
+  "The Hanged Man","Death","Temperance","The Devil","The Tower","The Star","The Moon",
+  "The Sun","Judgement","The World",
+  // Some minors as examples
+  "Ace of Cups","Two of Cups","Three of Wands","Four of Pentacles","Five of Swords"
+];
+
+async function fetchRandomTarotFromAPI(){
+  // try two public endpoints (best-effort). If both fail, return null.
+  const endpoints = [
+    'https://rws-cards-api.herokuapp.com/api/v1/cards/random',
+    'https://tarotapi.dev/api/v1/cards/random'
+  ];
+  for(const url of endpoints){
+    try{
+      const res = await fetch(url);
+      if(!res.ok) continue;
+      const j = await res.json();
+      // normalize returned shapes
+      // rws-cards-api often returns { cards: [...] } or a single card object
+      let card = null;
+      if(Array.isArray(j.cards) && j.cards.length) card = j.cards[0];
+      else if(j.card) card = j.card;
+      else if(j.name || j.name_up || j.card_name) card = j;
+      if(card) return card;
+    }catch(e){}
+  }
+  return null;
+}
+
+// Wikipedia helper: search + summary + thumbnail
+async function wikiSummaryFor(query){
+  try{
+    const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
+    const r = await fetch(searchUrl);
+    if(!r.ok) return null;
+    const s = await r.json();
+    if(s && s.query && s.query.search && s.query.search.length){
+      const title = s.query.search[0].title;
+      const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+      const rr = await fetch(summaryUrl);
+      if(!rr.ok) return {title};
+      const summary = await rr.json();
+      return summary;
+    }
+    return null;
+  }catch(e){ return null; }
+}
+
+async function drawTarot(){
+  const deckEl = $('tarotDeck');
+  const revealBox = $('tarotReveal');
+  const img = $('tarotImg');
+  const nameEl = $('tarotName');
+  const textEl = $('tarotText');
+  const linkEl = $('tarotLink');
+  const invertedBadge = $('invertedBadge');
+
+  // quick UI feedback
+  deckEl.style.transform = 'scale(.96)';
+  setTimeout(()=> deckEl.style.transform = '', 220);
+
+  // try API
+  let cardObj = await fetchRandomTarotFromAPI();
+  let cardName = null, meaningUp = null, meaningRev = null, imageUrl = null;
+
+  if(cardObj){
+    // normalize various field names
+    cardName = cardObj.name || cardObj.card || cardObj.name_short || cardObj.title || cardObj.card_name || cardObj.type || (cardObj.value ? `${cardObj.value} of ${cardObj.suit}` : null);
+    meaningUp = cardObj.meaning_up || cardObj.meaning || cardObj.desc || cardObj.meaning_up || cardObj.meaning_up;
+    meaningRev = cardObj.meaning_rev || cardObj.meaning_reverse || null;
+    imageUrl = cardObj.image || cardObj.img || cardObj.imageUrl || cardObj.img_url || null;
+  } else {
+    // fallback: select random from local list
+    const local = TAROT_DECK_LOCAL[Math.floor(Math.random()*TAROT_DECK_LOCAL.length)];
+    cardName = local;
+  }
+
+  // fetch wiki summary for richer text & thumbnail (try "CardName tarot" search)
+  let wiki = await wikiSummaryFor(cardName + ' tarot');
+  if(!wiki) wiki = await wikiSummaryFor(cardName);
+
+  // decide final image: prefer API image -> wiki thumbnail -> placeholder
+  if(!imageUrl && wiki && wiki.thumbnail && wiki.thumbnail.source) imageUrl = wiki.thumbnail.source;
+  if(!imageUrl) imageUrl = ''; // no image
+
+  // set inverted randomly (50%) for reading feel
+  const inverted = Math.random() < 0.46; // approx half
+  if(inverted){
+    invertedBadge.style.display = 'block';
+  } else invertedBadge.style.display = 'none';
+
+  // text content
+  nameEl.textContent = cardName || 'Carta';
+  const extracted = wiki && wiki.extract ? wiki.extract : (meaningUp ? (meaningUp.substring(0,400)) : 'Significado no disponible.');
+  textEl.textContent = extracted;
+  linkEl.href = (wiki && wiki.content_urls && wiki.content_urls.desktop && wiki.content_urls.desktop.page) ? wiki.content_urls.desktop.page : (`https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(cardName)}`);
+
+  // show image if exist, else show stylized placeholder
+  if(imageUrl){
+    img.src = imageUrl;
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
+
+  // show reveal
+  revealBox.style.display = 'block';
+  // apply inverted rotation visually
+  const cardBox = $('tarotCardBox');
+  cardBox.style.transform = inverted ? 'rotate(180deg)' : 'rotate(0deg)';
+  // scroll into view on mobile
+  setTimeout(()=> revealBox.scrollIntoView({behavior:'smooth',block:'center'}), 150);
+}
+
+// deck click handler
+$('tarotDeck').addEventListener('click', drawTarot);
+
+/* -------------- ANGELS oracle (local + wiki lookup for reference) -------------- */
+const ANGEL_ORACLE = [
+  {name:'Gabriel', msg:'Mensaje: Confía en la claridad que llega hoy. Escucha tus señales.'},
+  {name:'Michael', msg:'Mensaje: Protección y coraje. Avanza con confianza.'},
+  {name:'Raphael', msg:'Mensaje: Sanación. Presta atención a tu cuerpo y tus sueños.'},
+  {name:'Uriel', msg:'Mensaje: Iluminación. Una idea práctica se revelará.'},
+  {name:'Azrael', msg:'Mensaje: Confort. Es momento de dejar ir con amor.'},
+  {name:'Chamuel', msg:'Mensaje: Amor y compasión hacia ti y los demás.'}
+];
+
+async function drawAngel(){
+  const deck = $('angelsDeck');
+  deck.style.transform = 'scale(.96)';
+  setTimeout(()=> deck.style.transform = '', 200);
+
+  const idx = Math.floor(Math.random()*ANGEL_ORACLE.length);
+  const card = ANGEL_ORACLE[idx];
+  const nameEl = $('angelName'); const textEl = $('angelText'); const imgEl = $('angelImg'); const linkEl = $('angelLink');
+  nameEl.textContent = card.name;
+  textEl.textContent = card.msg;
+
+  // try wikipedia for angel (summary may exist)
+  const wiki = await wikiSummaryFor(card.name);
+  if(wiki && wiki.thumbnail && wiki.thumbnail.source){ imgEl.src = wiki.thumbnail.source; imgEl.style.display='block'; linkEl.href = (wiki.content_urls && wiki.content_urls.desktop && wiki.content_urls.desktop.page) ? wiki.content_urls.desktop.page : '#'; }
+  else { imgEl.style.display='none'; linkEl.href = '#'; }
+
+  $('angelReveal').style.display = 'block';
+}
+$('angelsDeck').addEventListener('click', drawAngel);
+
+/* -------------- Init: hide reveals until drawn -------------- */
+document.addEventListener('DOMContentLoaded', ()=> {
+  $('tarotReveal').style.display = 'none';
+  $('angelReveal').style.display = 'none';
+});
+
+/* -------------- Accessibility: allow tap floatingBtn to toggle timer start/stop -------------- */
+$('floatingBtn').addEventListener('click', ()=> {
+  if(timerInterval) stopTimer(); else startTimer();
+});
+
+/* -------------- Optional: prevent accidental selection while dragging (mobile) -------------- */
+document.addEventListener('touchmove', function(e){ if(isDragging) e.preventDefault(); }, {passive:false});
+</script>
+</body>
+</html>
+```0
